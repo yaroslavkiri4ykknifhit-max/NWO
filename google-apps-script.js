@@ -83,13 +83,16 @@ function verifyTelegramHash(params) {
   dataCheckList.sort();
   const dataCheckString = dataCheckList.join('\n');
 
-  // Вычисляем SHA-256 от токена бота для использования в качестве ключа
+  // 1. Вычисляем SHA-256 от токена бота для использования в качестве ключа (возвращает Byte[])
   const secretKey = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, TELEGRAM_BOT_TOKEN);
   
-  // Вычисляем HMAC-SHA-256 подпись
-  const signatureBytes = Utilities.computeHmacSha256Signature(dataCheckString, secretKey);
+  // 2. Конвертируем строку проверки в UTF-8 байты (возвращает Byte[]) для соответствия типов!
+  const valueBytes = Utilities.newBlob(dataCheckString, 'text/plain', 'UTF-8').getBytes();
 
-  // Конвертируем байты подписи в Hex-строку
+  // 3. Вычисляем HMAC-SHA-256 подпись (оба параметра теперь Byte[])
+  const signatureBytes = Utilities.computeHmacSha256Signature(valueBytes, secretKey);
+
+  // 4. Конвертируем байты подписи в Hex-строку
   let signatureHex = '';
   for (let i = 0; i < signatureBytes.length; i++) {
     let byteVal = signatureBytes[i];
