@@ -30,14 +30,18 @@ export function LessonViewer({
   // Урок считается видео-уроком только если ссылка заполнена и не равна прочерку "-"
   const hasVideo = cleanVideoUrl !== "" && cleanVideoUrl !== "-"
 
-  // Проверяем, является ли ссылка прямым файлом видео (mp4, webm, mov и т.д.)
+  // Проверяем, является ли ссылка прямым файлом видео или прямым стримом с Google Диска
   const isDirectVideo = hasVideo && (
     cleanVideoUrl.toLowerCase().endsWith(".mp4") ||
     cleanVideoUrl.toLowerCase().endsWith(".webm") ||
     cleanVideoUrl.toLowerCase().endsWith(".mov") ||
     cleanVideoUrl.toLowerCase().includes(".mp4?") ||
     cleanVideoUrl.toLowerCase().includes(".webm?") ||
-    cleanVideoUrl.toLowerCase().includes("/raw") // Например, прямые ссылки с Dropbox/GitHub
+    cleanVideoUrl.toLowerCase().includes("/raw") ||
+    // Поддержка прямых ссылок на скачивание с Google Диска для нативного плеера!
+    cleanVideoUrl.toLowerCase().includes("drive.google.com/uc?") ||
+    cleanVideoUrl.toLowerCase().includes("docs.google.com/uc?") ||
+    cleanVideoUrl.toLowerCase().includes("export=download")
   )
 
   return (
@@ -62,7 +66,7 @@ export function LessonViewer({
         {hasVideo && (
           <div className="aspect-video bg-black rounded-2xl mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5">
             {isDirectVideo ? (
-              /* Нативный HTML5 плеер для прямых ссылок (.mp4) с защитой от скачивания */
+              /* Нативный HTML5 плеер для прямых ссылок (.mp4 / uc?export=download) с защитой от скачивания */
               <video
                 src={cleanVideoUrl}
                 controls
