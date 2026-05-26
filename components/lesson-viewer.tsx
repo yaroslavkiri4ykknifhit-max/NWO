@@ -14,6 +14,62 @@ interface LessonViewerProps {
   hasNext: boolean
 }
 
+// Функция для парсинга текста и рендеринга Markdown-изображений
+// Поддерживает форматы: ![описание](ссылка), ![](ссылка) и !(ссылка)
+function renderTextWithImages(text: string) {
+  if (!text) return null
+
+  const regex = /(?:!\[([^\]]*)\]|!)\((https?:\/\/[^\s)]+)\)/g
+  const parts = []
+  let lastIndex = 0
+  let match
+
+  while ((match = regex.exec(text)) !== null) {
+    const matchIndex = match.index
+    const alt = match[1] || ""
+    const url = match[2]
+
+    // Добавляем текст перед картинкой
+    if (matchIndex > lastIndex) {
+      parts.push(
+        <span key={`text-${lastIndex}`} className="whitespace-pre-line">
+          {text.substring(lastIndex, matchIndex)}
+        </span>
+      )
+    }
+
+    // Добавляем саму картинку в красивой обертке
+    parts.push(
+      <span key={`img-${matchIndex}`} className="block my-6 max-w-xl mx-auto">
+        <img
+          src={url}
+          alt={alt || "Изображение"}
+          className="rounded-2xl border border-border/40 max-w-full h-auto mx-auto shadow-md hover:scale-[1.01] transition-transform duration-300"
+          loading="lazy"
+        />
+        {alt && (
+          <span className="block text-center text-xs text-muted-foreground mt-2 italic">
+            {alt}
+          </span>
+        )}
+      </span>
+    )
+
+    lastIndex = regex.lastIndex
+  }
+
+  // Добавляем оставшийся текст
+  if (lastIndex < text.length) {
+    parts.push(
+      <span key={`text-${lastIndex}`} className="whitespace-pre-line">
+        {text.substring(lastIndex)}
+      </span>
+    )
+  }
+
+  return parts
+}
+
 export function LessonViewer({
   title,
   moduleName,
@@ -90,8 +146,8 @@ export function LessonViewer({
         {textContent && (
           <div className="space-y-4 mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h2 className="text-xl font-semibold text-foreground">Материалы урока</h2>
-            <div className="p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed whitespace-pre-line text-base">
-              {textContent}
+            <div className="p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base">
+              {renderTextWithImages(textContent)}
             </div>
           </div>
         )}
