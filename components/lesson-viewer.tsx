@@ -16,10 +16,11 @@ interface LessonViewerProps {
 
 // Функция для парсинга текста и рендеринга Markdown-изображений
 // Поддерживает форматы: ![описание](ссылка), ![](ссылка) и !(ссылка)
+// Добавлена поддержка \s* на случай случайных переносов строк между ! и (
 function renderTextWithImages(text: string) {
   if (!text) return null
 
-  const regex = /(?:!\[([^\]]*)\]|!)\((https?:\/\/[^\s)]+)\)/g
+  const regex = /(?:!\[([^\]]*)\]|!)\s*\((https?:\/\/[^\s)]+)\)/g
   const parts = []
   let lastIndex = 0
   let match
