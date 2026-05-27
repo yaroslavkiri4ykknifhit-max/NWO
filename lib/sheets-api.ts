@@ -217,7 +217,7 @@ export async function fetchCourseData(): Promise<CourseData> {
 /**
  * Авторизация через Telegram. Отправляет данные пользователя в Google Apps Script для проверки подписи.
  */
-export async function loginWithTelegram(user: TelegramUser): Promise<{ valid: boolean; code?: string; error?: string }> {
+export async function loginWithTelegram(user: TelegramUser): Promise<{ valid: boolean; code?: string; completed_lessons?: string; error?: string }> {
   try {
     const params: Record<string, string> = {};
     Object.entries(user).forEach(([key, value]) => {
@@ -226,7 +226,7 @@ export async function loginWithTelegram(user: TelegramUser): Promise<{ valid: bo
       }
     });
 
-    const result = await apiFetch<{ valid: boolean; code?: string; error?: string }>('telegram_login', params);
+    const result = await apiFetch<{ valid: boolean; code?: string; completed_lessons?: string; error?: string }>('telegram_login', params);
     return result;
   } catch (error: any) {
     console.error('Ошибка входа через Telegram:', error);
@@ -251,5 +251,22 @@ export async function bindTelegramToCode(code: string, user: TelegramUser): Prom
   } catch (error: any) {
     console.error('Ошибка привязки инвайт-кода к Telegram:', error);
     return { valid: false, error: error?.message || 'Не удалось связаться с сервером авторизации' };
+  }
+}
+
+/**
+ * Сохраняет список пройденных уроков в Google Sheets.
+ */
+export async function saveProgressToGoogleSheets(code: string, completedLessons: string[]): Promise<boolean> {
+  try {
+    const progressString = completedLessons.join(',');
+    const result = await apiFetch<{ valid: boolean; error?: string }>('save_progress', {
+      code,
+      completed_lessons: progressString
+    });
+    return result.valid === true;
+  } catch (error) {
+    console.error('Ошибка сохранения прогресса в Google Sheets:', error);
+    return false;
   }
 }

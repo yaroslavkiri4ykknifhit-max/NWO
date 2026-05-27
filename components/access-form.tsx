@@ -109,6 +109,13 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
       // Пользователь уже привязан к коду
       localStorage.setItem("nwo_access_code", response.code)
       localStorage.setItem("nwo_telegram_user", JSON.stringify(user))
+      
+      // Синхронизируем сохраненный в Google Sheets прогресс с локальным устройством
+      if (response.completed_lessons !== undefined) {
+        const completedList = response.completed_lessons.split(',').filter(Boolean)
+        localStorage.setItem("nwo_completed_lessons", JSON.stringify(completedList))
+      }
+
       onAccessGranted()
     } else if (response.error === "not_bound") {
       // Пользователь валиден, но код еще не привязан

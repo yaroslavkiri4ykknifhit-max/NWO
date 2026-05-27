@@ -6,7 +6,7 @@ import { LessonSidebar } from "@/components/lesson-sidebar"
 import { LessonViewer } from "@/components/lesson-viewer"
 import { CourseHeader } from "@/components/course-header"
 import { Dashboard } from "@/components/dashboard"
-import { fetchCourseData, CourseData, clearCache, TelegramUser } from "@/lib/sheets-api"
+import { fetchCourseData, CourseData, clearCache, TelegramUser, saveProgressToGoogleSheets } from "@/lib/sheets-api"
 import { Loader2 } from "lucide-react"
 
 export default function Home() {
@@ -121,6 +121,12 @@ export default function Home() {
       const updated = [...completedLessons, currentLessonId]
       setCompletedLessons(updated)
       localStorage.setItem("nwo_completed_lessons", JSON.stringify(updated))
+
+      // Синхронизируем прогресс в Google Sheets в фоновом режиме
+      const savedCode = localStorage.getItem("nwo_access_code")
+      if (savedCode && savedCode !== "DEMO1234") {
+        saveProgressToGoogleSheets(savedCode, updated)
+      }
     }
   }
 

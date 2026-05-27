@@ -46,8 +46,11 @@ function doGet(e) {
       case 'telegram_bind':
         result = handleTelegramBind(e.parameter);
         break;
+      case 'save_progress':
+        result = handleSaveProgress(e.parameter);
+        break;
       default:
-        result = { error: 'Unknown action. Use: validate, modules, lessons, all, telegram_login, telegram_bind' };
+        result = { error: 'Unknown action. Use: validate, modules, lessons, all, telegram_login, telegram_bind, save_progress' };
     }
   } catch (err) {
     result = { error: err.message };
@@ -114,17 +117,26 @@ function ensureTelegramColumns(sheet) {
   
   let hasTgId = headers.indexOf('telegram_id') !== -1;
   let hasTgUser = headers.indexOf('telegram_username') !== -1;
+  let hasProgress = headers.indexOf('completed_lessons') !== -1;
   
   if (!hasTgId) {
     sheet.getRange(1, sheet.getLastColumn() + 1).setValue('telegram_id');
   }
   
-  // Обновляем заголовки, чтобы учесть добавленный telegram_id перед поиском telegram_username
-  const updatedHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  // Обновляем заголовки
+  let updatedHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   hasTgUser = updatedHeaders.indexOf('telegram_username') !== -1;
 
   if (!hasTgUser) {
     sheet.getRange(1, sheet.getLastColumn() + 1).setValue('telegram_username');
+  }
+
+  // Обновляем заголовки снова для completed_lessons
+  updatedHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  hasProgress = updatedHeaders.indexOf('completed_lessons') !== -1;
+
+  if (!hasProgress) {
+    sheet.getRange(1, sheet.getLastColumn() + 1).setValue('completed_lessons');
   }
 }
 
@@ -154,12 +166,18 @@ function handleTelegramLogin(params) {
   const codeColIndex = 0;
   const tgIdColIndex = headers.indexOf('telegram_id');
   const tgUserColIndex = headers.indexOf('telegram_username');
+  const progressColIndex = headers.indexOf('completed_lessons');
 
   // Ищем пользователя по telegram_id
   for (let i = 1; i < data.length; i++) {
     const sheetTgId = String(data[i][tgIdColIndex] || '').trim();
     if (sheetTgId === tgId) {
-      return { valid: true, code: String(data[i][codeColIndex]).trim() };
+      const progress = progressColIndex !== -1 ? String(data[i][progressColIndex] || '').trim() : '';
+      return { 
+        valid: true, 
+        code: String(data[i][codeColIndex]).trim(),
+        completed_lessons: progress
+      };
     }
   }
 
@@ -174,7 +192,13 @@ function handleTelegramLogin(params) {
         if (!sheetTgId) {
           // Автоматически привязываем ID к этому коду
           sheet.getRange(i + 1, tgIdColIndex + 1).setValue(tgId);
-          return { valid: true, code: String(data[i][codeColIndex]).trim(), message: 'Автопривязка по имени пользователя' };
+          const progress = progressColIndex !== -1 ? String(data[i][progressColIndex] || '').trim() : '';
+          return { 
+            valid: true, 
+            code: String(data[i][codeColIndex]).trim(), 
+            completed_lessons: progress,
+            message: 'Автопривязка по имени пользователя' 
+          };
         }
       }
     }
@@ -365,4 +389,45 @@ function handleAll() {
     modules: modulesResult.modules || [],
     lessons: lessonsResult.lessons || [],
   };
+}
+
+/**
+ * Сохраняет прогресс пройденных уроков.
+ */
+function handleSaveProgress(params) {
+  const code = String(params.code || '').trim().toUpperCase();
+  const progress = String(params.completed_lessons || '').trim();
+
+  if (!code) {
+    return { valid: false, error: 'code_missing', message: 'Код доступа обязателен' };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('Invites');
+
+  if (!sheet) {
+    return { valid: false, error: 'sheet_missing', message: 'Лист Invites не найден' };
+  }
+
+  ensureTelegramColumns(sheet);
+
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const codeColIndex = 0;
+  const progressColIndex = headers.indexOf('completed_lessons');
+
+  if (progressColIndex === -1) {
+    return { valid: false, error: 'column_missing', message: 'Колонка прогресса не найдена' };
+  }
+
+  // Ищем нужный код
+  for (let i = 1; i < data.length; i++) {
+    const sheetCode = String(data[i][codeColIndex]).trim().toUpperCase();
+    if (sheetCode === code) {
+      sheet.getRange(i + 1, progressColIndex + 1).setValue(progress);
+      return { valid: true };
+    }
+  }
+
+  return { valid: false, error: 'code_not_found', message: 'Код доступа не найден' };
 }
