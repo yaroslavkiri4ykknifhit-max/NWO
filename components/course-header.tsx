@@ -27,10 +27,11 @@ export function CourseHeader({ courseName, onLogout, telegramUser, onToggleSideb
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/25 flex items-center justify-center shadow-lg shadow-accent/5 shrink-0">
-          <span className="text-accent font-bold text-base">N</span>
-        </div>
-        <span className="font-semibold text-foreground tracking-tight truncate max-w-[140px] sm:max-w-none">{courseName}</span>
+        <span className="text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1">
+          NWO
+        </span>
+        <span className="w-[1px] h-4 bg-border shrink-0 mx-1 hidden sm:inline" />
+        <span className="font-medium text-muted-foreground tracking-tight truncate max-w-[120px] sm:max-w-none text-sm sm:text-base">{courseName}</span>
       </div>
 
       <div className="flex items-center gap-4">
