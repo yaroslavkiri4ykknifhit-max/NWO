@@ -74,6 +74,11 @@ async function apiFetch<T>(action: string, params: Record<string, string> = {}):
 
   const url = new URL(APPS_SCRIPT_URL);
   url.searchParams.set('action', action);
+  
+  // Добавляем cache-buster параметр с меткой времени, чтобы заставить браузер/webview 
+  // всегда запрашивать свежие данные непосредственно из Google Sheets без использования кэша.
+  url.searchParams.set('_t', String(Date.now()));
+
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.set(key, value);
   });
