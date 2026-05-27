@@ -18,6 +18,21 @@ export default function Home() {
   const [currentLessonId, setCurrentLessonId] = useState("")
   const [completedLessons, setCompletedLessons] = useState<string[]>([])
   const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  // Инициализация адаптивного состояния боковой панели (открыта на ПК, закрыта на телефонах)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true)
+      } else {
+        setIsSidebarOpen(false)
+      }
+    }
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   // 1. Проверяем сохраненный код доступа при загрузке страницы
   useEffect(() => {
@@ -207,12 +222,19 @@ export default function Home() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <CourseHeader courseName={courseData.name} onLogout={handleLogout} telegramUser={telegramUser} />
-      <div className="flex flex-1 overflow-hidden">
+      <CourseHeader 
+        courseName={courseData.name} 
+        onLogout={handleLogout} 
+        telegramUser={telegramUser} 
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+      />
+      <div className="flex flex-1 overflow-hidden relative">
         <LessonSidebar
           modules={modulesWithCompletion}
           currentLessonId={currentLessonId}
           onSelectLesson={handleSelectLesson}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
         />
         {currentLesson && currentModule ? (
           <LessonViewer

@@ -1,6 +1,6 @@
 "use client"
 
-import { LogOut, User } from "lucide-react"
+import { LogOut, User, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TelegramUser } from "@/lib/sheets-api"
 
@@ -8,20 +8,29 @@ interface CourseHeaderProps {
   courseName: string
   onLogout: () => void
   telegramUser?: TelegramUser | null
+  onToggleSidebar: () => void
 }
 
-export function CourseHeader({ courseName, onLogout, telegramUser }: CourseHeaderProps) {
+export function CourseHeader({ courseName, onLogout, telegramUser, onToggleSidebar }: CourseHeaderProps) {
   const displayName = telegramUser
     ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name)
     : "Студент"
 
   return (
-    <header className="h-16 bg-card/60 backdrop-blur-md border-b border-border/50 flex items-center justify-between px-6 shrink-0 transition-all duration-300">
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/25 flex items-center justify-center shadow-lg shadow-accent/5">
+    <header className="h-16 bg-card/60 backdrop-blur-md border-b border-border/50 flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <button
+          onClick={onToggleSidebar}
+          className="p-2 hover:bg-secondary/40 rounded-xl text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+          aria-label="Открыть меню"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/25 flex items-center justify-center shadow-lg shadow-accent/5 shrink-0">
           <span className="text-accent font-bold text-base">N</span>
         </div>
-        <span className="font-semibold text-foreground tracking-tight">{courseName}</span>
+        <span className="font-semibold text-foreground tracking-tight truncate max-w-[140px] sm:max-w-none">{courseName}</span>
       </div>
 
       <div className="flex items-center gap-4">

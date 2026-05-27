@@ -103,11 +103,11 @@ export function LessonViewer({
 
   return (
     <main className="flex-1 overflow-y-auto bg-background">
-      <div className="max-w-4xl mx-auto p-8">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <p className="text-accent text-sm font-medium mb-2">{moduleName}</p>
-          <h1 className="text-3xl font-semibold text-foreground mb-4 text-balance">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 text-balance">
             {title}
           </h1>
 
@@ -121,7 +121,7 @@ export function LessonViewer({
 
         {/* Video Player (Отображается только если видео задано) */}
         {hasVideo && (
-          <div className="aspect-video bg-black rounded-2xl mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5">
+          <div className="aspect-video bg-black rounded-2xl mb-6 sm:mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5">
             {isDirectVideo ? (
               /* Нативный HTML5 плеер для прямых ссылок (.mp4 / uc?export=download) с защитой от скачивания */
               <video
@@ -145,20 +145,20 @@ export function LessonViewer({
 
         {/* Content */}
         {textContent && (
-          <div className="space-y-4 mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h2 className="text-xl font-semibold text-foreground">Материалы урока</h2>
-            <div className="p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base">
+            <div className="p-4 sm:p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base">
               {renderTextWithImages(textContent)}
             </div>
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-6 border-t border-border/40">
+        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between pt-6 border-t border-border/40">
           <Button
             variant={isCompleted ? "secondary" : "default"}
             onClick={onComplete}
-            className="gap-2 cursor-pointer rounded-xl h-11 px-5"
+            className="gap-2 cursor-pointer rounded-xl h-11 px-5 w-full sm:w-auto justify-center"
           >
             {isCompleted ? (
               <>
@@ -177,7 +177,7 @@ export function LessonViewer({
             <Button 
               variant="outline" 
               onClick={onNext} 
-              className="gap-2 cursor-pointer rounded-xl h-11 px-5 hover:bg-secondary/40"
+              className="gap-2 cursor-pointer rounded-xl h-11 px-5 hover:bg-secondary/40 w-full sm:w-auto justify-center"
             >
               Следующий урок
               <ChevronRight className="w-4 h-4" />
