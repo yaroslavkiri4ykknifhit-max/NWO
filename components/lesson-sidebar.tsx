@@ -157,6 +157,18 @@ export function LessonSidebar({
             </div>
           ))}
         </nav>
+
+        <div className="p-3 border-t border-sidebar-border mt-auto shrink-0 flex items-center justify-between text-[11px] text-muted-foreground bg-sidebar-accent/15">
+          <span>Закрытый клуб NWO</span>
+          <a
+            href="https://t.me/c0lddev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-accent font-semibold transition-colors cursor-pointer"
+          >
+            <span>Сделано @c0lddev</span>
+          </a>
+        </div>
       </aside>
     </>
   )

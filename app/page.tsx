@@ -5,6 +5,7 @@ import { AccessForm } from "@/components/access-form"
 import { LessonSidebar } from "@/components/lesson-sidebar"
 import { LessonViewer } from "@/components/lesson-viewer"
 import { CourseHeader } from "@/components/course-header"
+import { Dashboard } from "@/components/dashboard"
 import { fetchCourseData, CourseData, clearCache, TelegramUser } from "@/lib/sheets-api"
 import { Loader2 } from "lucide-react"
 
@@ -78,11 +79,9 @@ export default function Home() {
       const data = await fetchCourseData()
       setCourseData(data)
 
-      // Выбираем первый урок, если ничего не выбрано
-      if (data.modules.length > 0 && data.modules[0].lessons.length > 0) {
-        setCurrentModuleId(data.modules[0].id)
-        setCurrentLessonId(data.modules[0].lessons[0].id)
-      }
+      // По умолчанию открываем дашборд (текущий урок пустой)
+      setCurrentModuleId("")
+      setCurrentLessonId("")
     } catch (err: any) {
       console.error(err)
       setError(err?.message || "Не удалось загрузить материалы курса. Проверьте правильность ссылки в настройках.")
@@ -220,6 +219,13 @@ export default function Home() {
   const currentIndex = allLessons.findIndex((l) => l.id === currentLessonId)
   const hasNext = currentIndex < allLessons.length - 1
 
+  const handleStartLearning = () => {
+    if (courseData && courseData.modules.length > 0 && courseData.modules[0].lessons.length > 0) {
+      setCurrentModuleId(courseData.modules[0].id)
+      setCurrentLessonId(courseData.modules[0].lessons[0].id)
+    }
+  }
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <CourseHeader 
@@ -227,6 +233,10 @@ export default function Home() {
         onLogout={handleLogout} 
         telegramUser={telegramUser} 
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onClickLogo={() => {
+          setCurrentModuleId("")
+          setCurrentLessonId("")
+        }}
       />
       <div className="flex flex-1 overflow-hidden relative">
         <LessonSidebar
@@ -248,9 +258,14 @@ export default function Home() {
             hasNext={hasNext}
           />
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-background text-muted-foreground">
-            Выберите урок в боковой панели
-          </div>
+          <Dashboard
+            courseName={courseData.name}
+            modulesCount={courseData.modules.length}
+            lessonsCount={allLessons.length}
+            completedCount={completedLessons.length}
+            onStartLearning={handleStartLearning}
+            telegramUser={telegramUser}
+          />
         )}
       </div>
     </div>

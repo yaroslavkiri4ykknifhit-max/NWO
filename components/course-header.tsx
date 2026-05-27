@@ -9,9 +9,10 @@ interface CourseHeaderProps {
   onLogout: () => void
   telegramUser?: TelegramUser | null
   onToggleSidebar: () => void
+  onClickLogo?: () => void
 }
 
-export function CourseHeader({ courseName, onLogout, telegramUser, onToggleSidebar }: CourseHeaderProps) {
+export function CourseHeader({ courseName, onLogout, telegramUser, onToggleSidebar, onClickLogo }: CourseHeaderProps) {
   const displayName = telegramUser
     ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name)
     : "Студент"
@@ -27,11 +28,12 @@ export function CourseHeader({ courseName, onLogout, telegramUser, onToggleSideb
           <Menu className="w-5 h-5" />
         </button>
 
-        <span className="text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1">
+        <button
+          onClick={onClickLogo}
+          className="text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+        >
           NWO
-        </span>
-        <span className="w-[1px] h-4 bg-border shrink-0 mx-1 hidden sm:inline" />
-        <span className="font-medium text-muted-foreground tracking-tight truncate max-w-[120px] sm:max-w-none text-sm sm:text-base">{courseName}</span>
+        </button>
       </div>
 
       <div className="flex items-center gap-4">
