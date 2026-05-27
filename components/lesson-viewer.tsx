@@ -1,5 +1,6 @@
 "use client"
 
+import { useRef, useEffect } from "react"
 import { Play, CheckCircle2, ChevronRight, Clock, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -81,6 +82,15 @@ export function LessonViewer({
   onNext,
   hasNext,
 }: LessonViewerProps) {
+  const scrollContainerRef = useRef<HTMLElement>(null)
+
+  // При изменении урока (когда меняется title) скроллим контейнер вверх
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0
+    }
+  }, [title])
+
   // Очищаем ссылку от пробелов
   const cleanVideoUrl = videoUrl?.trim() || ""
   
@@ -102,7 +112,7 @@ export function LessonViewer({
   )
 
   return (
-    <main className="flex-1 overflow-y-auto bg-background">
+    <main ref={scrollContainerRef} className="flex-1 overflow-y-auto bg-background">
       <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
