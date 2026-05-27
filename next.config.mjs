@@ -7,7 +7,7 @@ const repoName = isGithubActions && process.env.GITHUB_REPOSITORY
 
 const nextConfig = {
   output: 'export', // Обязательно для статического экспорта на GitHub Pages
-  basePath: repoName ? `/${repoName}` : undefined, // Авто-настройка путей для github.io/repo-name
+  // basePath: repoName ? `/${repoName}` : undefined, // Отключено для работы на собственном домене без подпапок
   typescript: {
     ignoreBuildErrors: true,
   },
