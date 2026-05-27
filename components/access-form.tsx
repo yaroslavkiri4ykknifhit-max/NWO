@@ -163,72 +163,39 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
           <div>
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 border border-accent/20 mb-5 relative group transition-all duration-300 hover:bg-accent/20">
-                <Lock className="w-7 h-7 text-accent animate-pulse" />
+                <TelegramIcon />
               </div>
               <h1 className="text-3xl font-semibold text-foreground tracking-tight mb-2">
-                Закрытый доступ
+                Вход на платформу
               </h1>
-              <p className="text-muted-foreground text-sm">
-                Введите инвайт-код или авторизуйтесь через Telegram
+              <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+                Для защиты вашего прогресса и аккаунта сначала авторизуйтесь через Telegram
               </p>
             </div>
 
-            <form onSubmit={handleSubmitCodeOnly} className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  type="text"
-                  placeholder="Введите код доступа"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  className="h-12 bg-input/40 border-border/50 text-center text-lg tracking-widest uppercase placeholder:normal-case placeholder:tracking-normal focus:ring-accent/50 focus:border-accent"
-                  disabled={isLoading}
-                />
-                {error && (
-                  <p className="text-sm text-destructive text-center flex items-center justify-center gap-1.5 mt-2 animate-bounce">
-                    <ShieldAlert className="w-4 h-4" />
-                    {error}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/95 transition-all duration-300 font-medium active:scale-[0.98] cursor-pointer"
-                disabled={!code.trim() || isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Проверка...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    Войти на платформу
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                )}
-              </Button>
-            </form>
-
-            {botName && (
-              <div className="mt-8 space-y-6">
-                <div className="relative flex items-center justify-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-border/40" />
-                  </div>
-                  <span className="relative px-3 bg-background text-xs text-muted-foreground uppercase tracking-widest">
-                    Или для безопасности
-                  </span>
-                </div>
-
+            {botName ? (
+              <div className="space-y-6">
                 <div className="space-y-3">
-                  <p className="text-xs text-center text-muted-foreground/80">
-                    Рекомендуется войти через Telegram для защиты вашего аккаунта от блокировок
-                  </p>
                   <TelegramWidget botName={botName} onAuth={handleTelegramAuth} />
+                  {error && (
+                    <p className="text-sm text-destructive text-center flex items-center justify-center gap-1.5 mt-2 animate-bounce">
+                      <ShieldAlert className="w-4 h-4" />
+                      {error}
+                    </p>
+                  )}
                 </div>
+              </div>
+            ) : (
+              <div className="text-center text-sm text-destructive p-4 bg-destructive/10 rounded-xl">
+                Ошибка конфигурации: Имя Telegram-бота не найдено.
               </div>
             )}
+
+            <div className="mt-8 p-4 rounded-xl bg-secondary/35 border border-border/30">
+              <p className="text-xs text-muted-foreground text-center leading-relaxed">
+                ℹ️ После авторизации в Telegram вам будет предложено ввести инвайт-код доступа для первой активации профиля.
+              </p>
+            </div>
 
             <p className="mt-8 text-center text-xs text-muted-foreground">
               Доступ предоставляется строго участникам сообщества NWO
