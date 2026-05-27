@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, ExternalLink } from "lucide-react"
+import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, ExternalLink, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { validateAccessCode, loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
@@ -358,9 +358,10 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
               </button>
             </form>
 
-            <div className="mt-6 p-4 rounded-xl bg-accent/5 border border-accent/10">
-              <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-                ℹ️ После успешной привязки инвайт-код навсегда закрепится за вашим Telegram. На других устройствах вы сможете входить мгновенно в один клик.
+            <div className="mt-6 p-4 rounded-2xl bg-accent/5 border border-accent/10/70 flex gap-3 items-start text-left">
+              <Info className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                После успешной привязки инвайт-код навсегда закрепится за вашим Telegram. На других устройствах вы сможете входить мгновенно в один клик.
               </p>
             </div>
           </div>
