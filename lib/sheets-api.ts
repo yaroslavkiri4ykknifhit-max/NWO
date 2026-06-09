@@ -214,8 +214,8 @@ export async function fetchCourseData(): Promise<CourseData> {
 
     return courseData;
   } catch (error) {
-    console.warn('Не удалось загрузить данные из Google Sheets, загружаем демо-данные:', error);
-    return MOCK_COURSE_DATA;
+    console.error('Не удалось загрузить данные из Google Sheets:', error);
+    throw error;
   }
 }
 
