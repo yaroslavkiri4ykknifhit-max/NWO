@@ -50,6 +50,17 @@ export interface TelegramUser {
   hash: string;
 }
 
+export interface ShameTrade {
+  id: string;
+  title: string;
+  manager: string;
+  client: string;
+  dealAmount: string;
+  date: string;
+  screenshots: string[];
+  textContent: string;
+}
+
 // ── Кэш ─────────────────────────────────────────────────────────────────
 
 let cachedCourseData: CourseData | null = null;
@@ -135,6 +146,29 @@ const MOCK_COURSE_DATA: CourseData = {
     }
   ]
 };
+
+export const MOCK_SHAME_TRADES: ShameTrade[] = [
+  {
+    id: "shame-1",
+    title: "Скидка на первом звонке (слив ценности)",
+    manager: "Василий П.",
+    client: "ООО 'Инновация'",
+    dealAmount: "50 000 руб.",
+    date: "2026-06-18",
+    screenshots: ["/shame_deal_1.png"],
+    textContent: "### Что произошло:\nМенеджер Василий созванивался с новым клиентом, который проявил интерес к нашему предложению. Вместо того, чтобы провести квалификацию, выявить боли клиента и донести ценность продукта, Василий сразу после первого вопроса о стоимости предложил скидку 50%.\n\n### Ошибки:\n1. **Слив ценности с порога**: Предложил скидку без объяснения причин, тем самым обесценив продукт.\n2. **Отсутствие квалификации**: Не узнал, зачем клиенту продукт, какие цели он преследует.\n3. **Давление**: Фраза «Только сегодня и только для вас» выглядит дешево и отталкивает платежеспособного клиента.\n\n### Как надо было сделать:\nВыявить потребности: «Расскажите, пожалуйста, какие задачи вы хотите решить с помощью нашего продукта? Под какие цели подбираете?» Только после этого презентовать ценность и называть стандартную цену. Скидки давать только в обмен на обязательства (например, быструю оплату в течение 2 часов)."
+  },
+  {
+    id: "shame-2",
+    title: "Агрессивная реакция на возражение 'Дорого'",
+    manager: "Алексей К.",
+    client: "ИП Смирнов",
+    dealAmount: "120 000 руб.",
+    date: "2026-06-20",
+    screenshots: ["/shame_deal_2.png"],
+    textContent: "### Что произошло:\nКлиент написал возражение о том, что у конкурентов аналогичная услуга стоит на 20% дешевле. Вместо аргументированной отработки возражения менеджер Алексей встал в оборонительную позицию и в грубой форме отправил клиента к конкурентам.\n\n### Ошибки:\n1. **Агрессия и высокомерие**: Фраза «Ну так и покупайте у них» — это прямой посыл клиента. Так общаться категорически запрещено.\n2. **Уход от диалога**: Вместо того, чтобы расспросить, с кем сравнивают, и объяснить наши преимущества, менеджер слил лид.\n3. **Пустая фраза 'премиум качество'**: Данная фраза ничем не подтверждена и звучит как банальная отговорка.\n\n### Как надо было сделать:\nОтработать возражение через согласие и сравнение условий:\n«Понимаю ваше желание сэкономить. Подскажите, пожалуйста, а вы сравниваете с компанией X? Просто у них в эту стоимость не входит персональное сопровождение куратора и практические разборы, а у нас это включено. Давайте сравним наполнение...»"
+  }
+];
 
 // ── Публичные функции ───────────────────────────────────────────────────
 
@@ -273,5 +307,51 @@ export async function saveProgressToGoogleSheets(code: string, completedLessons:
   } catch (error) {
     console.error('Ошибка сохранения прогресса в Google Sheets:', error);
     return false;
+  }
+}
+
+/**
+ * Загружает все плохие сделки из листа "ShameTrades".
+ */
+export async function fetchShameTrades(): Promise<ShameTrade[]> {
+  // Если URL скрипта не настроен — отдаем демо-данные Стены позора
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
+    console.log('Используются локальные демо-данные для Стены позора');
+    return MOCK_SHAME_TRADES;
+  }
+
+  try {
+    const result = await apiFetch<{
+      trades: {
+        id: string;
+        title: string;
+        manager: string;
+        client: string;
+        dealAmount: string;
+        date: string;
+        screenshots: string;
+        textContent: string;
+      }[];
+      error?: string;
+    }>('shame_trades');
+
+    if (result.error) {
+      throw new Error(result.error);
+    }
+
+    return (result.trades || []).map((t) => ({
+      id: String(t.id),
+      title: String(t.title),
+      manager: String(t.manager || ''),
+      client: String(t.client || ''),
+      dealAmount: String(t.dealAmount || ''),
+      date: String(t.date || ''),
+      screenshots: t.screenshots ? t.screenshots.split(',').map((url) => url.trim()).filter(Boolean) : [],
+      textContent: String(t.textContent || ''),
+    }));
+  } catch (error) {
+    console.error('Не удалось загрузить данные Стены позора из Google Sheets:', error);
+    // Возвращаем локальные демо-данные в случае ошибки сети, чтобы интерфейс работал
+    return MOCK_SHAME_TRADES;
   }
 }

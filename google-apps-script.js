@@ -49,8 +49,11 @@ function doGet(e) {
       case 'save_progress':
         result = handleSaveProgress(e.parameter);
         break;
+      case 'shame_trades':
+        result = handleShameTrades();
+        break;
       default:
-        result = { error: 'Unknown action. Use: validate, modules, lessons, all, telegram_login, telegram_bind, save_progress' };
+        result = { error: 'Unknown action. Use: validate, modules, lessons, all, telegram_login, telegram_bind, save_progress, shame_trades' };
     }
   } catch (err) {
     result = { error: err.message };
@@ -430,4 +433,46 @@ function handleSaveProgress(params) {
   }
 
   return { valid: false, error: 'code_not_found', message: 'Код доступа не найден' };
+}
+
+/**
+ * Возвращает все плохие сделки из листа "ShameTrades".
+ */
+function handleShameTrades() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('ShameTrades');
+
+  if (!sheet) {
+    return { error: 'Лист ShameTrades не найден. Пожалуйста, создайте его.', trades: [] };
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const trades = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const id = data[i][0];
+    const title = data[i][1];
+    const manager = data[i][2];
+    const client = data[i][3];
+    const dealAmount = data[i][4];
+    const date = data[i][5];
+    const screenshots = data[i][6];
+    const textContent = data[i][7];
+    const status = String(data[i][8] || 'active').trim().toLowerCase();
+
+    if (id && title && status === 'active') {
+      trades.push({
+        id: String(id),
+        title: String(title),
+        manager: String(manager || ''),
+        client: String(client || ''),
+        dealAmount: String(dealAmount || ''),
+        date: String(date || ''),
+        screenshots: String(screenshots || ''),
+        textContent: String(textContent || ''),
+      });
+    }
+  }
+
+  return { trades: trades };
 }

@@ -6,7 +6,8 @@ import { LessonSidebar } from "@/components/lesson-sidebar"
 import { LessonViewer } from "@/components/lesson-viewer"
 import { CourseHeader } from "@/components/course-header"
 import { Dashboard } from "@/components/dashboard"
-import { fetchCourseData, CourseData, clearCache, TelegramUser, saveProgressToGoogleSheets } from "@/lib/sheets-api"
+import { WallOfShame } from "@/components/wall-of-shame"
+import { fetchCourseData, CourseData, clearCache, TelegramUser, saveProgressToGoogleSheets, ShameTrade, fetchShameTrades } from "@/lib/sheets-api"
 import { Loader2 } from "lucide-react"
 
 export default function Home() {
@@ -20,6 +21,9 @@ export default function Home() {
   const [completedLessons, setCompletedLessons] = useState<string[]>([])
   const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isWallOfShameActive, setIsWallOfShameActive] = useState(false)
+  const [shameTrades, setShameTrades] = useState<ShameTrade[]>([])
+  const [shameLoading, setShameLoading] = useState(false)
 
   // Инициализация адаптивного состояния боковой панели (открыта на ПК, закрыта на телефонах)
   useEffect(() => {
@@ -53,10 +57,11 @@ export default function Home() {
     }
   }, [])
 
-  // 2. Если есть доступ, загружаем данные курса
+  // 2. Если есть доступ, загружаем данные курса и разборов сделок
   useEffect(() => {
     if (hasAccess === true) {
       loadCourseData()
+      loadShameTrades()
     }
   }, [hasAccess])
 
@@ -82,11 +87,24 @@ export default function Home() {
       // По умолчанию открываем дашборд (текущий урок пустой)
       setCurrentModuleId("")
       setCurrentLessonId("")
+      setIsWallOfShameActive(false)
     } catch (err: any) {
       console.error(err)
       setError(err?.message || "Не удалось загрузить материалы курса. Проверьте правильность ссылки в настройках.")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadShameTrades = async () => {
+    setShameLoading(true)
+    try {
+      const data = await fetchShameTrades()
+      setShameTrades(data)
+    } catch (err) {
+      console.error("Ошибка загрузки разборов сделок:", err)
+    } finally {
+      setShameLoading(false)
     }
   }
 
@@ -112,6 +130,7 @@ export default function Home() {
   }
 
   const handleSelectLesson = (moduleId: string, lessonId: string) => {
+    setIsWallOfShameActive(false)
     setCurrentModuleId(moduleId)
     setCurrentLessonId(lessonId)
   }
@@ -227,6 +246,7 @@ export default function Home() {
 
   const handleStartLearning = () => {
     if (courseData && courseData.modules.length > 0 && courseData.modules[0].lessons.length > 0) {
+      setIsWallOfShameActive(false)
       setCurrentModuleId(courseData.modules[0].id)
       setCurrentLessonId(courseData.modules[0].lessons[0].id)
     }
@@ -240,6 +260,7 @@ export default function Home() {
         telegramUser={telegramUser} 
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         onClickLogo={() => {
+          setIsWallOfShameActive(false)
           setCurrentModuleId("")
           setCurrentLessonId("")
         }}
@@ -251,8 +272,16 @@ export default function Home() {
           onSelectLesson={handleSelectLesson}
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
+          isWallOfShameActive={isWallOfShameActive}
+          onSelectWallOfShame={() => {
+            setIsWallOfShameActive(true)
+            setCurrentModuleId("")
+            setCurrentLessonId("")
+          }}
         />
-        {currentLesson && currentModule ? (
+        {isWallOfShameActive ? (
+          <WallOfShame trades={shameTrades} loading={shameLoading} />
+        ) : currentLesson && currentModule ? (
           <LessonViewer
             title={currentLesson.title}
             moduleName={currentModule.title}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, PlayCircle, CheckCircle2, Lock, X } from "lucide-react"
+import { ChevronDown, PlayCircle, CheckCircle2, Lock, X, ShieldAlert } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Lesson {
@@ -23,6 +23,8 @@ interface LessonSidebarProps {
   onSelectLesson: (moduleId: string, lessonId: string) => void
   isOpen: boolean
   onClose: () => void
+  isWallOfShameActive?: boolean
+  onSelectWallOfShame?: () => void
 }
 
 export function LessonSidebar({
@@ -31,6 +33,8 @@ export function LessonSidebar({
   onSelectLesson,
   isOpen,
   onClose,
+  isWallOfShameActive = false,
+  onSelectWallOfShame,
 }: LessonSidebarProps) {
   const [expandedModules, setExpandedModules] = useState<string[]>([modules[0]?.id || ""])
 
@@ -84,6 +88,40 @@ export function LessonSidebar({
         </div>
 
         <nav className="p-2 flex-1 overflow-y-auto">
+          {/* Wall of Shame Section */}
+          <div className="mb-4">
+            <button
+              onClick={() => {
+                if (onSelectWallOfShame) {
+                  onSelectWallOfShame()
+                  if (window.innerWidth < 1024) {
+                    onClose()
+                  }
+                }
+              }}
+              className={cn(
+                "w-full flex items-center justify-between p-3 rounded-lg border transition-all text-left cursor-pointer",
+                isWallOfShameActive
+                  ? "bg-red-50/70 border-red-200/60 text-red-600 shadow-sm"
+                  : "border-transparent hover:bg-sidebar-accent/50 text-sidebar-foreground"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <span className={cn(
+                  "flex items-center justify-center w-6 h-6 rounded text-xs font-semibold transition-colors",
+                  isWallOfShameActive
+                    ? "bg-red-200/80 text-red-700"
+                    : "bg-red-50 text-red-500"
+                )}>
+                  <ShieldAlert className="w-4 h-4" />
+                </span>
+                <span className="font-semibold text-sm">
+                  Стена позора
+                </span>
+              </div>
+            </button>
+          </div>
+
           {modules.map((module, moduleIndex) => (
             <div key={module.id} className="mb-2">
               <button
