@@ -259,6 +259,7 @@ export default function Home() {
         onLogout={handleLogout} 
         telegramUser={telegramUser} 
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        isSidebarOpen={isSidebarOpen}
         onClickLogo={() => {
           setIsWallOfShameActive(false)
           setCurrentModuleId("")

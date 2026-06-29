@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronDown, PlayCircle, CheckCircle2, Lock, X, ShieldAlert } from "lucide-react"
+import { ChevronDown, PlayCircle, CheckCircle2, Lock, ShieldAlert } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "motion/react"
 import type { Variants } from "motion/react"
@@ -32,30 +32,30 @@ interface LessonSidebarProps {
 const sidebarVariants: Variants = {
   open: (height = 1000) => ({
     width: 320,
-    clipPath: `circle(${height * 2 + 200}px at 40px 40px)`,
+    clipPath: `circle(${height * 2 + 200}px at 30px -32px)`,
     opacity: 1,
     borderRightWidth: "1px",
     pointerEvents: "auto" as const,
     transition: {
       type: "spring",
-      stiffness: 80,
-      damping: 15,
+      stiffness: 20,
       restDelta: 2,
-      delayChildren: 0.1,
-      staggerChildren: 0.05,
+      delayChildren: 0.2,
+      staggerChildren: 0.07,
     },
   }),
   closed: {
     width: 0,
-    clipPath: "circle(0px at 40px 40px)",
+    clipPath: "circle(0px at 30px -32px)",
     opacity: 0,
     borderRightWidth: "0px",
     pointerEvents: "none" as const,
     transition: {
+      delay: 0.2,
       type: "spring",
       stiffness: 400,
       damping: 40,
-      staggerChildren: 0.03,
+      staggerChildren: 0.05,
       staggerDirection: -1,
     },
   },
@@ -70,7 +70,7 @@ const itemVariants: Variants = {
     },
   },
   closed: {
-    y: 20,
+    y: 50,
     opacity: 0,
     transition: {
       y: { stiffness: 1000 },
@@ -142,7 +142,7 @@ export function LessonSidebar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/85 backdrop-blur-sm z-40 lg:hidden"
+            className="fixed inset-x-0 top-16 bottom-0 bg-background/85 backdrop-blur-sm z-40 lg:hidden"
             onClick={onClose}
           />
         )}
@@ -154,8 +154,8 @@ export function LessonSidebar({
         custom={windowHeight}
         variants={sidebarVariants}
         className={cn(
-          "bg-sidebar border-sidebar-border h-full shrink-0 flex flex-col overflow-hidden",
-          "fixed inset-y-0 left-0 z-50 border-r lg:relative lg:translate-x-0 lg:z-0"
+          "bg-sidebar border-sidebar-border shrink-0 flex flex-col overflow-hidden",
+          "fixed top-16 bottom-0 left-0 z-50 border-r lg:relative lg:top-0 lg:h-full lg:z-0"
         )}
       >
         <motion.div 
@@ -168,30 +168,24 @@ export function LessonSidebar({
               {modules.reduce((acc, m) => acc + m.lessons.length, 0)} уроков
             </p>
           </div>
-          <motion.button
-            onClick={onClose}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="lg:hidden p-2 hover:bg-sidebar-accent rounded-xl text-muted-foreground hover:text-sidebar-foreground transition-colors cursor-pointer"
-            aria-label="Закрыть меню"
-          >
-            <X className="w-5 h-5" />
-          </motion.button>
         </motion.div>
 
         <nav className="p-2 flex-1 overflow-y-auto space-y-2">
           {/* Wall of Shame Section */}
           {onSelectWallOfShame && (
-            <motion.div variants={itemVariants} className="mb-2">
-              <motion.button
+            <motion.div 
+              variants={itemVariants} 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mb-2"
+            >
+              <button
                 onClick={() => {
                   onSelectWallOfShame()
                   if (window.innerWidth < 1024) {
                     onClose()
                   }
                 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
                 className={cn(
                   "w-full flex items-center justify-between p-3 rounded-lg border transition-all text-left cursor-pointer",
                   isWallOfShameActive
@@ -212,16 +206,20 @@ export function LessonSidebar({
                     Стена позора
                   </span>
                 </div>
-              </motion.button>
+              </button>
             </motion.div>
           )}
 
           {modules.map((module, moduleIndex) => (
-            <motion.div key={module.id} variants={itemVariants} className="mb-2">
-              <motion.button
+            <motion.div 
+              key={module.id} 
+              variants={itemVariants} 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mb-2"
+            >
+              <button
                 onClick={() => toggleModule(module.id)}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
                 className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-sidebar-accent transition-colors text-left cursor-pointer"
               >
                 <div className="flex items-center gap-3">
@@ -238,7 +236,7 @@ export function LessonSidebar({
                     expandedModules.includes(module.id) && "rotate-180"
                   )}
                 />
-              </motion.button>
+              </button>
 
               <AnimatePresence initial={false}>
                 {expandedModules.includes(module.id) && (
