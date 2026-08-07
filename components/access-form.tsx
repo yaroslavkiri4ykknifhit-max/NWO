@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, ExternalLink, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { validateAccessCode, loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
+import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
 
 // Иконка Telegram для Lucide-подобного использования
 const TelegramIcon = () => (
@@ -74,30 +74,6 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
 
   const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || ""
 
-  // Обработка стандартного входа по коду
-  const handleSubmitCodeOnly = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
-
-    const trimmedCode = code.trim()
-    if (trimmedCode.length < 8) {
-      setError("Код должен быть не менее 8 символов")
-      setIsLoading(false)
-      return
-    }
-
-    const isValid = await validateAccessCode(trimmedCode)
-
-    if (isValid) {
-      localStorage.setItem("nwo_access_code", trimmedCode)
-      onAccessGranted()
-    } else {
-      setError("Неверный код доступа")
-    }
-    setIsLoading(false)
-  }
-
   // Обработка входа через Telegram
   const handleTelegramAuth = async (user: TelegramUser) => {
     setError("")
@@ -105,19 +81,9 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
 
     const response = await loginWithTelegram(user)
 
-    if (response.valid && response.code) {
-      // Пользователь уже привязан к коду
-      localStorage.setItem("nwo_access_code", response.code)
-      localStorage.setItem("nwo_telegram_user", JSON.stringify(user))
-      
-      // Синхронизируем сохраненный в Google Sheets прогресс с локальным устройством
-      if (response.completed_lessons !== undefined) {
-        const completedList = response.completed_lessons.split(',').filter(Boolean)
-        localStorage.setItem("nwo_completed_lessons", JSON.stringify(completedList))
-      }
-
+    if (response.valid) {
       onAccessGranted()
-    } else if (response.error === "not_bound") {
+    } else if (response.needsCode || response.error === "not_bound") {
       // Пользователь валиден, но код еще не привязан
       setTelegramUser(user)
       setView("tg_binding")
@@ -145,9 +111,6 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
     const response = await bindTelegramToCode(trimmedCode, telegramUser)
 
     if (response.valid) {
-      // Успешно привязано! Сохраняем сессию
-      localStorage.setItem("nwo_access_code", trimmedCode)
-      localStorage.setItem("nwo_telegram_user", JSON.stringify(telegramUser))
       onAccessGranted()
     } else {
       setError(response.error || "Не удалось привязать код")
@@ -238,18 +201,7 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
               </div>
             )}
 
-            {/* Divider "или" */}
-            <div className="relative w-full flex items-center justify-center my-6">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-200/70" />
-              </div>
-              <span className="relative px-3 bg-white text-xs text-muted-foreground/75 uppercase tracking-wider font-semibold">
-                или
-              </span>
-            </div>
-
-            {/* "Нет Telegram?" Section */}
-            <div className="w-full flex items-start gap-3.5 p-1 text-left">
+            <div className="w-full flex items-start gap-3.5 p-1 mt-6 text-left">
               <HelpCircle className="text-muted-foreground/50 w-8 h-8 shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-bold text-slate-800 leading-snug">

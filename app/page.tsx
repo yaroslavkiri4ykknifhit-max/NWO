@@ -7,7 +7,16 @@ import { LessonViewer } from "@/components/lesson-viewer"
 import { CourseHeader } from "@/components/course-header"
 import { Dashboard } from "@/components/dashboard"
 import { WallOfShame } from "@/components/wall-of-shame"
-import { fetchCourseData, CourseData, clearCache, TelegramUser, saveProgressToGoogleSheets, ShameTrade, fetchShameTrades } from "@/lib/sheets-api"
+import {
+  fetchCourseData,
+  CourseData,
+  TelegramProfile,
+  getAuthSession,
+  logout,
+  saveProgress,
+  ShameTrade,
+  fetchShameTrades,
+} from "@/lib/sheets-api"
 import { Loader2 } from "lucide-react"
 
 export default function Home() {
@@ -19,7 +28,7 @@ export default function Home() {
   const [currentModuleId, setCurrentModuleId] = useState("")
   const [currentLessonId, setCurrentLessonId] = useState("")
   const [completedLessons, setCompletedLessons] = useState<string[]>([])
-  const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
+  const [telegramUser, setTelegramUser] = useState<TelegramProfile | null>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isWallOfShameActive, setIsWallOfShameActive] = useState(false)
   const [shameTrades, setShameTrades] = useState<ShameTrade[]>([])
@@ -39,21 +48,20 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // 1. Проверяем сохраненный код доступа при загрузке страницы
+  // Проверяем короткоживущую подписанную сессию Apps Script.
   useEffect(() => {
-    const savedCode = localStorage.getItem("nwo_access_code")
-    const savedUser = localStorage.getItem("nwo_telegram_user")
-    if (savedUser) {
-      try {
-        setTelegramUser(JSON.parse(savedUser))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    if (savedCode) {
-      setHasAccess(true)
-    } else {
-      setHasAccess(false)
+    let active = true
+    getAuthSession()
+      .then((session) => {
+        if (!active) return
+        setTelegramUser(session.telegramUser)
+        setCompletedLessons(session.completedLessons)
+        setHasAccess(session.authenticated)
+      })
+      .catch(() => active && setHasAccess(false))
+
+    return () => {
+      active = false
     }
   }, [])
 
@@ -64,18 +72,6 @@ export default function Home() {
       loadShameTrades()
     }
   }, [hasAccess])
-
-  // 3. Загружаем прогресс уроков
-  useEffect(() => {
-    const savedProgress = localStorage.getItem("nwo_completed_lessons")
-    if (savedProgress) {
-      try {
-        setCompletedLessons(JSON.parse(savedProgress))
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  }, [])
 
   const loadCourseData = async () => {
     setLoading(true)
@@ -108,25 +104,27 @@ export default function Home() {
     }
   }
 
-  const handleAccessGranted = () => {
-    const savedUser = localStorage.getItem("nwo_telegram_user")
-    if (savedUser) {
-      try {
-        setTelegramUser(JSON.parse(savedUser))
-      } catch (e) {
-        console.error(e)
-      }
+  const handleAccessGranted = async () => {
+    try {
+      const session = await getAuthSession()
+      setTelegramUser(session.telegramUser)
+      setCompletedLessons(session.completedLessons)
+      setHasAccess(session.authenticated)
+    } catch {
+      setHasAccess(false)
     }
-    setHasAccess(true)
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem("nwo_access_code")
-    localStorage.removeItem("nwo_telegram_user")
-    clearCache()
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error("Не удалось завершить сессию", error)
+    }
     setHasAccess(false)
     setTelegramUser(null)
     setCourseData(null)
+    setCompletedLessons([])
   }
 
   const handleSelectLesson = (moduleId: string, lessonId: string) => {
@@ -139,13 +137,9 @@ export default function Home() {
     if (!completedLessons.includes(currentLessonId)) {
       const updated = [...completedLessons, currentLessonId]
       setCompletedLessons(updated)
-      localStorage.setItem("nwo_completed_lessons", JSON.stringify(updated))
-
-      // Синхронизируем прогресс в Google Sheets в фоновом режиме
-      const savedCode = localStorage.getItem("nwo_access_code")
-      if (savedCode && savedCode !== "DEMO1234") {
-        saveProgressToGoogleSheets(savedCode, updated)
-      }
+      saveProgress(updated).catch((error) =>
+        console.error("Не удалось сохранить прогресс", error),
+      )
     }
   }
 

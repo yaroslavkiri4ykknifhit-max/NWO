@@ -1,7 +1,7 @@
 "use client"
 
 import { BookOpen, MessageCircle, ExternalLink, Code, Lightbulb } from "lucide-react"
-import { TelegramUser } from "@/lib/sheets-api"
+import { TelegramProfile } from "@/lib/sheets-api"
 
 interface DashboardProps {
   courseName: string
@@ -9,7 +9,7 @@ interface DashboardProps {
   lessonsCount: number
   completedCount: number
   onStartLearning: () => void
-  telegramUser?: TelegramUser | null
+  telegramUser?: TelegramProfile | null
 }
 
 export function Dashboard({
@@ -352,4 +352,3 @@ export function Dashboard({
     </main>
   )
 }
-

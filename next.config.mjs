@@ -1,19 +1,10 @@
 /** @type {import('next').NextConfig} */
-const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
-// Если сборка идет на GitHub Actions, автоматически получаем имя репозитория для basePath
-const repoName = isGithubActions && process.env.GITHUB_REPOSITORY 
-  ? process.env.GITHUB_REPOSITORY.split('/')[1] 
-  : '';
-
 const nextConfig = {
-  output: 'export', // Обязательно для статического экспорта на GitHub Pages
-  // basePath: repoName ? `/${repoName}` : undefined, // Отключено для работы на собственном домене без подпапок
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  output: 'export',
   images: {
-    unoptimized: true, // GitHub Pages не поддерживает серверную оптимизацию изображений
+    unoptimized: true,
   },
+  poweredByHeader: false,
 }
 
 export default nextConfig

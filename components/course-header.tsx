@@ -2,14 +2,14 @@
 
 import { LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { TelegramUser } from "@/lib/sheets-api"
+import { TelegramProfile } from "@/lib/sheets-api"
 import { motion } from "motion/react"
 import type { Variants } from "motion/react"
 
 interface CourseHeaderProps {
   courseName: string
   onLogout: () => void
-  telegramUser?: TelegramUser | null
+  telegramUser?: TelegramProfile | null
   onToggleSidebar: () => void
   isSidebarOpen: boolean
   onClickLogo?: () => void
