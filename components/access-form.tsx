@@ -34,10 +34,47 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
   useEffect(() => {
     if (!containerRef.current || !botName) return
 
-    const callbackName = `onTelegramAuth_${Math.floor(Math.random() * 1000000)}`
-    ;(window as any)[callbackName] = (user: TelegramUser) => {
+    const telegramFields = [
+      "id",
+      "first_name",
+      "last_name",
+      "username",
+      "photo_url",
+      "auth_date",
+      "hash",
+    ]
+    const url = new URL(window.location.href)
+    const id = Number(url.searchParams.get("id"))
+    const authDate = Number(url.searchParams.get("auth_date"))
+    const hash = url.searchParams.get("hash") || ""
+    const firstName = url.searchParams.get("first_name") || ""
+
+    if (
+      Number.isSafeInteger(id) &&
+      id > 0 &&
+      Number.isSafeInteger(authDate) &&
+      authDate > 0 &&
+      /^[a-f0-9]{64}$/i.test(hash) &&
+      firstName
+    ) {
+      const user: TelegramUser = {
+        id,
+        first_name: firstName,
+        auth_date: authDate,
+        hash,
+      }
+
+      const lastName = url.searchParams.get("last_name")
+      const username = url.searchParams.get("username")
+      const photoUrl = url.searchParams.get("photo_url")
+      if (lastName) user.last_name = lastName
+      if (username) user.username = username
+      if (photoUrl) user.photo_url = photoUrl
+
+      telegramFields.forEach((field) => url.searchParams.delete(field))
+      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
       onAuth(user)
-      delete (window as any)[callbackName]
+      return
     }
 
     const script = document.createElement("script")
@@ -46,7 +83,7 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
     script.setAttribute("data-telegram-login", botName)
     script.setAttribute("data-size", "large")
     script.setAttribute("data-radius", "8")
-    script.setAttribute("data-onauth", `${callbackName}(user)`)
+    script.setAttribute("data-auth-url", `${url.origin}${url.pathname}`)
     script.setAttribute("data-request-access", "write")
     script.setAttribute("data-userpic", "true")
 
@@ -56,7 +93,6 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
       if (containerRef.current) {
         containerRef.current.innerHTML = ""
       }
-      delete (window as any)[callbackName]
     }
   }, [botName, onAuth])
 
