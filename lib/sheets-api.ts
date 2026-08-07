@@ -70,6 +70,13 @@ export interface AuthSession {
   completedLessons: string[]
 }
 
+export interface PaidAuthSession {
+  authenticated: boolean
+  paidAccess: boolean
+  telegramUser: TelegramProfile | null
+  completedLessons: string[]
+}
+
 interface ApiResult {
   valid?: boolean
   error?: string
@@ -180,6 +187,52 @@ export async function getAuthSession(): Promise<AuthSession> {
   }
 }
 
+export async function getPaidAuthSession(): Promise<PaidAuthSession> {
+  if (!getSessionToken()) {
+    return {
+      authenticated: false,
+      paidAccess: false,
+      telegramUser: null,
+      completedLessons: [],
+    }
+  }
+
+  try {
+    const result = await apiFetch<
+      ApiResult & {
+        paid_access?: boolean
+        paid_completed_lessons?: string
+        telegram_user?: TelegramProfile
+      }
+    >("paid_session")
+
+    if (!result.valid) {
+      clearSessionToken()
+      return {
+        authenticated: false,
+        paidAccess: false,
+        telegramUser: null,
+        completedLessons: [],
+      }
+    }
+
+    return {
+      authenticated: true,
+      paidAccess: result.paid_access === true,
+      telegramUser: result.telegram_user || null,
+      completedLessons: parseProgress(result.paid_completed_lessons),
+    }
+  } catch {
+    clearSessionToken()
+    return {
+      authenticated: false,
+      paidAccess: false,
+      telegramUser: null,
+      completedLessons: [],
+    }
+  }
+}
+
 export async function loginWithTelegram(
   user: TelegramUser,
 ): Promise<{ valid: boolean; needsCode?: boolean; error?: string }> {
@@ -260,8 +313,52 @@ export async function fetchCourseData(): Promise<CourseData> {
   return { name: result.name || "Академия: Полный курс", modules }
 }
 
+export async function fetchPaidCourseData(): Promise<{
+  course: CourseData
+  completedLessons: string[]
+}> {
+  const result = await apiFetch<
+    ApiResult & {
+      name?: string
+      modules?: SheetModule[]
+      lessons?: SheetLesson[]
+      completed_lessons?: string
+    }
+  >("paid_all")
+
+  if (!result.valid) throw accessError(result)
+
+  const sheetModules = result.modules || []
+  const sheetLessons = result.lessons || []
+  const modules: CourseModule[] = sheetModules.map((module) => ({
+    id: `module-${module.id}`,
+    title: module.name,
+    lessons: sheetLessons
+      .filter((lesson) => String(lesson.moduleId) === String(module.id))
+      .map((lesson) => ({
+        id: `lesson-${lesson.id}`,
+        moduleId: String(lesson.moduleId),
+        title: lesson.title,
+        textContent: lesson.textContent,
+        videoUrl: lesson.videoUrl,
+      })),
+  }))
+
+  return {
+    course: { name: result.name || "NWO: Платное обучение", modules },
+    completedLessons: parseProgress(result.completed_lessons),
+  }
+}
+
 export async function saveProgress(completedLessons: string[]): Promise<void> {
   const result = await apiFetch<ApiResult>("save_progress", {
+    completed_lessons: completedLessons.join(","),
+  })
+  if (!result.valid) throw accessError(result)
+}
+
+export async function savePaidProgress(completedLessons: string[]): Promise<void> {
+  const result = await apiFetch<ApiResult>("save_paid_progress", {
     completed_lessons: completedLessons.join(","),
   })
   if (!result.valid) throw accessError(result)

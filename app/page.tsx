@@ -295,6 +295,7 @@ export default function Home() {
             completedCount={completedLessons.length}
             onStartLearning={handleStartLearning}
             telegramUser={telegramUser}
+            premiumHref="/premium/"
           />
         )}
       </div>

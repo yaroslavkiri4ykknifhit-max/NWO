@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpen, MessageCircle, ExternalLink, Code, Lightbulb } from "lucide-react"
+import { BookOpen, ExternalLink, Code, Lightbulb, Crown, ArrowRight } from "lucide-react"
 import { TelegramProfile } from "@/lib/sheets-api"
 
 interface DashboardProps {
@@ -10,6 +10,7 @@ interface DashboardProps {
   completedCount: number
   onStartLearning: () => void
   telegramUser?: TelegramProfile | null
+  premiumHref?: string
 }
 
 export function Dashboard({
@@ -19,6 +20,7 @@ export function Dashboard({
   completedCount,
   onStartLearning,
   telegramUser,
+  premiumHref,
 }: DashboardProps) {
   const progressPercent = lessonsCount > 0 ? Math.round((completedCount / lessonsCount) * 100) : 0
   const studentName = telegramUser?.username || telegramUser?.first_name || "colddev"
@@ -219,6 +221,36 @@ export function Dashboard({
               </div>
             </div>
           </div>
+
+          {premiumHref && (
+            <div className="p-6 sm:p-8 bg-gradient-to-br from-[#fff8dc] via-[#fffdf5] to-[#f5edff] border-2 border-amber-200/80 rounded-3xl flex flex-col lg:flex-row items-center justify-between gap-6 relative shadow-lg shadow-amber-900/5 overflow-hidden">
+              <div className="absolute -right-8 -top-10 w-40 h-40 rounded-full bg-amber-300/15 blur-2xl pointer-events-none" />
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/25 rotate-[-3deg]">
+                  <Crown className="w-6 h-6" />
+                </div>
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-amber-800 mb-1">
+                    Продвинутый уровень
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 font-serif leading-tight">
+                    Платное обучение NWO
+                  </h3>
+                  <p className="text-sm sm:text-base text-slate-600 max-w-xl leading-relaxed font-neucha">
+                    Отдельная программа с расширенными уроками и собственным прогрессом обучения.
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href={premiumHref}
+                className="bg-slate-900 hover:bg-slate-800 text-white font-neucha text-lg font-bold tracking-wide rounded-2xl min-h-14 px-7 py-3 flex items-center justify-center gap-2 shadow-lg shadow-slate-900/15 active:scale-[0.97] transition-all cursor-pointer w-full lg:w-auto shrink-0 relative z-10 text-center"
+              >
+                <span>Перейти к платному обучению</span>
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            </div>
+          )}
 
           {/* Banner 1: Start Learning (Green block) */}
           <div className="p-6 sm:p-8 bg-[#f5f9f4] border-2 border-[#d2edd5]/80 rounded-3xl flex flex-col lg:flex-row items-center justify-between gap-6 relative shadow-lg shadow-green-900/5 overflow-hidden">

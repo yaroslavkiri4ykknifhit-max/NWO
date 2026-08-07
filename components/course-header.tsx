@@ -1,6 +1,6 @@
 "use client"
 
-import { LogOut, User } from "lucide-react"
+import { ArrowLeft, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TelegramProfile } from "@/lib/sheets-api"
 import { motion } from "motion/react"
@@ -13,6 +13,8 @@ interface CourseHeaderProps {
   onToggleSidebar: () => void
   isSidebarOpen: boolean
   onClickLogo?: () => void
+  backHref?: string
+  backLabel?: string
 }
 
 interface PathProps {
@@ -76,6 +78,8 @@ export function CourseHeader({
   onToggleSidebar,
   isSidebarOpen,
   onClickLogo,
+  backHref,
+  backLabel = "Назад",
 }: CourseHeaderProps) {
   const displayName = telegramUser
     ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name)
@@ -92,6 +96,16 @@ export function CourseHeader({
         >
           NWO
         </button>
+
+        {backHref && (
+          <a
+            href={backHref}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border/40 bg-secondary/30 p-2 sm:px-3 sm:py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{backLabel}</span>
+          </a>
+        )}
       </div>
 
       <div className="flex items-center gap-4">

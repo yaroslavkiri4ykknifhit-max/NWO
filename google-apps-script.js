@@ -62,11 +62,20 @@ function doPost(e) {
       case 'session':
         result = handleSession(params.session_token);
         break;
+      case 'paid_session':
+        result = handlePaidSession(params.session_token);
+        break;
       case 'all':
         result = handleAll(params.session_token);
         break;
+      case 'paid_all':
+        result = handlePaidAll(params.session_token);
+        break;
       case 'save_progress':
         result = handleSaveProgress(params.session_token, params.completed_lessons);
+        break;
+      case 'save_paid_progress':
+        result = handleSavePaidProgress(params.session_token, params.completed_lessons);
         break;
       case 'shame_trades':
         result = handleShameTrades(params.session_token);
@@ -130,6 +139,7 @@ function ensureInviteColumns(sheet) {
     'telegram_id',
     'telegram_username',
     'completed_lessons',
+    'paid_completed_lessons',
     'access_status',
     'expires_at'
   ];
@@ -163,6 +173,7 @@ function getInviteContext() {
     telegramIdIndex: headers.indexOf('telegram_id'),
     telegramUsernameIndex: headers.indexOf('telegram_username'),
     progressIndex: headers.indexOf('completed_lessons'),
+    paidProgressIndex: headers.indexOf('paid_completed_lessons'),
     statusIndex: headers.indexOf('access_status'),
     expiresIndex: headers.indexOf('expires_at')
   };
@@ -224,6 +235,10 @@ function inviteIsActive(context, invite) {
     if (isNaN(expiresAt.getTime()) || Date.now() >= expiresAt.getTime()) return false;
   }
   return true;
+}
+
+function inviteHasPaidAccess(context, invite) {
+  return String(invite.row[context.statusIndex] || '').trim().toLowerCase() === 'paid';
 }
 
 function base64UrlEncodeString(value) {
@@ -313,6 +328,12 @@ function authorizeSession(sessionToken) {
 function getProgress(authorization) {
   return String(
     authorization.invite.row[authorization.context.progressIndex] || ''
+  ).trim();
+}
+
+function getPaidProgress(authorization) {
+  return String(
+    authorization.invite.row[authorization.context.paidProgressIndex] || ''
   ).trim();
 }
 
@@ -444,6 +465,22 @@ function handleSession(sessionToken) {
   };
 }
 
+function handlePaidSession(sessionToken) {
+  var authorization = authorizeSession(sessionToken);
+  if (!authorization.valid) return authorization;
+
+  return {
+    valid: true,
+    paid_access: inviteHasPaidAccess(authorization.context, authorization.invite),
+    paid_completed_lessons: getPaidProgress(authorization),
+    telegram_user: {
+      id: Number(authorization.payload.tg),
+      first_name: String(authorization.payload.fn || 'Участник'),
+      username: String(authorization.payload.un || '')
+    }
+  };
+}
+
 function handleModules() {
   var sheet = getSpreadsheet().getSheetByName('Modules');
   if (!sheet) return { modules: [] };
@@ -479,6 +516,41 @@ function handleLessons() {
   return { lessons: lessons };
 }
 
+function handlePaidModules() {
+  var sheet = getSpreadsheet().getSheetByName('PaidModules');
+  if (!sheet) return { modules: [] };
+  var data = sheet.getDataRange().getValues();
+  var modules = [];
+
+  for (var i = 1; i < data.length; i++) {
+    var status = String(data[i][2] || '').trim().toLowerCase();
+    if (data[i][0] && data[i][1] && status === 'active') {
+      modules.push({ id: String(data[i][0]), name: String(data[i][1]), status: status });
+    }
+  }
+  return { modules: modules };
+}
+
+function handlePaidLessons() {
+  var sheet = getSpreadsheet().getSheetByName('PaidLessons');
+  if (!sheet) return { lessons: [] };
+  var data = sheet.getDataRange().getValues();
+  var lessons = [];
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0] && data[i][1] && data[i][2]) {
+      lessons.push({
+        id: String(data[i][0]),
+        moduleId: String(data[i][1]),
+        title: String(data[i][2]),
+        textContent: String(data[i][3] || ''),
+        videoUrl: String(data[i][4] || '')
+      });
+    }
+  }
+  return { lessons: lessons };
+}
+
 function handleAll(sessionToken) {
   var authorization = authorizeSession(sessionToken);
   if (!authorization.valid) return authorization;
@@ -487,6 +559,26 @@ function handleAll(sessionToken) {
     name: 'Академия: Полный курс',
     modules: handleModules().modules,
     lessons: handleLessons().lessons
+  };
+}
+
+function handlePaidAll(sessionToken) {
+  var authorization = authorizeSession(sessionToken);
+  if (!authorization.valid) return authorization;
+  if (!inviteHasPaidAccess(authorization.context, authorization.invite)) {
+    return {
+      valid: false,
+      error: 'paid_access_required',
+      message: 'Платный доступ для этого аккаунта не подключён'
+    };
+  }
+
+  return {
+    valid: true,
+    name: 'NWO: Платное обучение',
+    modules: handlePaidModules().modules,
+    lessons: handlePaidLessons().lessons,
+    completed_lessons: getPaidProgress(authorization)
   };
 }
 
@@ -505,6 +597,28 @@ function handleSaveProgress(sessionToken, completedLessons) {
 
   authorization.context.sheet
     .getRange(authorization.invite.rowIndex + 1, authorization.context.progressIndex + 1)
+    .setValue(progress);
+  return { valid: true };
+}
+
+function handleSavePaidProgress(sessionToken, completedLessons) {
+  var authorization = authorizeSession(sessionToken);
+  if (!authorization.valid) return authorization;
+  if (!inviteHasPaidAccess(authorization.context, authorization.invite)) {
+    return { valid: false, error: 'paid_access_required', message: 'Платный доступ не подключён' };
+  }
+
+  var progress = String(completedLessons || '').trim();
+  var items = progress ? progress.split(',') : [];
+  if (items.length > 500) return { valid: false, error: 'invalid_progress' };
+  for (var i = 0; i < items.length; i++) {
+    if (!/^lesson-[A-Za-z0-9_-]{1,80}$/.test(items[i])) {
+      return { valid: false, error: 'invalid_progress' };
+    }
+  }
+
+  authorization.context.sheet
+    .getRange(authorization.invite.rowIndex + 1, authorization.context.paidProgressIndex + 1)
     .setValue(progress);
   return { valid: true };
 }
