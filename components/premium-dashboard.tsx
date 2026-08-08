@@ -57,7 +57,7 @@ export function PremiumDashboard({
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.28em] text-[#b8ff3d]">
               Добро пожаловать, {displayName}
             </p>
-            <h1 className="premium-display max-w-4xl text-[clamp(3.2rem,7vw,7rem)] font-black uppercase leading-[0.82] tracking-[-0.075em] text-white">
+            <h1 className="premium-display max-w-4xl text-[clamp(3.2rem,7vw,7rem)] font-black uppercase leading-[0.82] tracking-[0.015em] text-white">
               Ты внутри.
               <span className="mt-3 block premium-gradient-text">Теперь - по-крупному.</span>
             </h1>
@@ -100,7 +100,7 @@ export function PremiumDashboard({
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="text-xs font-bold uppercase tracking-[0.28em] text-white/40">NWO</div>
-                      <div className="premium-display mt-1 text-4xl font-black tracking-[-0.06em] text-white">BLACK</div>
+                      <div className="premium-display mt-1 text-4xl font-black tracking-[0.012em] text-white">BLACK</div>
                     </div>
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#b8ff3d]/30 bg-[#b8ff3d]/10 text-[#b8ff3d]">
                       <Crown className="h-6 w-6" />
@@ -156,7 +156,7 @@ export function PremiumDashboard({
                 <Layers3 className="h-3.5 w-3.5" />
                 ВАША БОЕВАЯ КАРТА
               </div>
-              <h2 className="premium-display text-4xl font-black uppercase tracking-[-0.055em] text-white sm:text-6xl">
+              <h2 className="premium-display text-4xl font-black uppercase tracking-[0.012em] text-white sm:text-6xl">
                 Маршрут до результата
               </h2>
             </div>
@@ -176,7 +176,7 @@ export function PremiumDashboard({
 
               return (
                 <article key={module.id} className="premium-module-card group relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-7">
-                  <div className="absolute right-5 top-3 premium-display text-7xl font-black tracking-[-0.08em] text-white/[0.035] transition-colors group-hover:text-[#b8ff3d]/[0.07]">
+                  <div className="absolute right-5 top-3 premium-display text-7xl font-black tracking-[0.01em] text-white/[0.035] transition-colors group-hover:text-[#b8ff3d]/[0.07]">
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div className="relative z-10 flex items-start gap-4">
@@ -230,7 +230,7 @@ export function PremiumDashboard({
               <Flame className="h-7 w-7 fill-current" />
             </div>
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b8ff3d]">Доступ подтверждён</p>
-            <h2 className="premium-display mt-4 text-4xl font-black uppercase tracking-[-0.055em] text-white sm:text-6xl">
+            <h2 className="premium-display mt-4 text-4xl font-black uppercase tracking-[0.012em] text-white sm:text-6xl">
               Хватит смотреть. Пора делать.
             </h2>
             <p className="mx-auto mt-5 max-w-xl text-white/50">

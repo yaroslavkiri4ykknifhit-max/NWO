@@ -350,7 +350,7 @@ export function LessonViewer({
           <p className="text-accent text-sm font-medium mb-2">{moduleName}</p>
           <h1 className={cn(
             "text-2xl sm:text-3xl font-semibold text-foreground mb-4 text-balance",
-            isPremium && "premium-display sm:text-5xl font-black uppercase tracking-[-0.045em] leading-[0.95]"
+            isPremium && "premium-display sm:text-5xl font-black uppercase tracking-[0.012em] leading-[0.95]"
           )}>
             {title}
           </h1>

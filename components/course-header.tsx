@@ -101,7 +101,7 @@ export function CourseHeader({
         <button
           onClick={onClickLogo}
           className={isPremium
-            ? "premium-display flex items-baseline gap-1.5 text-xl font-black text-white select-none tracking-[-0.04em] shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+            ? "premium-display flex items-baseline gap-1.5 text-xl font-black text-white select-none tracking-[0.012em] shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
             : "text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
           }
         >

@@ -116,7 +116,7 @@ export default function PremiumPage() {
             <Crown className="w-4 h-4" />
             NWO BLACK · LOCKED
           </div>
-          <h1 className="premium-display text-4xl sm:text-5xl font-black uppercase tracking-[-0.055em] leading-[0.92] text-white">
+          <h1 className="premium-display text-4xl sm:text-5xl font-black uppercase tracking-[0.012em] leading-[0.92] text-white">
             Доступ пока не подключён
           </h1>
           <p className="mt-5 text-white/50 leading-relaxed">

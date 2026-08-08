@@ -259,7 +259,7 @@ html {
   font-family: var(--font-display);
   font-size: clamp(8rem, 29vw, 25rem);
   font-weight: 950;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.01em;
   line-height: 0.86;
   text-align: center;
   text-shadow: 0 18px 60px rgba(0, 0, 0, 0.64);
@@ -316,7 +316,7 @@ html {
   font-family: var(--font-display);
   font-size: clamp(3.2rem, 6.9vw, 7rem);
   font-weight: 900;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.008em;
   line-height: 0.94;
   text-transform: uppercase;
 }
@@ -408,7 +408,7 @@ html {
   color: transparent;
   font-family: var(--font-display);
   font-size: clamp(18rem, 47vw, 48rem);
-  letter-spacing: -0.075em;
+  letter-spacing: 0;
   line-height: 0.75;
   opacity: 0.085;
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.55);
@@ -518,7 +518,7 @@ html {
   font-family: var(--font-display);
   font-size: clamp(3rem, 6.3vw, 6.3rem);
   font-weight: 900;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.008em;
   line-height: 0.94;
   text-transform: uppercase;
 }
@@ -674,7 +674,7 @@ html {
   font-family: var(--font-display);
   font-size: clamp(3rem, 6.4vw, 6.5rem);
   font-weight: 900;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.008em;
   line-height: 0.94;
   text-transform: uppercase;
 }
@@ -746,7 +746,7 @@ html {
   font-family: var(--font-display);
   font-size: clamp(3.2rem, 6vw, 6rem);
   font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
   line-height: 0.94;
 }
 
@@ -826,7 +826,7 @@ html {
   font-family: var(--font-display);
   font-size: clamp(3rem, 6vw, 6rem);
   font-weight: 900;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.008em;
   line-height: 0.94;
   text-transform: uppercase;
 }
@@ -901,7 +901,7 @@ html {
   color: rgba(255, 255, 255, 0.025);
   font-family: var(--font-display);
   font-size: clamp(14rem, 44vw, 38rem);
-  letter-spacing: -0.08em;
+  letter-spacing: 0;
   line-height: 1;
   white-space: nowrap;
 }
@@ -1155,7 +1155,7 @@ html {
   font-family: var(--font-display);
   font-weight: 900;
   font-style: normal;
-  letter-spacing: -0.025em !important;
+  letter-spacing: 0.012em !important;
   line-height: 0.94 !important;
 }
 
@@ -1536,7 +1536,7 @@ html {
 .premium-dashboard > div > section:first-of-type h1.premium-display {
   max-width: 54rem;
   font-size: clamp(3rem, 6.1vw, 6.25rem) !important;
-  letter-spacing: -0.03em !important;
+  letter-spacing: 0.015em !important;
   line-height: 0.96 !important;
 }
 
@@ -1600,7 +1600,7 @@ html {
   }
 
   .premium-display {
-    letter-spacing: -0.015em !important;
+    letter-spacing: 0.008em !important;
     line-height: 0.98 !important;
   }
 
