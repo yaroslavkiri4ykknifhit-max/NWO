@@ -13,6 +13,9 @@ function ScrollReactiveBackground() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
     let stopTimer = 0
 
+    video.defaultPlaybackRate = 0.68
+    video.playbackRate = 0.68
+
     const stopVideo = () => {
       window.clearTimeout(stopTimer)
       video.pause()
@@ -56,10 +59,10 @@ function ScrollReactiveBackground() {
         loop
         playsInline
         preload="auto"
-        poster="/collage-scroll-poster.jpg"
+        poster="/flash-smooth-poster.jpg"
         disablePictureInPicture
       >
-        <source src="/collage-scroll.mp4" type="video/mp4" />
+        <source src="/flash-smooth.mp4" type="video/mp4" />
       </video>
       <div className="landing-motion-shade" />
       <div className="landing-motion-noise" />
