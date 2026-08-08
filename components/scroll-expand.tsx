@@ -20,7 +20,7 @@ const smoothstep = (edge0: number, edge1: number, value: number) => {
 type ScrollExpandProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   src?: string
   mobileSrc?: string
-  mediaType?: "image" | "video"
+  mediaType?: "image" | "video" | "custom"
   poster?: string
   alt?: string
   title?: string
@@ -69,7 +69,7 @@ export default function ScrollExpand({
   const trackRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
-  const mediaRef = useRef<HTMLImageElement | HTMLVideoElement | null>(null)
+  const mediaRef = useRef<HTMLElement | null>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const scrimRef = useRef<HTMLDivElement>(null)
@@ -229,11 +229,13 @@ export default function ScrollExpand({
     }
   }, [applyProgress, useWindowScroll])
 
-  const assignMedia = (node: HTMLImageElement | HTMLVideoElement | null) => {
+  const assignMedia = (node: HTMLElement | null) => {
     mediaRef.current = node
   }
 
-  const media = mediaType === "video" ? (
+  const media = mediaType === "custom" ? (
+    <div ref={assignMedia} className="scroll-expand__media scroll-expand__media--custom" />
+  ) : mediaType === "video" ? (
     <video
       ref={assignMedia}
       className="scroll-expand__media"

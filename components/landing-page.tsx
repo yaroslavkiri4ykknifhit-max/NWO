@@ -1,81 +1,16 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
 import { ArrowDown, ArrowRight, Check, LockKeyhole } from "lucide-react"
 import ScrollExpand from "@/components/scroll-expand"
 
-function ScrollReactiveBackground() {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [videoReady, setVideoReady] = useState(false)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    let stopTimer = 0
-
-    video.defaultPlaybackRate = 0.68
-    video.playbackRate = 0.68
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-      setVideoReady(true)
-    }
-
-    const stopVideo = () => {
-      window.clearTimeout(stopTimer)
-      video.pause()
-    }
-
-    const handleScroll = () => {
-      if (reducedMotion.matches) return
-
-      if (video.paused) {
-        void video.play().catch(() => {
-          // Muted inline video normally needs no permission. The poster remains
-          // visible if a browser still blocks playback.
-        })
-      }
-
-      window.clearTimeout(stopTimer)
-      stopTimer = window.setTimeout(stopVideo, 90)
-    }
-
-    const handleVisibility = () => {
-      if (document.hidden) stopVideo()
-    }
-
-    video.pause()
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    document.addEventListener("visibilitychange", handleVisibility)
-
-    return () => {
-      stopVideo()
-      window.removeEventListener("scroll", handleScroll)
-      document.removeEventListener("visibilitychange", handleVisibility)
-    }
-  }, [])
-
+function LandingStaticBackground() {
   return (
-    <div className="landing-motion-background" aria-hidden="true">
-      <picture className="landing-motion-poster">
-        <source media="(max-width: 760px)" srcSet="/flash-smooth-mobile-poster.jpg" />
-        <img src="/flash-smooth-poster.jpg" alt="" />
-      </picture>
-      <video
-        ref={videoRef}
-        className={`landing-motion-video${videoReady ? " is-ready" : ""}`}
-        muted
-        loop
-        playsInline
-        preload="auto"
-        disablePictureInPicture
-        onLoadedData={() => setVideoReady(true)}
-      >
-        <source media="(max-width: 760px)" src="/flash-smooth-mobile.mp4" type="video/mp4" />
-        <source src="/flash-smooth.mp4" type="video/mp4" />
-      </video>
-      <div className="landing-motion-shade" />
-      <div className="landing-motion-noise" />
+    <div className="landing-static-background" aria-hidden="true">
+      <div className="landing-static-grid" />
+      <div className="landing-static-ring landing-static-ring-one" />
+      <div className="landing-static-ring landing-static-ring-two" />
+      <div className="landing-static-word">NWO</div>
+      <div className="landing-static-accent" />
     </div>
   )
 }
@@ -83,12 +18,10 @@ function ScrollReactiveBackground() {
 export function LandingPage() {
   return (
     <main className="landing-shell">
-      <ScrollReactiveBackground />
+      <LandingStaticBackground />
 
       <ScrollExpand
-        src="/flash-smooth-poster.jpg"
-        mobileSrc="/flash-smooth-mobile-poster.jpg"
-        alt=""
+        mediaType="custom"
         title="NWO"
         scrollHint="Листай, чтобы войти"
         startWidth={44}
