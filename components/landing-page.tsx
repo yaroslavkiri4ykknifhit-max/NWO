@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ArrowDown, ArrowRight, Check, LockKeyhole } from "lucide-react"
 
 function ScrollReactiveBackground() {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [videoReady, setVideoReady] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -15,6 +16,9 @@ function ScrollReactiveBackground() {
 
     video.defaultPlaybackRate = 0.68
     video.playbackRate = 0.68
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      setVideoReady(true)
+    }
 
     const stopVideo = () => {
       window.clearTimeout(stopTimer)
@@ -52,16 +56,21 @@ function ScrollReactiveBackground() {
 
   return (
     <div className="landing-motion-background" aria-hidden="true">
+      <picture className="landing-motion-poster">
+        <source media="(max-width: 760px)" srcSet="/flash-smooth-mobile-poster.jpg" />
+        <img src="/flash-smooth-poster.jpg" alt="" />
+      </picture>
       <video
         ref={videoRef}
-        className="landing-motion-video"
+        className={`landing-motion-video${videoReady ? " is-ready" : ""}`}
         muted
         loop
         playsInline
         preload="auto"
-        poster="/flash-smooth-poster.jpg"
         disablePictureInPicture
+        onLoadedData={() => setVideoReady(true)}
       >
+        <source media="(max-width: 760px)" src="/flash-smooth-mobile.mp4" type="video/mp4" />
         <source src="/flash-smooth.mp4" type="video/mp4" />
       </video>
       <div className="landing-motion-shade" />
