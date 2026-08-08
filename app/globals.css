@@ -291,6 +291,48 @@ html {
   box-shadow: 0 35px 110px rgba(0, 0, 0, 0.7);
 }
 
+.nwo-scroll-intro .scroll-expand__overlay {
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 5vw, 5rem);
+}
+
+.nwo-intro-offer {
+  width: min(76rem, 100%);
+  text-align: center;
+}
+
+.nwo-intro-offer h1 {
+  max-width: 72rem;
+  margin: 0 auto;
+  text-wrap: balance;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+  font-size: clamp(3.2rem, 6.9vw, 7rem);
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.nwo-intro-description {
+  max-width: 45rem;
+  margin: 1.5rem auto 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(0.96rem, 1.4vw, 1.18rem);
+  line-height: 1.65;
+}
+
+.nwo-intro-offer .landing-hero-actions {
+  justify-content: center;
+}
+
+.nwo-intro-note {
+  max-width: 42rem;
+  margin: 1.2rem auto 0;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
 /* NWO landing — cinematic public entrance */
 .landing-shell {
   position: relative;
@@ -428,68 +470,26 @@ html {
   background: rgba(12, 18, 8, 0.45);
 }
 
-.landing-hero,
 .landing-statement {
   position: relative;
   z-index: 2;
   display: flex;
-  min-height: 100svh;
+  min-height: auto;
   align-items: center;
-  padding: 7rem clamp(1.25rem, 8vw, 8rem) 5rem;
-}
-
-.landing-hero-copy {
-  width: min(49rem, 100%);
-}
-
-.landing-hero h1 {
-  max-width: 48rem;
-  text-wrap: balance;
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
-  font-size: clamp(3.6rem, 8vw, 8rem);
-  font-weight: 900;
-  letter-spacing: -0.035em;
-  line-height: 0.88;
-  text-transform: uppercase;
-  text-shadow: 0 14px 55px rgba(0, 0, 0, 0.72);
-}
-
-.landing-hero-description {
-  max-width: 35rem;
-  margin-top: 1.65rem;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: clamp(1rem, 1.3vw, 1.18rem);
-  line-height: 1.65;
-}
-
-.landing-scroll-cue {
-  position: absolute;
-  right: clamp(1.25rem, 4vw, 4rem);
-  bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: rgba(255, 255, 255, 0.58);
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  writing-mode: vertical-rl;
-}
-
-.landing-statement {
-  justify-content: flex-end;
+  justify-content: center;
+  padding: clamp(6rem, 10vw, 9rem) clamp(1.1rem, 5vw, 5rem);
 }
 
 .landing-statement-inner {
   position: relative;
-  width: min(50rem, 100%);
+  width: min(78rem, 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 1.5rem;
   padding: clamp(1.7rem, 4vw, 4rem);
   background: rgba(5, 5, 5, 0.54);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.26);
   backdrop-filter: blur(10px);
+  text-align: center;
 }
 
 .landing-statement-number {
@@ -503,7 +503,8 @@ html {
 }
 
 .landing-statement h2 {
-  max-width: 46rem;
+  max-width: 67rem;
+  margin: 0 auto;
   text-wrap: balance;
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
   font-size: clamp(3rem, 6.3vw, 6.3rem);
@@ -512,12 +513,61 @@ html {
   text-transform: uppercase;
 }
 
-.landing-statement-inner > p:last-child {
-  max-width: 37rem;
-  margin-top: 1.5rem;
+.landing-statement-lead {
+  max-width: 50rem;
+  margin: 1.5rem auto 0;
   color: rgba(255, 255, 255, 0.64);
   font-size: 1rem;
   line-height: 1.7;
+}
+
+.landing-problem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  text-align: left;
+}
+
+.landing-problem-grid article {
+  min-height: 13rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 1rem;
+  padding: 1.35rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.landing-problem-grid article > span,
+.landing-outcomes-grid article > span {
+  color: #c6ff3d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+}
+
+.landing-problem-grid h3,
+.landing-outcomes-grid h3 {
+  margin-top: 2rem;
+  font-size: 1.08rem;
+  font-weight: 850;
+  line-height: 1.2;
+}
+
+.landing-problem-grid article p,
+.landing-outcomes-grid article p {
+  margin-top: 0.7rem;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.landing-statement-bottom {
+  max-width: 46rem;
+  margin: 2rem auto 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1.6;
 }
 
 .landing-eyebrow {
@@ -564,6 +614,18 @@ html {
   background: #c6ff3d;
 }
 
+.landing-button-premium {
+  border: 1px solid rgba(219, 255, 147, 0.8);
+  background: linear-gradient(135deg, #d1ff72, #aef72f 56%, #dfff9f);
+  color: #071006;
+  box-shadow: 0 14px 44px rgba(184, 255, 61, 0.16);
+}
+
+.landing-button-premium:hover {
+  background: linear-gradient(135deg, #ddff99, #bdff4f 56%, #e8ffb8);
+  box-shadow: 0 18px 54px rgba(184, 255, 61, 0.25);
+}
+
 .landing-button-ghost {
   border: 1px solid rgba(255, 255, 255, 0.24);
   background: rgba(7, 7, 7, 0.28);
@@ -587,17 +649,13 @@ html {
 }
 
 .landing-paths-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
-  align-items: end;
-  gap: 2rem;
   max-width: 78rem;
   margin: 0 auto 4rem;
+  text-align: center;
 }
 
 .landing-paths-heading .landing-eyebrow {
-  grid-column: 1 / -1;
-  margin-bottom: -0.65rem;
+  margin-bottom: 1rem;
 }
 
 .landing-paths-heading h2,
@@ -611,6 +669,8 @@ html {
 }
 
 .landing-paths-heading > p:last-child {
+  max-width: 52rem;
+  margin: 1.5rem auto 0;
   color: rgba(255, 255, 255, 0.56);
   font-size: 1rem;
   line-height: 1.7;
@@ -735,6 +795,77 @@ html {
   color: #c6ff3d;
 }
 
+.landing-outcomes {
+  position: relative;
+  z-index: 3;
+  padding: clamp(6rem, 11vw, 10rem) clamp(1.1rem, 5vw, 5rem);
+  background: rgba(4, 5, 4, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.landing-outcomes-heading {
+  max-width: 68rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing-outcomes-heading h2 {
+  text-wrap: balance;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+  font-size: clamp(3rem, 6vw, 6rem);
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.landing-outcomes-heading > p:last-child {
+  max-width: 49rem;
+  margin: 1.5rem auto 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.landing-outcomes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  max-width: 78rem;
+  margin: 3.5rem auto 0;
+}
+
+.landing-outcomes-grid article {
+  min-height: 15rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 1rem;
+  padding: 1.45rem;
+  background:
+    linear-gradient(145deg, rgba(198, 255, 61, 0.045), transparent 56%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.landing-honest-note {
+  display: flex;
+  max-width: 78rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 3.5rem auto 0;
+  padding-top: 2rem;
+}
+
+.landing-honest-note p {
+  max-width: 48rem;
+  color: rgba(255, 255, 255, 0.53);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.landing-honest-note strong {
+  color: rgba(255, 255, 255, 0.86);
+}
+
 .landing-final {
   position: relative;
   display: flex;
@@ -769,7 +900,22 @@ html {
 
 .landing-final h2 {
   max-width: 60rem;
-  margin-bottom: 2.4rem;
+}
+
+.landing-final-description {
+  max-width: 44rem;
+  margin: 1.5rem auto 0;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.landing-final-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2.4rem;
 }
 
 .landing-footer {
@@ -807,6 +953,39 @@ html {
 
   .scroll-expand__title {
     font-size: clamp(6.8rem, 34vw, 9.2rem);
+  }
+
+  .nwo-scroll-intro .scroll-expand__overlay {
+    padding: 4.5rem 1rem 1.5rem;
+  }
+
+  .nwo-intro-offer h1 {
+    font-size: clamp(2.45rem, 10.8vw, 4.1rem);
+    line-height: 0.92;
+  }
+
+  .nwo-intro-description {
+    margin-top: 1rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .nwo-intro-offer .landing-hero-actions {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+  }
+
+  .nwo-intro-offer .landing-button {
+    width: 100%;
+    min-height: 3.1rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.68rem;
+  }
+
+  .nwo-intro-note {
+    margin-top: 0.8rem;
+    font-size: 0.66rem;
   }
 
   .scroll-expand__media--custom::before {
@@ -847,31 +1026,26 @@ html {
     width: 92%;
   }
 
-  .landing-hero,
   .landing-statement {
-    align-items: flex-end;
-    padding: 7rem 1.2rem 5.5rem;
+    padding: 5rem 1.1rem;
   }
 
-  .landing-hero h1 {
-    font-size: clamp(3.2rem, 15vw, 5rem);
+  .landing-statement h2 {
+    font-size: clamp(2.75rem, 12.5vw, 4.5rem);
   }
 
-  .landing-scroll-cue {
-    display: none;
+  .landing-problem-grid {
+    grid-template-columns: 1fr;
+    margin-top: 2rem;
   }
 
-  .landing-statement {
-    min-height: 92svh;
+  .landing-problem-grid article {
+    min-height: 10rem;
   }
 
   .landing-statement-inner {
     border-radius: 1.2rem;
     background: rgba(5, 5, 5, 0.62);
-  }
-
-  .landing-paths-heading {
-    grid-template-columns: 1fr;
   }
 
   .landing-path-grid {
@@ -880,6 +1054,34 @@ html {
 
   .landing-path {
     min-height: 31rem;
+  }
+
+  .landing-outcomes-grid {
+    grid-template-columns: 1fr;
+    margin-top: 2.5rem;
+  }
+
+  .landing-outcomes-grid article {
+    min-height: 11rem;
+  }
+
+  .landing-honest-note {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .landing-honest-note .landing-button {
+    width: 100%;
+  }
+
+  .landing-final-actions {
+    width: 100%;
+    max-width: 28rem;
+    flex-direction: column;
+  }
+
+  .landing-final-actions .landing-button {
+    width: 100%;
   }
 
   .landing-footer {

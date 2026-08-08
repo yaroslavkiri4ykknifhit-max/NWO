@@ -138,6 +138,7 @@ export default function ScrollExpand({
       const visible = smoothstep(0.68, 1, progress)
       overlayRef.current.style.opacity = String(visible)
       overlayRef.current.style.transform = `translate3d(0, ${18 * (1 - visible)}px, 0)`
+      overlayRef.current.style.pointerEvents = visible > 0.92 ? "auto" : "none"
     }
   }, [])
 
