@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from "react"
 import { ArrowLeft, Crown, Loader2, LockKeyhole, LogOut } from "lucide-react"
 import { AccessForm } from "@/components/access-form"
 import { CourseHeader } from "@/components/course-header"
-import { Dashboard } from "@/components/dashboard"
 import { LessonSidebar } from "@/components/lesson-sidebar"
 import { LessonViewer } from "@/components/lesson-viewer"
+import { PremiumDashboard } from "@/components/premium-dashboard"
 import {
   CourseData,
   TelegramProfile,
@@ -89,15 +89,15 @@ export default function PremiumPage() {
 
   if (accessState === "checking") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
-        <Loader2 className="w-10 h-10 text-amber-500 animate-spin" />
-        <p className="text-sm text-slate-500">Проверяем платный доступ...</p>
+      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 text-[#b8ff3d] animate-spin" />
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/40">Проверяем NWO BLACK...</p>
       </div>
     )
   }
 
   if (accessState === "login") {
-    return <AccessForm onAccessGranted={refreshAccess} />
+    return <AccessForm onAccessGranted={refreshAccess} variant="premium" />
   }
 
   if (accessState === "unpaid") {
@@ -106,26 +106,27 @@ export default function PremiumPage() {
       : telegramUser?.first_name || "пользователь"
 
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-100 via-amber-50/50 to-purple-50 flex items-center justify-center p-4 sm:p-6">
-        <section className="w-full max-w-lg rounded-[32px] border border-amber-200/70 bg-white p-8 sm:p-10 text-center shadow-2xl shadow-slate-900/10">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-xl shadow-amber-500/25 rotate-[-3deg]">
+      <main className="premium-surface premium-paywall min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+        <div className="premium-grid absolute inset-0 opacity-40" />
+        <section className="premium-paywall-card relative z-10 w-full max-w-lg rounded-[32px] border p-8 sm:p-10 text-center shadow-2xl">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-[#b8ff3d] text-black shadow-[0_0_45px_rgba(184,255,61,0.24)] rotate-[-3deg]">
             <LockKeyhole className="w-9 h-9" />
           </div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-800">
+          <div className="premium-kicker mb-5 inline-flex">
             <Crown className="w-4 h-4" />
-            Платное обучение
+            NWO BLACK · LOCKED
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold font-serif text-slate-900">
+          <h1 className="premium-display text-4xl sm:text-5xl font-black uppercase tracking-[-0.055em] leading-[0.92] text-white">
             Доступ пока не подключён
           </h1>
-          <p className="mt-4 text-slate-600 leading-relaxed">
+          <p className="mt-5 text-white/50 leading-relaxed">
             Аккаунт {displayName} успешно подтверждён, но для него ещё не активирован платный курс.
             Бесплатное обучение и весь текущий прогресс остаются доступны.
           </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             <a
               href="/"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white transition-colors hover:bg-slate-800"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#b8ff3d] px-5 py-3 font-bold text-black transition-all hover:bg-[#c8ff67]"
             >
               <ArrowLeft className="w-4 h-4" />
               Бесплатный курс
@@ -133,13 +134,13 @@ export default function PremiumPage() {
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Другой аккаунт
             </button>
           </div>
-          <p className="mt-6 text-xs text-slate-400">
+          <p className="mt-6 text-xs text-white/25">
             После подключения оплаты доступ будет включаться автоматически.
           </p>
         </section>
@@ -149,27 +150,27 @@ export default function PremiumPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
-        <Loader2 className="w-10 h-10 text-amber-500 animate-spin" />
-        <p className="text-slate-500 text-sm">Загрузка платного курса...</p>
+      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 text-[#b8ff3d] animate-spin" />
+        <p className="text-white/40 text-sm font-semibold uppercase tracking-[0.16em]">Загрузка NWO BLACK...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4 p-4 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center text-2xl">⚠️</div>
-        <h2 className="text-xl font-semibold text-slate-900">Не удалось открыть платный курс</h2>
-        <p className="max-w-md text-sm text-slate-500">{error}</p>
+      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-2xl">⚠️</div>
+        <h2 className="premium-display text-2xl font-black uppercase text-white">Не удалось открыть NWO BLACK</h2>
+        <p className="max-w-md text-sm text-white/45">{error}</p>
         <div className="flex flex-wrap justify-center gap-3">
           <button
             onClick={loadCourseData}
-            className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white cursor-pointer"
+            className="rounded-xl bg-[#b8ff3d] px-5 py-2.5 text-sm font-bold text-black cursor-pointer"
           >
             Повторить
           </button>
-          <a href="/" className="rounded-xl bg-white border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700">
+          <a href="/" className="rounded-xl bg-white/5 border border-white/10 px-5 py-2.5 text-sm font-semibold text-white/60">
             Вернуться к бесплатному курсу
           </a>
         </div>
@@ -179,15 +180,15 @@ export default function PremiumPage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-amber-50 gap-4 p-4 text-center">
-        <div className="w-20 h-20 rounded-3xl bg-amber-100 flex items-center justify-center text-amber-600">
+      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
+        <div className="w-20 h-20 rounded-3xl bg-[#b8ff3d]/10 border border-[#b8ff3d]/20 flex items-center justify-center text-[#b8ff3d]">
           <Crown className="w-9 h-9" />
         </div>
-        <h2 className="text-2xl font-bold font-serif text-slate-900">Платный раздел подключён</h2>
-        <p className="max-w-md text-slate-500">
+        <h2 className="premium-display text-3xl font-black uppercase text-white">NWO BLACK подключён</h2>
+        <p className="max-w-md text-white/45">
           Доступ работает. Добавьте активные модули и уроки в листы PaidModules и PaidLessons.
         </p>
-        <a href="/" className="mt-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
+        <a href="/" className="mt-2 rounded-xl bg-[#b8ff3d] px-5 py-3 text-sm font-bold text-black">
           Вернуться к бесплатному курсу
         </a>
       </div>
@@ -239,7 +240,7 @@ export default function PremiumPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="premium-surface h-screen flex flex-col overflow-hidden">
       <CourseHeader
         courseName={courseData.name}
         onLogout={handleLogout}
@@ -252,6 +253,7 @@ export default function PremiumPage() {
         }}
         backHref="/"
         backLabel="Бесплатный курс"
+        variant="premium"
       />
       <div className="flex flex-1 overflow-hidden relative">
         <LessonSidebar
@@ -260,6 +262,7 @@ export default function PremiumPage() {
           onSelectLesson={handleSelectLesson}
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
+          variant="premium"
         />
         {currentLesson && currentModule ? (
           <LessonViewer
@@ -271,13 +274,13 @@ export default function PremiumPage() {
             isCompleted={completedLessons.includes(currentLessonId)}
             onNext={handleNextLesson}
             hasNext={hasNext}
+            variant="premium"
           />
         ) : (
-          <Dashboard
+          <PremiumDashboard
             courseName={courseData.name}
-            modulesCount={courseData.modules.length}
-            lessonsCount={allLessons.length}
-            completedCount={completedLessons.length}
+            modules={courseData.modules}
+            completedLessons={completedLessons}
             onStartLearning={handleStartLearning}
             telegramUser={telegramUser}
           />

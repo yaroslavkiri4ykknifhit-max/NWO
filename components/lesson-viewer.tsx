@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react"
 import { Play, CheckCircle2, ChevronRight, Clock, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 interface LessonViewerProps {
   title: string
@@ -13,6 +14,7 @@ interface LessonViewerProps {
   isCompleted: boolean
   onNext: () => void
   hasNext: boolean
+  variant?: "default" | "premium"
 }
 
 // Функция для парсинга текста и рендеринга Markdown-изображений
@@ -304,7 +306,9 @@ export function LessonViewer({
   isCompleted,
   onNext,
   hasNext,
+  variant = "default",
 }: LessonViewerProps) {
+  const isPremium = variant === "premium"
   const scrollContainerRef = useRef<HTMLElement>(null)
 
   // При изменении урока (когда меняется title) скроллим контейнер вверх
@@ -335,12 +339,19 @@ export function LessonViewer({
   )
 
   return (
-    <main ref={scrollContainerRef} className="flex-1 overflow-y-auto bg-background">
-      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+    <main
+      ref={scrollContainerRef}
+      className={cn("flex-1 overflow-y-auto bg-background", isPremium && "premium-lesson-viewer")}
+    >
+      <div className={cn("max-w-4xl mx-auto p-4 sm:p-6 lg:p-8", isPremium && "lg:py-12")}>
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
+        <div className={cn("mb-6 sm:mb-8", isPremium && "border-b border-white/10 pb-8")}>
+          {isPremium && <div className="premium-kicker mb-5 w-fit">PREMIUM LESSON</div>}
           <p className="text-accent text-sm font-medium mb-2">{moduleName}</p>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 text-balance">
+          <h1 className={cn(
+            "text-2xl sm:text-3xl font-semibold text-foreground mb-4 text-balance",
+            isPremium && "premium-display sm:text-5xl font-black uppercase tracking-[-0.045em] leading-[0.95]"
+          )}>
             {title}
           </h1>
 
@@ -354,7 +365,10 @@ export function LessonViewer({
 
         {/* Video Player (Отображается только если видео задано) */}
         {hasVideo && (
-          <div className="aspect-video bg-black rounded-2xl mb-6 sm:mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5">
+          <div className={cn(
+            "aspect-video bg-black rounded-2xl mb-6 sm:mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5",
+            isPremium && "premium-video-frame rounded-3xl"
+          )}>
             {isDirectVideo ? (
               /* Нативный HTML5 плеер для прямых ссылок (.mp4 / uc?export=download) с защитой от скачивания */
               <video
@@ -380,7 +394,10 @@ export function LessonViewer({
         {textContent && (
           <div className="space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h2 className="text-xl font-semibold text-foreground font-sans">Материалы урока</h2>
-            <div className="p-4 sm:p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base">
+            <div className={cn(
+              "p-4 sm:p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base",
+              isPremium && "premium-lesson-content sm:p-8 rounded-3xl"
+            )}>
               {renderFormattedContent(textContent)}
             </div>
           </div>

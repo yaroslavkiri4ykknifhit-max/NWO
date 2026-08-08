@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, LogOut, User } from "lucide-react"
+import { ArrowLeft, Crown, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TelegramProfile } from "@/lib/sheets-api"
 import { motion } from "motion/react"
@@ -15,6 +15,7 @@ interface CourseHeaderProps {
   onClickLogo?: () => void
   backHref?: string
   backLabel?: string
+  variant?: "default" | "premium"
 }
 
 interface PathProps {
@@ -80,21 +81,30 @@ export function CourseHeader({
   onClickLogo,
   backHref,
   backLabel = "Назад",
+  variant = "default",
 }: CourseHeaderProps) {
+  const isPremium = variant === "premium"
   const displayName = telegramUser
     ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name)
     : "Студент"
 
   return (
-    <header className="h-16 bg-card/60 backdrop-blur-md border-b border-border/50 flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300 z-50">
+    <header className={isPremium
+      ? "premium-course-header h-16 backdrop-blur-xl border-b flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300 z-50"
+      : "h-16 bg-card/60 backdrop-blur-md border-b border-border/50 flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300 z-50"
+    }>
       <div className="flex items-center gap-2 sm:gap-3">
         <MenuToggle isOpen={isSidebarOpen} toggle={onToggleSidebar} />
 
         <button
           onClick={onClickLogo}
-          className="text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+          className={isPremium
+            ? "premium-display flex items-baseline gap-1.5 text-xl font-black text-white select-none tracking-[-0.04em] shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+            : "text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+          }
         >
           NWO
+          {isPremium && <span className="text-[#b8ff3d]">/BLACK</span>}
         </button>
 
         {backHref && (
@@ -108,8 +118,18 @@ export function CourseHeader({
         )}
       </div>
 
+      {isPremium && (
+        <div className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-[#b8ff3d]/15 bg-[#b8ff3d]/5 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-[#b8ff3d] lg:flex">
+          <Crown className="h-3.5 w-3.5" />
+          Premium access
+        </div>
+      )}
+
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-secondary/35 border border-border/30">
+        <div className={isPremium
+          ? "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.035] border border-white/10"
+          : "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-secondary/35 border border-border/30"
+        }>
           {telegramUser?.photo_url ? (
             <img
               src={telegramUser.photo_url}
@@ -138,7 +158,10 @@ export function CourseHeader({
           variant="ghost"
           size="sm"
           onClick={onLogout}
-          className="gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl px-3 h-9 transition-colors cursor-pointer"
+          className={isPremium
+            ? "gap-2 text-white/40 hover:text-red-300 hover:bg-red-500/10 rounded-xl px-3 h-9 transition-colors cursor-pointer"
+            : "gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl px-3 h-9 transition-colors cursor-pointer"
+          }
         >
           <LogOut className="w-4 h-4" />
           <span className="hidden sm:inline text-xs font-medium">Выйти</span>

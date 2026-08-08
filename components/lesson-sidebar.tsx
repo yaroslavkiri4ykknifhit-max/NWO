@@ -27,6 +27,7 @@ interface LessonSidebarProps {
   onClose: () => void
   isWallOfShameActive?: boolean
   onSelectWallOfShame?: () => void
+  variant?: "default" | "premium"
 }
 
 const sidebarVariants: Variants = {
@@ -105,7 +106,9 @@ export function LessonSidebar({
   onClose,
   isWallOfShameActive = false,
   onSelectWallOfShame,
+  variant = "default",
 }: LessonSidebarProps) {
+  const isPremium = variant === "premium"
   const [expandedModules, setExpandedModules] = useState<string[]>([modules[0]?.id || ""])
   const [windowHeight, setWindowHeight] = useState(1000)
 
@@ -155,7 +158,8 @@ export function LessonSidebar({
         variants={sidebarVariants}
         className={cn(
           "bg-sidebar border-sidebar-border shrink-0 flex flex-col overflow-hidden",
-          "fixed top-16 bottom-0 left-0 z-50 border-r lg:relative lg:top-0 lg:h-full lg:z-0"
+          "fixed top-16 bottom-0 left-0 z-50 border-r lg:relative lg:top-0 lg:h-full lg:z-0",
+          isPremium && "premium-course-sidebar"
         )}
       >
         <motion.div 
@@ -163,7 +167,9 @@ export function LessonSidebar({
           className="p-4 border-b border-sidebar-border flex items-center justify-between shrink-0"
         >
           <div>
-            <h2 className="font-semibold text-sidebar-foreground">Содержание курса</h2>
+            <h2 className="font-semibold text-sidebar-foreground">
+              {isPremium ? "Программа NWO BLACK" : "Содержание курса"}
+            </h2>
             <p className="text-sm text-muted-foreground mt-1">
               {modules.reduce((acc, m) => acc + m.lessons.length, 0)} уроков
             </p>
@@ -304,7 +310,7 @@ export function LessonSidebar({
           variants={itemVariants}
           className="p-3 border-t border-sidebar-border mt-auto shrink-0 flex items-center justify-between text-[11px] text-muted-foreground bg-sidebar-accent/15"
         >
-          <span>Закрытый клуб NWO</span>
+          <span>{isPremium ? "NWO BLACK · MEMBERS" : "Закрытый клуб NWO"}</span>
           <a
             href="https://t.me/c0lddev"
             target="_blank"

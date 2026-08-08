@@ -20,6 +20,7 @@ const TelegramIcon = () => (
 
 interface AccessFormProps {
   onAccessGranted: () => void
+  variant?: "default" | "premium"
 }
 
 // Компонент динамической кнопки авторизации через Telegram
@@ -101,7 +102,7 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
   return <div ref={containerRef} className="flex justify-center min-h-[40px] transition-all duration-200" />
 }
 
-export function AccessForm({ onAccessGranted }: AccessFormProps) {
+export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormProps) {
   const [view, setView] = useState<"initial" | "tg_binding">("initial")
   const [code, setCode] = useState("")
   const [error, setError] = useState("")
@@ -109,6 +110,7 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
   const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
 
   const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || ""
+  const isPremium = variant === "premium"
 
   // Обработка входа через Telegram
   const handleTelegramAuth = async (user: TelegramUser) => {
@@ -162,8 +164,21 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-radial from-slate-50 via-slate-100 to-slate-200/50 p-4 sm:p-6 transition-all duration-300">
-      <div className="w-full max-w-[440px] bg-white border border-slate-100/80 rounded-[32px] p-8 sm:p-10 shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col">
+    <div className={isPremium
+      ? "premium-access min-h-screen flex items-center justify-center p-4 sm:p-6 transition-all duration-300"
+      : "min-h-screen flex items-center justify-center bg-radial from-slate-50 via-slate-100 to-slate-200/50 p-4 sm:p-6 transition-all duration-300"
+    }>
+      <div className={isPremium
+        ? "premium-login-card w-full max-w-[480px] border rounded-[32px] p-8 sm:p-10 shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col"
+        : "w-full max-w-[440px] bg-white border border-slate-100/80 rounded-[32px] p-8 sm:p-10 shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col"
+      }>
+        {isPremium && (
+          <>
+            <div className="premium-login-orb premium-login-orb-one" />
+            <div className="premium-login-orb premium-login-orb-two" />
+            <div className="premium-grid absolute inset-0 pointer-events-none opacity-40" />
+          </>
+        )}
         
         {view === "initial" ? (
           <div className="animate-in fade-in zoom-in-95 duration-300">
@@ -191,11 +206,16 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
 
             {/* Header Title */}
             <div className="text-center mb-6">
+              {isPremium && (
+                <div className="premium-kicker mx-auto mb-4 w-fit">
+                  NWO BLACK · MEMBERS ONLY
+                </div>
+              )}
               <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 font-sans leading-none">
-                Закрытый доступ
+                {isPremium ? "Вход в высшую лигу" : "Закрытый доступ"}
               </h1>
               <p className="text-slate-500 text-sm font-medium">
-                Безопасный вход через Telegram
+                {isPremium ? "Платная программа, которой нет в открытом доступе" : "Безопасный вход через Telegram"}
               </p>
             </div>
 
@@ -204,10 +224,10 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
               <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-semibold text-blue-900 leading-tight">
-                  Ваш аккаунт и данные надежно защищены
+                  {isPremium ? "Ваш доступ персональный и защищённый" : "Ваш аккаунт и данные надежно защищены"}
                 </p>
                 <p className="text-[11px] sm:text-xs text-blue-700/80 mt-1 leading-snug">
-                  Доступ предоставляется только участникам сообщества NWO
+                  {isPremium ? "Внутри — расширенная система продаж NWO BLACK" : "Доступ предоставляется только участникам сообщества NWO"}
                 </p>
               </div>
             </div>
@@ -274,7 +294,7 @@ export function AccessForm({ onAccessGranted }: AccessFormProps) {
             {/* Header Title */}
             <div className="text-center mb-6">
               <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 font-sans leading-none">
-                Активация доступа
+                {isPremium ? "Активация NWO BLACK" : "Активация доступа"}
               </h2>
               <p className="text-slate-500 text-sm font-medium">
                 Введите инвайт-код для завершения входа
