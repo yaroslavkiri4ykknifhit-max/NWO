@@ -152,6 +152,10 @@ function parseProgress(value: unknown): string[] {
     .filter(Boolean)
 }
 
+function normalizeDashes(value: unknown): string {
+  return String(value ?? "").replace(/[—–]/g, "-")
+}
+
 function accessError(result: ApiResult): Error {
   if (["session_invalid", "session_expired", "access_inactive"].includes(result.error || "")) {
     clearSessionToken()
@@ -299,19 +303,19 @@ export async function fetchCourseData(): Promise<CourseData> {
   const sheetLessons = result.lessons || []
   const modules: CourseModule[] = sheetModules.map((module) => ({
     id: `module-${module.id}`,
-    title: module.name,
+    title: normalizeDashes(module.name),
     lessons: sheetLessons
       .filter((lesson) => String(lesson.moduleId) === String(module.id))
       .map((lesson) => ({
         id: `lesson-${lesson.id}`,
         moduleId: String(lesson.moduleId),
-        title: lesson.title,
-        textContent: lesson.textContent,
+        title: normalizeDashes(lesson.title),
+        textContent: normalizeDashes(lesson.textContent),
         videoUrl: lesson.videoUrl,
       })),
   }))
 
-  return { name: result.name || "Академия: Полный курс", modules }
+  return { name: normalizeDashes(result.name || "Академия: Полный курс"), modules }
 }
 
 export async function fetchPublicCourseData(): Promise<CourseData> {
@@ -331,19 +335,19 @@ export async function fetchPublicCourseData(): Promise<CourseData> {
   const sheetLessons = result.lessons || []
   const modules: CourseModule[] = sheetModules.map((module) => ({
     id: `module-${module.id}`,
-    title: module.name,
+    title: normalizeDashes(module.name),
     lessons: sheetLessons
       .filter((lesson) => String(lesson.moduleId) === String(module.id))
       .map((lesson) => ({
         id: `lesson-${lesson.id}`,
         moduleId: String(lesson.moduleId),
-        title: lesson.title,
-        textContent: lesson.textContent,
+        title: normalizeDashes(lesson.title),
+        textContent: normalizeDashes(lesson.textContent),
         videoUrl: lesson.videoUrl,
       })),
   }))
 
-  return { name: result.name || "NWO: Бесплатная база продаж", modules }
+  return { name: normalizeDashes(result.name || "NWO: Бесплатная база продаж"), modules }
 }
 
 export function getLocalFreeProgress(): string[] {
@@ -387,20 +391,20 @@ export async function fetchPaidCourseData(): Promise<{
   const sheetLessons = result.lessons || []
   const modules: CourseModule[] = sheetModules.map((module) => ({
     id: `module-${module.id}`,
-    title: module.name,
+    title: normalizeDashes(module.name),
     lessons: sheetLessons
       .filter((lesson) => String(lesson.moduleId) === String(module.id))
       .map((lesson) => ({
         id: `lesson-${lesson.id}`,
         moduleId: String(lesson.moduleId),
-        title: lesson.title,
-        textContent: lesson.textContent,
+        title: normalizeDashes(lesson.title),
+        textContent: normalizeDashes(lesson.textContent),
         videoUrl: lesson.videoUrl,
       })),
   }))
 
   return {
-    course: { name: result.name || "NWO: Платное обучение", modules },
+    course: { name: normalizeDashes(result.name || "NWO: Платное обучение"), modules },
     completedLessons: parseProgress(result.completed_lessons),
   }
 }
@@ -431,6 +435,12 @@ export async function fetchShameTrades(): Promise<ShameTrade[]> {
   return (result.trades || []).map((trade) => ({
     ...trade,
     id: String(trade.id),
+    title: normalizeDashes(trade.title),
+    manager: normalizeDashes(trade.manager),
+    client: normalizeDashes(trade.client),
+    dealAmount: normalizeDashes(trade.dealAmount),
+    date: normalizeDashes(trade.date),
+    textContent: normalizeDashes(trade.textContent),
     screenshots: trade.screenshots
       ? String(trade.screenshots)
           .split(",")
@@ -453,6 +463,12 @@ export async function fetchPublicShameTrades(): Promise<ShameTrade[]> {
 
   return (result.trades || []).map((trade) => ({
     ...trade,
+    title: normalizeDashes(trade.title),
+    manager: normalizeDashes(trade.manager),
+    client: normalizeDashes(trade.client),
+    dealAmount: normalizeDashes(trade.dealAmount),
+    date: normalizeDashes(trade.date),
+    textContent: normalizeDashes(trade.textContent),
     screenshots: String(trade.screenshots || "")
       .split(",")
       .map((item) => item.trim())

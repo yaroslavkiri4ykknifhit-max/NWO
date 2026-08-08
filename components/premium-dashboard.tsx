@@ -59,7 +59,7 @@ export function PremiumDashboard({
             </p>
             <h1 className="premium-display max-w-4xl text-[clamp(3.2rem,7vw,7rem)] font-black uppercase leading-[0.82] tracking-[-0.075em] text-white">
               Ты внутри.
-              <span className="mt-3 block premium-gradient-text">Теперь — по-крупному.</span>
+              <span className="mt-3 block premium-gradient-text">Теперь - по-крупному.</span>
             </h1>
             <p className="mt-8 max-w-2xl text-base leading-relaxed text-white/60 sm:text-lg lg:text-xl">
               Здесь не будет базовых советов из интернета. Только система, разборы,
@@ -161,7 +161,7 @@ export function PremiumDashboard({
               </h2>
             </div>
             <p className="max-w-md text-sm leading-relaxed text-white/45 md:text-right">
-              Каждый модуль — следующий уровень системы. Проходите последовательно или заходите сразу в нужную точку.
+              Каждый модуль - следующий уровень системы. Проходите последовательно или заходите сразу в нужную точку.
             </p>
           </div>
 
@@ -208,7 +208,7 @@ export function PremiumDashboard({
           {[
             { icon: Target, label: "Система", title: "Не набор советов", text: "Цельная архитектура продаж: от первого контакта до денег и повторных сделок." },
             { icon: BarChart3, label: "Практика", title: "Разбор по костям", text: "Механики, примеры и решения, которые можно внедрить в работу сразу после урока." },
-            { icon: Trophy, label: "Результат", title: "Новый стандарт", text: "Не просто знать больше — действовать точнее, увереннее и зарабатывать системно." },
+            { icon: Trophy, label: "Результат", title: "Новый стандарт", text: "Не просто знать больше - действовать точнее, увереннее и зарабатывать системно." },
           ].map(({ icon: Icon, label, title, text }) => (
             <article key={title} className="premium-value-card rounded-3xl border border-white/10 p-7">
               <div className="mb-8 flex items-center justify-between">

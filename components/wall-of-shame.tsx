@@ -326,7 +326,7 @@ export function WallOfShame({ trades, loading = false }: WallOfShameProps) {
               Разбор ошибок продаж
             </h1>
             <p className="text-slate-500 text-xs sm:text-sm font-neucha tracking-wide">
-              Разбираем провальные диалоги и звонки. Каждая ошибка здесь — это сэкономленные деньги в будущих сделках.
+              Разбираем провальные диалоги и звонки. Каждая ошибка здесь - это сэкономленные деньги в будущих сделках.
             </p>
           </div>
         </div>

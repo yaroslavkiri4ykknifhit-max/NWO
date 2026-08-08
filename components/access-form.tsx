@@ -227,7 +227,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                   {isPremium ? "Ваш доступ персональный и защищённый" : "Ваш аккаунт и данные надежно защищены"}
                 </p>
                 <p className="text-[11px] sm:text-xs text-blue-700/80 mt-1 leading-snug">
-                  {isPremium ? "Внутри — расширенная система продаж NWO BLACK" : "Доступ предоставляется только участникам сообщества NWO"}
+                  {isPremium ? "Внутри - расширенная система продаж NWO BLACK" : "Доступ предоставляется только участникам сообщества NWO"}
                 </p>
               </div>
             </div>

@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   metadataBase: new URL("https://newwayout.online"),
   title: "Платное обучение | NWO",
-  description: "NWO BLACK — закрытая премиальная система обучения продажам.",
+  description: "NWO BLACK - закрытая премиальная система обучения продажам.",
   openGraph: {
     title: "NWO BLACK · Premium Sales System",
     description: "Закрытая премиальная система обучения продажам.",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
         url: "/premium-og.png",
         width: 1731,
         height: 909,
-        alt: "NWO BLACK — Premium Sales System",
+        alt: "NWO BLACK - Premium Sales System",
       },
     ],
   },

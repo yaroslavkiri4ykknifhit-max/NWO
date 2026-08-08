@@ -137,7 +137,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* React Bits ScrollExpand — intro transition into the NWO landing */
+/* React Bits ScrollExpand - intro transition into the NWO landing */
 .scroll-expand {
   position: relative;
   width: 100%;
@@ -342,7 +342,7 @@ html {
   line-height: 1.55;
 }
 
-/* NWO landing — cinematic public entrance */
+/* NWO landing - cinematic public entrance */
 .landing-shell {
   position: relative;
   isolation: isolate;
@@ -1119,7 +1119,7 @@ html {
 
 }
 
-/* NWO BLACK — отдельная визуальная система платного продукта */
+/* NWO BLACK - отдельная визуальная система платного продукта */
 .premium-surface,
 .premium-access {
   --background: oklch(0.095 0.008 155);

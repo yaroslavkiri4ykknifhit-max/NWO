@@ -356,7 +356,7 @@ export function Dashboard({
           {/* Handwritten slogan with custom heart underline */}
           <div className="relative inline-block pb-3">
             <div className="font-caveat text-3xl text-slate-500/90 select-none flex items-center justify-center gap-2.5">
-              <span>Ваш успех — наша миссия</span>
+              <span>Ваш успех - наша миссия</span>
               <span className="text-red-400 text-3xl">♡</span>
             </div>
             
