@@ -159,7 +159,7 @@ html {
   height: calc(100% + 1.5rem);
   object-fit: cover;
   object-position: center;
-  filter: blur(3px) saturate(0.72) contrast(1.08) brightness(0.68);
+  filter: blur(3px) saturate(0.74) contrast(1.1) brightness(0.6);
   transform: scale(1.025);
 }
 
@@ -612,9 +612,9 @@ html {
     inset: -0.4rem;
     width: calc(100% + 0.8rem);
     height: calc(100% + 0.8rem);
-    object-position: center;
-    filter: blur(2px) saturate(0.78) contrast(1.06) brightness(0.72);
-    transform: scale(1.02);
+    object-position: 50% 50%;
+    filter: blur(2.5px) saturate(0.76) contrast(1.08) brightness(0.58);
+    transform: scale(1.045);
   }
 
   .landing-motion-shade {

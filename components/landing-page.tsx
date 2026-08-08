@@ -56,10 +56,10 @@ function ScrollReactiveBackground() {
         loop
         playsInline
         preload="auto"
-        poster="/village-scroll-poster.jpg"
+        poster="/collage-scroll-poster.jpg"
         disablePictureInPicture
       >
-        <source src="/village-scroll.mp4" type="video/mp4" />
+        <source src="/collage-scroll.mp4" type="video/mp4" />
       </video>
       <div className="landing-motion-shade" />
       <div className="landing-motion-noise" />
