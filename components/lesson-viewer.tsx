@@ -392,10 +392,10 @@ export function LessonViewer({
 
         {/* Content */}
         {textContent && (
-          <div className="space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="lesson-content-section space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h2 className="text-xl font-semibold text-foreground font-sans">Материалы урока</h2>
             <div className={cn(
-              "p-4 sm:p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base",
+              "lesson-reading-content p-4 sm:p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base",
               isPremium && "premium-lesson-content sm:p-8 rounded-3xl"
             )}>
               {renderFormattedContent(textContent)}
