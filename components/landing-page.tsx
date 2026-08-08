@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { ArrowDown, ArrowRight, Check, LockKeyhole } from "lucide-react"
+import ScrollExpand from "@/components/scroll-expand"
 
 function ScrollReactiveBackground() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -83,6 +84,26 @@ export function LandingPage() {
   return (
     <main className="landing-shell">
       <ScrollReactiveBackground />
+
+      <ScrollExpand
+        src="/flash-smooth-poster.jpg"
+        mobileSrc="/flash-smooth-mobile-poster.jpg"
+        alt=""
+        title="NWO"
+        scrollHint="Листай, чтобы войти"
+        startWidth={44}
+        startHeight={46}
+        startRadius={28}
+        endRadius={0}
+        mediaZoom={1.42}
+        scrollDistance={0.92}
+        holdDistance={0.16}
+        smoothing={0.075}
+        overlayScrim={0.2}
+        useWindowScroll
+        className="nwo-scroll-intro"
+        aria-label="Заставка NWO"
+      />
 
       <header className="landing-header">
         <a href="/" className="landing-logo" aria-label="NWO — главная">
