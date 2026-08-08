@@ -3,11 +3,11 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://newwayout.online'),
-  title: 'NWO — система обучения продажам',
-  description: 'Открытая база продаж и закрытая продвинутая программа NWO BLACK.',
+  title: 'NWO — научись продавать и влиять на свой доход',
+  description: 'Научись продавать себя, продукты, услуги и идеи. Бесплатная база NWO и полная система продаж NWO BLACK.',
   openGraph: {
-    title: 'NWO — продажи это система',
-    description: 'Начни с бесплатной базы. Переходи в NWO BLACK, когда будешь готов идти глубже.',
+    title: 'NWO — научись продавать и влиять на свой доход',
+    description: 'Неважно, с какой точки ты начинаешь. Освой навык, который помогает находить клиентов, показывать ценность и договариваться о деньгах.',
     url: 'https://newwayout.online',
     siteName: 'NWO',
     locale: 'ru_RU',
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NWO — продажи это система',
-    description: 'Открытая база продаж и закрытая продвинутая программа NWO BLACK.',
+    title: 'NWO — научись продавать и влиять на свой доход',
+    description: 'Научись продавать себя, продукты, услуги и идеи с системой NWO.',
     images: ['/og.png'],
   },
   icons: {
