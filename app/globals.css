@@ -138,6 +138,7 @@ html {
   background: #050505;
   color: #f5f2eb;
   color-scheme: dark;
+  touch-action: pan-y;
 }
 
 .landing-header {
@@ -195,7 +196,7 @@ html {
 
 .landing-scene {
   position: relative;
-  height: 190vh;
+  height: 148vh;
   background: #050505;
 }
 
@@ -217,11 +218,21 @@ html {
   object-position: center;
   transform: scale(1.035);
   filter: saturate(0.78) contrast(1.12) brightness(0.75);
+  animation: landing-media-in 280ms ease-out both;
+}
+
+.landing-scene-backdrop {
+  display: none;
+}
+
+@keyframes landing-media-in {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
 }
 
 .landing-scene-shade {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   inset: 0;
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.89) 0%, rgba(0, 0, 0, 0.58) 42%, rgba(0, 0, 0, 0.18) 72%),
@@ -230,7 +241,7 @@ html {
 
 .landing-scene-grain {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset: -50%;
   pointer-events: none;
   opacity: 0.055;
@@ -253,7 +264,8 @@ html {
   left: clamp(1.25rem, 8vw, 8rem);
   width: min(48rem, calc(100% - 2.5rem));
   transform: translate3d(0, calc(-50% + var(--landing-copy-offset, 0px)), 0);
-  transition: opacity 100ms linear;
+  opacity: 0.5;
+  transition: opacity 80ms linear;
   will-change: transform, opacity;
 }
 
@@ -597,26 +609,45 @@ html {
   }
 
   .landing-scene {
-    height: 165vh;
+    height: 138vh;
   }
 
   .landing-scene-sticky {
-    min-height: 36rem;
+    height: 100svh;
+    min-height: 0;
   }
 
   .landing-scene-media {
-    object-position: 58% center;
+    z-index: 1;
+    object-fit: contain;
+    object-position: center 27%;
+    transform: none;
+    filter: saturate(0.92) contrast(1.08) brightness(0.9);
+  }
+
+  .landing-scene-backdrop {
+    position: absolute;
+    z-index: 0;
+    inset: -2rem;
+    display: block;
+    width: calc(100% + 4rem);
+    height: calc(100% + 4rem);
+    object-fit: cover;
+    opacity: 0.52;
+    filter: blur(24px) saturate(0.8) brightness(0.46);
+    transform: scale(1.08);
+    animation: landing-media-in 280ms ease-out both;
   }
 
   .landing-scene-shade {
     background:
-      linear-gradient(90deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.25)),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 26%, rgba(0, 0, 0, 0.82) 100%);
+      linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.08)),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 32%, transparent 58%, rgba(0, 0, 0, 0.9) 100%);
   }
 
   .landing-scene-copy {
     top: auto;
-    bottom: 7rem;
+    bottom: 5.5rem;
     left: 1.2rem;
     transform: translate3d(0, var(--landing-copy-offset, 0px), 0);
   }

@@ -1,6 +1,6 @@
 "use client"
 
-import { type CSSProperties, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ArrowDown, ArrowRight, Check, LockKeyhole, Play } from "lucide-react"
 
 type ScrollGifSceneProps = {
@@ -13,64 +13,6 @@ type ScrollGifSceneProps = {
   first?: boolean
 }
 
-function useSlowScroll() {
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const coarsePointer = window.matchMedia("(pointer: coarse)")
-    if (reducedMotion.matches || coarsePointer.matches) return
-
-    let currentY = window.scrollY
-    let targetY = window.scrollY
-    let animationFrame = 0
-    let animating = false
-
-    const maxScroll = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
-
-    const animate = () => {
-      currentY += (targetY - currentY) * 0.085
-      window.scrollTo(0, currentY)
-
-      if (Math.abs(targetY - currentY) > 0.5) {
-        animationFrame = window.requestAnimationFrame(animate)
-      } else {
-        window.scrollTo(0, targetY)
-        currentY = targetY
-        animating = false
-      }
-    }
-
-    const handleWheel = (event: WheelEvent) => {
-      if (event.ctrlKey || event.metaKey) return
-
-      event.preventDefault()
-      const multiplier = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? window.innerHeight : 1
-      targetY = Math.min(maxScroll(), Math.max(0, targetY + event.deltaY * multiplier * 0.72))
-
-      if (!animating) {
-        currentY = window.scrollY
-        animating = true
-        animationFrame = window.requestAnimationFrame(animate)
-      }
-    }
-
-    const handleNativeScroll = () => {
-      if (!animating) {
-        currentY = window.scrollY
-        targetY = window.scrollY
-      }
-    }
-
-    window.addEventListener("wheel", handleWheel, { passive: false })
-    window.addEventListener("scroll", handleNativeScroll, { passive: true })
-
-    return () => {
-      window.cancelAnimationFrame(animationFrame)
-      window.removeEventListener("wheel", handleWheel)
-      window.removeEventListener("scroll", handleNativeScroll)
-    }
-  }, [])
-}
-
 function ScrollGifScene({
   number,
   eyebrow,
@@ -81,8 +23,8 @@ function ScrollGifScene({
   first = false,
 }: ScrollGifSceneProps) {
   const sectionRef = useRef<HTMLElement>(null)
+  const copyRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     let frame = 0
@@ -94,7 +36,11 @@ function ScrollGifScene({
       const rect = section.getBoundingClientRect()
       const distance = Math.max(1, rect.height - window.innerHeight)
       const nextProgress = Math.min(1, Math.max(0, -rect.top / distance))
-      setProgress(nextProgress)
+      const copy = copyRef.current
+      if (copy) {
+        copy.style.opacity = String(Math.min(1, 0.5 + nextProgress))
+        copy.style.setProperty("--landing-copy-offset", `${Math.max(0, 20 - nextProgress * 30)}px`)
+      }
 
       const insideScene = rect.top < window.innerHeight * 0.82 && rect.bottom > window.innerHeight * 0.18
       const hasStartedScrolling = first ? window.scrollY > 4 : rect.top < window.innerHeight * 0.75
@@ -116,12 +62,15 @@ function ScrollGifScene({
     }
   }, [first])
 
-  const contentOpacity = Math.min(1, 0.42 + progress * 1.15)
-  const contentOffset = Math.max(0, 26 - progress * 38)
-
   return (
     <section ref={sectionRef} className="landing-scene" aria-label={`${number}. ${eyebrow}`}>
       <div className="landing-scene-sticky">
+        <img
+          src={posterSrc}
+          alt=""
+          className="landing-scene-backdrop"
+          aria-hidden="true"
+        />
         <img
           key={isPlaying ? "playing" : "poster"}
           src={isPlaying ? gifSrc : posterSrc}
@@ -133,13 +82,7 @@ function ScrollGifScene({
         <div className="landing-scene-shade" />
         <div className="landing-scene-grain" />
 
-        <div
-          className="landing-scene-copy"
-          style={{
-            opacity: contentOpacity,
-            "--landing-copy-offset": `${contentOffset}px`,
-          } as CSSProperties}
-        >
+        <div ref={copyRef} className="landing-scene-copy">
           <p className="landing-scene-number">{number}</p>
           <p className="landing-eyebrow">{eyebrow}</p>
           <h1>{title}</h1>
@@ -175,8 +118,6 @@ function ScrollGifScene({
 }
 
 export function LandingPage() {
-  useSlowScroll()
-
   return (
     <main className="landing-shell">
       <header className="landing-header">
