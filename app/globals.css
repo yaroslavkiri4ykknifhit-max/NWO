@@ -133,12 +133,49 @@ html {
 
 /* NWO landing — cinematic public entrance */
 .landing-shell {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   overflow: clip;
   background: #050505;
   color: #f5f2eb;
   color-scheme: dark;
   touch-action: pan-y;
+}
+
+.landing-motion-background {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  background: #050505;
+  pointer-events: none;
+}
+
+.landing-motion-video {
+  position: absolute;
+  inset: -0.75rem;
+  width: calc(100% + 1.5rem);
+  height: calc(100% + 1.5rem);
+  object-fit: cover;
+  object-position: center;
+  filter: blur(3px) saturate(0.72) contrast(1.08) brightness(0.68);
+  transform: scale(1.025);
+}
+
+.landing-motion-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(2, 2, 2, 0.82) 0%, rgba(2, 2, 2, 0.5) 48%, rgba(2, 2, 2, 0.26) 100%),
+    linear-gradient(180deg, rgba(2, 2, 2, 0.42) 0%, transparent 34%, rgba(2, 2, 2, 0.58) 100%);
+}
+
+.landing-motion-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E");
 }
 
 .landing-header {
@@ -194,89 +231,96 @@ html {
   background: rgba(12, 18, 8, 0.45);
 }
 
-.landing-scene {
+.landing-hero,
+.landing-statement {
   position: relative;
-  height: 148vh;
-  background: #050505;
-}
-
-.landing-scene-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  min-height: 38rem;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.landing-scene-media {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transform: scale(1.035);
-  filter: saturate(0.78) contrast(1.12) brightness(0.75);
-  animation: landing-media-in 280ms ease-out both;
-}
-
-.landing-scene-backdrop {
-  display: none;
-}
-
-@keyframes landing-media-in {
-  from { opacity: 0.35; }
-  to { opacity: 1; }
-}
-
-.landing-scene-shade {
-  position: absolute;
   z-index: 2;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.89) 0%, rgba(0, 0, 0, 0.58) 42%, rgba(0, 0, 0, 0.18) 72%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.44) 0%, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+  padding: 7rem clamp(1.25rem, 8vw, 8rem) 5rem;
 }
 
-.landing-scene-grain {
+.landing-hero-copy {
+  width: min(49rem, 100%);
+}
+
+.landing-hero h1 {
+  max-width: 48rem;
+  text-wrap: balance;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+  font-size: clamp(3.6rem, 8vw, 8rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 0.88;
+  text-transform: uppercase;
+  text-shadow: 0 14px 55px rgba(0, 0, 0, 0.72);
+}
+
+.landing-hero-description {
+  max-width: 35rem;
+  margin-top: 1.65rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(1rem, 1.3vw, 1.18rem);
+  line-height: 1.65;
+}
+
+.landing-scroll-cue {
   position: absolute;
-  z-index: 3;
-  inset: -50%;
-  pointer-events: none;
-  opacity: 0.055;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
-  animation: landing-grain 0.22s steps(2) infinite;
+  right: clamp(1.25rem, 4vw, 4rem);
+  bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
 }
 
-@keyframes landing-grain {
-  0% { transform: translate3d(-2%, 1%, 0); }
-  25% { transform: translate3d(1%, -2%, 0); }
-  50% { transform: translate3d(2%, 2%, 0); }
-  75% { transform: translate3d(-1%, -1%, 0); }
-  100% { transform: translate3d(0, 2%, 0); }
+.landing-statement {
+  justify-content: flex-end;
 }
 
-.landing-scene-copy {
+.landing-statement-inner {
+  position: relative;
+  width: min(50rem, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.5rem;
+  padding: clamp(1.7rem, 4vw, 4rem);
+  background: rgba(5, 5, 5, 0.54);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(10px);
+}
+
+.landing-statement-number {
   position: absolute;
-  z-index: 4;
-  top: 50%;
-  left: clamp(1.25rem, 8vw, 8rem);
-  width: min(48rem, calc(100% - 2.5rem));
-  transform: translate3d(0, calc(-50% + var(--landing-copy-offset, 0px)), 0);
-  opacity: 0.5;
-  transition: opacity 80ms linear;
-  will-change: transform, opacity;
-}
-
-.landing-scene-number {
-  position: absolute;
-  top: 0.1rem;
-  left: -3.8rem;
-  color: rgba(255, 255, 255, 0.3);
+  top: 1.2rem;
+  right: 1.4rem;
+  color: rgba(255, 255, 255, 0.26);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.65rem;
   letter-spacing: 0.16em;
+}
+
+.landing-statement h2 {
+  max-width: 46rem;
+  text-wrap: balance;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+  font-size: clamp(3rem, 6.3vw, 6.3rem);
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.landing-statement-inner > p:last-child {
+  max-width: 37rem;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .landing-eyebrow {
@@ -286,26 +330,6 @@ html {
   font-weight: 900;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-}
-
-.landing-scene-copy h1 {
-  max-width: 46rem;
-  text-wrap: balance;
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
-  font-size: clamp(3.4rem, 7.8vw, 7.8rem);
-  font-weight: 900;
-  letter-spacing: -0.035em;
-  line-height: 0.88;
-  text-transform: uppercase;
-  text-shadow: 0 12px 45px rgba(0, 0, 0, 0.45);
-}
-
-.landing-scene-description {
-  max-width: 35rem;
-  margin-top: 1.65rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: clamp(0.98rem, 1.3vw, 1.18rem);
-  line-height: 1.65;
 }
 
 .landing-hero-actions {
@@ -355,43 +379,14 @@ html {
   color: #c6ff3d;
 }
 
-.landing-play-hint,
-.landing-scroll-hint {
-  position: absolute;
-  z-index: 5;
-  bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.landing-play-hint {
-  left: clamp(1.25rem, 8vw, 8rem);
-}
-
-.landing-scroll-hint {
-  right: clamp(1.25rem, 4vw, 4rem);
-  writing-mode: vertical-rl;
-  animation: landing-bob 1.8s ease-in-out infinite;
-}
-
-@keyframes landing-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(7px); }
-}
-
 .landing-paths {
   position: relative;
   z-index: 3;
   padding: clamp(6rem, 12vw, 11rem) clamp(1.1rem, 5vw, 5rem);
   background:
     radial-gradient(circle at 80% 18%, rgba(198, 255, 61, 0.08), transparent 27rem),
-    #080908;
+    rgba(5, 7, 5, 0.78);
+  backdrop-filter: blur(6px);
 }
 
 .landing-paths-heading {
@@ -551,11 +546,13 @@ html {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  z-index: 3;
   padding: 6rem 1.25rem;
   text-align: center;
   background:
     radial-gradient(circle at 50% 65%, rgba(198, 255, 61, 0.1), transparent 24rem),
-    #050505;
+    rgba(5, 5, 5, 0.82);
+  backdrop-filter: blur(5px);
 }
 
 .landing-final-mark {
@@ -579,6 +576,8 @@ html {
 }
 
 .landing-footer {
+  position: relative;
+  z-index: 3;
   display: flex;
   justify-content: space-between;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -588,6 +587,7 @@ html {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  background: rgba(5, 5, 5, 0.88);
 }
 
 @media (max-width: 760px) {
@@ -608,65 +608,42 @@ html {
     padding: 0.55rem 0.75rem;
   }
 
-  .landing-scene {
-    height: 138vh;
+  .landing-motion-video {
+    inset: -0.4rem;
+    width: calc(100% + 0.8rem);
+    height: calc(100% + 0.8rem);
+    object-position: center;
+    filter: blur(2px) saturate(0.78) contrast(1.06) brightness(0.72);
+    transform: scale(1.02);
   }
 
-  .landing-scene-sticky {
-    height: 100svh;
-    min-height: 0;
-  }
-
-  .landing-scene-media {
-    z-index: 1;
-    object-fit: contain;
-    object-position: center 27%;
-    transform: none;
-    filter: saturate(0.92) contrast(1.08) brightness(0.9);
-  }
-
-  .landing-scene-backdrop {
-    position: absolute;
-    z-index: 0;
-    inset: -2rem;
-    display: block;
-    width: calc(100% + 4rem);
-    height: calc(100% + 4rem);
-    object-fit: cover;
-    opacity: 0.52;
-    filter: blur(24px) saturate(0.8) brightness(0.46);
-    transform: scale(1.08);
-    animation: landing-media-in 280ms ease-out both;
-  }
-
-  .landing-scene-shade {
+  .landing-motion-shade {
     background:
-      linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.08)),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 32%, transparent 58%, rgba(0, 0, 0, 0.9) 100%);
+      linear-gradient(180deg, rgba(2, 2, 2, 0.52) 0%, rgba(2, 2, 2, 0.26) 35%, rgba(2, 2, 2, 0.72) 100%),
+      rgba(2, 2, 2, 0.2);
   }
 
-  .landing-scene-copy {
-    top: auto;
-    bottom: 5.5rem;
-    left: 1.2rem;
-    transform: translate3d(0, var(--landing-copy-offset, 0px), 0);
+  .landing-hero,
+  .landing-statement {
+    align-items: flex-end;
+    padding: 7rem 1.2rem 5.5rem;
   }
 
-  .landing-scene-copy h1 {
-    font-size: clamp(3.15rem, 15vw, 5rem);
+  .landing-hero h1 {
+    font-size: clamp(3.2rem, 15vw, 5rem);
   }
 
-  .landing-scene-number {
+  .landing-scroll-cue {
     display: none;
   }
 
-  .landing-play-hint {
-    bottom: 2rem;
-    left: 1.2rem;
+  .landing-statement {
+    min-height: 92svh;
   }
 
-  .landing-scroll-hint {
-    display: none;
+  .landing-statement-inner {
+    border-radius: 1.2rem;
+    background: rgba(5, 5, 5, 0.62);
   }
 
   .landing-paths-heading {
@@ -692,10 +669,6 @@ html {
     scroll-behavior: auto;
   }
 
-  .landing-scene-grain,
-  .landing-scroll-hint {
-    animation: none;
-  }
 }
 
 /* NWO BLACK — отдельная визуальная система платного продукта */

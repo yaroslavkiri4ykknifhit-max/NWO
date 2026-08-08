@@ -1,125 +1,77 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { ArrowDown, ArrowRight, Check, LockKeyhole, Play } from "lucide-react"
+import { useEffect, useRef } from "react"
+import { ArrowDown, ArrowRight, Check, LockKeyhole } from "lucide-react"
 
-type ScrollGifSceneProps = {
-  number: string
-  eyebrow: string
-  title: string
-  description: string
-  gifSrc: string
-  posterSrc: string
-  first?: boolean
-}
-
-function ScrollGifScene({
-  number,
-  eyebrow,
-  title,
-  description,
-  gifSrc,
-  posterSrc,
-  first = false,
-}: ScrollGifSceneProps) {
-  const sectionRef = useRef<HTMLElement>(null)
-  const copyRef = useRef<HTMLDivElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
+function ScrollReactiveBackground() {
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    let frame = 0
+    const video = videoRef.current
+    if (!video) return
 
-    const update = () => {
-      const section = sectionRef.current
-      if (!section) return
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let stopTimer = 0
 
-      const rect = section.getBoundingClientRect()
-      const distance = Math.max(1, rect.height - window.innerHeight)
-      const nextProgress = Math.min(1, Math.max(0, -rect.top / distance))
-      const copy = copyRef.current
-      if (copy) {
-        copy.style.opacity = String(Math.min(1, 0.5 + nextProgress))
-        copy.style.setProperty("--landing-copy-offset", `${Math.max(0, 20 - nextProgress * 30)}px`)
-      }
-
-      const insideScene = rect.top < window.innerHeight * 0.82 && rect.bottom > window.innerHeight * 0.18
-      const hasStartedScrolling = first ? window.scrollY > 4 : rect.top < window.innerHeight * 0.75
-      if (insideScene && hasStartedScrolling) setIsPlaying(true)
+    const stopVideo = () => {
+      window.clearTimeout(stopTimer)
+      video.pause()
     }
 
     const handleScroll = () => {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(update)
+      if (reducedMotion.matches) return
+
+      if (video.paused) {
+        void video.play().catch(() => {
+          // Muted inline video normally needs no permission. The poster remains
+          // visible if a browser still blocks playback.
+        })
+      }
+
+      window.clearTimeout(stopTimer)
+      stopTimer = window.setTimeout(stopVideo, 90)
     }
 
-    update()
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    window.addEventListener("resize", handleScroll)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      window.removeEventListener("scroll", handleScroll)
-      window.removeEventListener("resize", handleScroll)
+    const handleVisibility = () => {
+      if (document.hidden) stopVideo()
     }
-  }, [first])
+
+    video.pause()
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    document.addEventListener("visibilitychange", handleVisibility)
+
+    return () => {
+      stopVideo()
+      window.removeEventListener("scroll", handleScroll)
+      document.removeEventListener("visibilitychange", handleVisibility)
+    }
+  }, [])
 
   return (
-    <section ref={sectionRef} className="landing-scene" aria-label={`${number}. ${eyebrow}`}>
-      <div className="landing-scene-sticky">
-        <img
-          src={posterSrc}
-          alt=""
-          className="landing-scene-backdrop"
-          aria-hidden="true"
-        />
-        <img
-          key={isPlaying ? "playing" : "poster"}
-          src={isPlaying ? gifSrc : posterSrc}
-          alt=""
-          className="landing-scene-media"
-          loading={first ? "eager" : "lazy"}
-          aria-hidden="true"
-        />
-        <div className="landing-scene-shade" />
-        <div className="landing-scene-grain" />
-
-        <div ref={copyRef} className="landing-scene-copy">
-          <p className="landing-scene-number">{number}</p>
-          <p className="landing-eyebrow">{eyebrow}</p>
-          <h1>{title}</h1>
-          <p className="landing-scene-description">{description}</p>
-          {first && (
-            <div className="landing-hero-actions">
-              <a href="/free/" className="landing-button landing-button-light">
-                Начать бесплатно <ArrowRight size={18} />
-              </a>
-              <a href="/premium/" className="landing-button landing-button-ghost">
-                NWO BLACK <LockKeyhole size={16} />
-              </a>
-            </div>
-          )}
-        </div>
-
-        {!isPlaying && (
-          <div className="landing-play-hint" aria-hidden="true">
-            <Play size={13} fill="currentColor" />
-            {first ? "Прокрути — кадр оживёт" : "Следующий кадр ждёт"}
-          </div>
-        )}
-
-        {first && (
-          <div className="landing-scroll-hint" aria-hidden="true">
-            <span>Листай</span>
-            <ArrowDown size={16} />
-          </div>
-        )}
-      </div>
-    </section>
+    <div className="landing-motion-background" aria-hidden="true">
+      <video
+        ref={videoRef}
+        className="landing-motion-video"
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster="/flash-cut-poster.jpg"
+        disablePictureInPicture
+      >
+        <source src="/flash-cut.mp4" type="video/mp4" />
+      </video>
+      <div className="landing-motion-shade" />
+      <div className="landing-motion-noise" />
+    </div>
   )
 }
 
 export function LandingPage() {
   return (
     <main className="landing-shell">
+      <ScrollReactiveBackground />
+
       <header className="landing-header">
         <a href="/" className="landing-logo" aria-label="NWO — главная">
           NWO<span>.</span>
@@ -133,24 +85,41 @@ export function LandingPage() {
         </nav>
       </header>
 
-      <ScrollGifScene
-        number="01"
-        eyebrow="Деньги любят систему"
-        title="Продажи — не талант. Это система."
-        description="Забери базу бесплатно. Разбери механику сделки, перестань импровизировать и начни управлять разговором."
-        gifSrc="/landing-money.gif"
-        posterSrc="/landing-money-poster.jpg"
-        first
-      />
+      <section className="landing-hero">
+        <div className="landing-hero-copy">
+          <p className="landing-eyebrow">Деньги любят систему</p>
+          <h1>Продажи — не талант. Это система.</h1>
+          <p className="landing-hero-description">
+            Забери базу бесплатно. Разбери механику сделки, перестань
+            импровизировать и начни управлять разговором.
+          </p>
+          <div className="landing-hero-actions">
+            <a href="/free/" className="landing-button landing-button-light">
+              Начать бесплатно <ArrowRight size={18} />
+            </a>
+            <a href="/premium/" className="landing-button landing-button-ghost">
+              NWO BLACK <LockKeyhole size={16} />
+            </a>
+          </div>
+        </div>
 
-      <ScrollGifScene
-        number="02"
-        eyebrow="Фокус решает"
-        title="Один разговор может изменить всю сделку."
-        description="Не больше слов — больше точности. Научись видеть мотив клиента, держать рамку и вести к решению без суеты."
-        gifSrc="/landing-focus.gif"
-        posterSrc="/landing-focus-poster.jpg"
-      />
+        <div className="landing-scroll-cue" aria-hidden="true">
+          <span>Двигай страницу</span>
+          <ArrowDown size={17} />
+        </div>
+      </section>
+
+      <section className="landing-statement">
+        <div className="landing-statement-inner">
+          <span className="landing-statement-number">02</span>
+          <p className="landing-eyebrow">Фокус решает</p>
+          <h2>Движение начинается только тогда, когда двигаешься ты.</h2>
+          <p>
+            Один разговор может изменить всю сделку. Не больше слов — больше
+            точности, контроля и понимания реального мотива клиента.
+          </p>
+        </div>
+      </section>
 
       <section id="program" className="landing-paths">
         <div className="landing-paths-heading">
