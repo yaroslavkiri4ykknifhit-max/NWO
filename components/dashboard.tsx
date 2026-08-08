@@ -23,7 +23,7 @@ export function Dashboard({
   premiumHref,
 }: DashboardProps) {
   const progressPercent = lessonsCount > 0 ? Math.round((completedCount / lessonsCount) * 100) : 0
-  const studentName = telegramUser?.username || telegramUser?.first_name || "colddev"
+  const studentName = telegramUser?.username || telegramUser?.first_name || "студент"
 
   return (
     <main className="flex-1 overflow-y-auto bg-[#faf8f3] flex flex-col min-h-full font-sans text-slate-800 relative">

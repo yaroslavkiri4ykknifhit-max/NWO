@@ -68,6 +68,9 @@ function doPost(e) {
       case 'all':
         result = handleAll(params.session_token);
         break;
+      case 'public_all':
+        result = handlePublicAll();
+        break;
       case 'paid_all':
         result = handlePaidAll(params.session_token);
         break;
@@ -79,6 +82,9 @@ function doPost(e) {
         break;
       case 'shame_trades':
         result = handleShameTrades(params.session_token);
+        break;
+      case 'public_shame_trades':
+        result = handlePublicShameTrades();
         break;
       default:
         result = { valid: false, error: 'unknown_action' };
@@ -562,6 +568,15 @@ function handleAll(sessionToken) {
   };
 }
 
+function handlePublicAll() {
+  return {
+    valid: true,
+    name: 'NWO: Бесплатная база продаж',
+    modules: handleModules().modules,
+    lessons: handleLessons().lessons
+  };
+}
+
 function handlePaidAll(sessionToken) {
   var authorization = authorizeSession(sessionToken);
   if (!authorization.valid) return authorization;
@@ -626,8 +641,16 @@ function handleSavePaidProgress(sessionToken, completedLessons) {
 function handleShameTrades(sessionToken) {
   var authorization = authorizeSession(sessionToken);
   if (!authorization.valid) return authorization;
+  return { valid: true, trades: readShameTrades() };
+}
+
+function handlePublicShameTrades() {
+  return { valid: true, trades: readShameTrades() };
+}
+
+function readShameTrades() {
   var sheet = getSpreadsheet().getSheetByName('ShameTrades');
-  if (!sheet) return { valid: true, trades: [] };
+  if (!sheet) return [];
   var data = sheet.getDataRange().getValues();
   var trades = [];
 
@@ -646,7 +669,7 @@ function handleShameTrades(sessionToken) {
       });
     }
   }
-  return { valid: true, trades: trades };
+  return trades;
 }
 
 /** Запустите вручную и замените пример, чтобы получить SHA-256 инвайт-кода. */

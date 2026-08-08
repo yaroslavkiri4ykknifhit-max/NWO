@@ -2,9 +2,24 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Академия | Закрытый доступ',
-  description: 'Закрытая образовательная платформа',
-  generator: 'v0.app',
+  metadataBase: new URL('https://newwayout.online'),
+  title: 'NWO — система обучения продажам',
+  description: 'Открытая база продаж и закрытая продвинутая программа NWO BLACK.',
+  openGraph: {
+    title: 'NWO — продажи это система',
+    description: 'Начни с бесплатной базы. Переходи в NWO BLACK, когда будешь готов идти глубже.',
+    url: 'https://newwayout.online',
+    siteName: 'NWO',
+    locale: 'ru_RU',
+    type: 'website',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'NWO — система обучения продажам' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NWO — продажи это система',
+    description: 'Открытая база продаж и закрытая продвинутая программа NWO BLACK.',
+    images: ['/og.png'],
+  },
   icons: {
     icon: [
       {

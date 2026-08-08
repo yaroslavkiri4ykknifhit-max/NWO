@@ -8,7 +8,7 @@ import type { Variants } from "motion/react"
 
 interface CourseHeaderProps {
   courseName: string
-  onLogout: () => void
+  onLogout?: () => void
   telegramUser?: TelegramProfile | null
   onToggleSidebar: () => void
   isSidebarOpen: boolean
@@ -16,6 +16,7 @@ interface CourseHeaderProps {
   backHref?: string
   backLabel?: string
   variant?: "default" | "premium"
+  showUser?: boolean
 }
 
 interface PathProps {
@@ -82,6 +83,7 @@ export function CourseHeader({
   backHref,
   backLabel = "Назад",
   variant = "default",
+  showUser = true,
 }: CourseHeaderProps) {
   const isPremium = variant === "premium"
   const displayName = telegramUser
@@ -126,46 +128,50 @@ export function CourseHeader({
       )}
 
       <div className="flex items-center gap-4">
-        <div className={isPremium
-          ? "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.035] border border-white/10"
-          : "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-secondary/35 border border-border/30"
-        }>
-          {telegramUser?.photo_url ? (
-            <img
-              src={telegramUser.photo_url}
-              alt={displayName}
-              className="w-6 h-6 rounded-full object-cover border border-accent/40"
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-                const sibling = e.currentTarget.nextElementSibling as HTMLElement
-                if (sibling) sibling.style.display = 'block'
-              }}
-            />
-          ) : null}
-          
-          <User 
-            className="w-4 h-4 text-accent" 
-            style={{ display: telegramUser?.photo_url ? 'none' : 'block' }} 
-          />
-          
-          <span className="text-sm font-medium text-foreground tracking-wide max-w-[120px] truncate">
-            {displayName}
-          </span>
-        </div>
+        {showUser && (
+          <div className={isPremium
+            ? "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.035] border border-white/10"
+            : "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-secondary/35 border border-border/30"
+          }>
+            {telegramUser?.photo_url ? (
+              <img
+                src={telegramUser.photo_url}
+                alt={displayName}
+                className="w-6 h-6 rounded-full object-cover border border-accent/40"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  const sibling = e.currentTarget.nextElementSibling as HTMLElement
+                  if (sibling) sibling.style.display = 'block'
+                }}
+              />
+            ) : null}
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onLogout}
-          className={isPremium
-            ? "gap-2 text-white/40 hover:text-red-300 hover:bg-red-500/10 rounded-xl px-3 h-9 transition-colors cursor-pointer"
-            : "gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl px-3 h-9 transition-colors cursor-pointer"
-          }
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline text-xs font-medium">Выйти</span>
-        </Button>
+            <User
+              className="w-4 h-4 text-accent"
+              style={{ display: telegramUser?.photo_url ? 'none' : 'block' }}
+            />
+
+            <span className="text-sm font-medium text-foreground tracking-wide max-w-[120px] truncate">
+              {displayName}
+            </span>
+          </div>
+        )}
+
+        {onLogout && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onLogout}
+            className={isPremium
+              ? "gap-2 text-white/40 hover:text-red-300 hover:bg-red-500/10 rounded-xl px-3 h-9 transition-colors cursor-pointer"
+              : "gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl px-3 h-9 transition-colors cursor-pointer"
+            }
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline text-xs font-medium">Выйти</span>
+          </Button>
+        )}
       </div>
     </header>
   )

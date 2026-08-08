@@ -6,6 +6,7 @@
 
 const APPS_SCRIPT_URL = process.env.NEXT_PUBLIC_APPS_SCRIPT_URL || ""
 const SESSION_STORAGE_KEY = "nwo_paid_session"
+const FREE_PROGRESS_STORAGE_KEY = "nwo_free_progress"
 
 export interface SheetModule {
   id: string
@@ -313,6 +314,60 @@ export async function fetchCourseData(): Promise<CourseData> {
   return { name: result.name || "Академия: Полный курс", modules }
 }
 
+export async function fetchPublicCourseData(): Promise<CourseData> {
+  const result = await apiFetch<
+    ApiResult & {
+      name?: string
+      modules?: SheetModule[]
+      lessons?: SheetLesson[]
+    }
+  >("public_all", {}, false)
+
+  if (!result.valid) {
+    throw new Error(result.message || "Не удалось загрузить бесплатный курс")
+  }
+
+  const sheetModules = result.modules || []
+  const sheetLessons = result.lessons || []
+  const modules: CourseModule[] = sheetModules.map((module) => ({
+    id: `module-${module.id}`,
+    title: module.name,
+    lessons: sheetLessons
+      .filter((lesson) => String(lesson.moduleId) === String(module.id))
+      .map((lesson) => ({
+        id: `lesson-${lesson.id}`,
+        moduleId: String(lesson.moduleId),
+        title: lesson.title,
+        textContent: lesson.textContent,
+        videoUrl: lesson.videoUrl,
+      })),
+  }))
+
+  return { name: result.name || "NWO: Бесплатная база продаж", modules }
+}
+
+export function getLocalFreeProgress(): string[] {
+  if (typeof window === "undefined") return []
+  try {
+    const saved = JSON.parse(localStorage.getItem(FREE_PROGRESS_STORAGE_KEY) || "[]")
+    if (!Array.isArray(saved)) return []
+    return saved
+      .map((item) => String(item))
+      .filter((item) => /^lesson-[A-Za-z0-9_-]{1,80}$/.test(item))
+      .slice(0, 500)
+  } catch {
+    return []
+  }
+}
+
+export function saveLocalFreeProgress(completedLessons: string[]): void {
+  if (typeof window === "undefined") return
+  const safeItems = completedLessons
+    .filter((item) => /^lesson-[A-Za-z0-9_-]{1,80}$/.test(item))
+    .slice(0, 500)
+  localStorage.setItem(FREE_PROGRESS_STORAGE_KEY, JSON.stringify(safeItems))
+}
+
 export async function fetchPaidCourseData(): Promise<{
   course: CourseData
   completedLessons: string[]
@@ -382,5 +437,25 @@ export async function fetchShameTrades(): Promise<ShameTrade[]> {
           .map((url) => url.trim())
           .filter(Boolean)
       : [],
+  }))
+}
+
+export async function fetchPublicShameTrades(): Promise<ShameTrade[]> {
+  const result = await apiFetch<
+    ApiResult & {
+      trades?: Array<Omit<ShameTrade, "screenshots"> & { screenshots: string }>
+    }
+  >("public_shame_trades", {}, false)
+
+  if (!result.valid) {
+    throw new Error(result.message || "Не удалось загрузить разборы")
+  }
+
+  return (result.trades || []).map((trade) => ({
+    ...trade,
+    screenshots: String(trade.screenshots || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
   }))
 }
