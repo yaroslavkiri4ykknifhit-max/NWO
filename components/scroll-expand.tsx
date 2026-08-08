@@ -149,19 +149,44 @@ export default function ScrollExpand({
     if (!root || !track || !stage) return
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches
     let animationFrame = 0
     let current = 0
     let target = 0
     let stageHeight = 0
+    let measuredWidth = 0
     let running = false
 
-    const measure = () => {
+    const measure = (force = false) => {
       const config = propsRef.current
-      stageHeight = config.useWindowScroll ? window.innerHeight : root.clientHeight
-      if (stageHeight <= 0) return
+      const nextWidth = Math.round(root.getBoundingClientRect().width || window.innerWidth)
+      const widthChanged = Math.abs(nextWidth - measuredWidth) >= 8
+      const mobileViewport = window.matchMedia("(max-width: 760px)").matches
+
+      // Mobile browsers resize the visual viewport whenever their address bar
+      // opens or closes. Rebuilding the sticky track for that height-only
+      // change moves the document underneath the user's finger.
+      if (
+        !force &&
+        config.useWindowScroll &&
+        mobileViewport &&
+        measuredWidth > 0 &&
+        !widthChanged
+      ) {
+        return false
+      }
+
+      measuredWidth = nextWidth
+      const nextHeight = config.useWindowScroll
+        ? Math.round(document.documentElement.clientHeight || window.innerHeight)
+        : Math.round(root.clientHeight)
+      if (nextHeight <= 0) return false
+
+      stageHeight = nextHeight
 
       stage.style.height = `${stageHeight}px`
       track.style.height = `${stageHeight * (1 + Math.max(0, config.scrollDistance) + Math.max(0, config.holdDistance))}px`
+      return true
     }
 
     const readProgress = () => {
@@ -176,7 +201,8 @@ export default function ScrollExpand({
 
     const tick = () => {
       const config = propsRef.current
-      const follow = config.smoothing <= 0 ? 1 : 1 - Math.exp(-1 / (60 * config.smoothing))
+      const effectiveSmoothing = coarsePointer ? 0 : config.smoothing
+      const follow = effectiveSmoothing <= 0 ? 1 : 1 - Math.exp(-1 / (60 * effectiveSmoothing))
       current += (target - current) * follow
 
       if (Math.abs(target - current) < 0.0004) {
@@ -196,7 +222,10 @@ export default function ScrollExpand({
 
     const handleScroll = () => {
       target = readProgress()
-      if (propsRef.current.smoothing <= 0 || reduceMotion) {
+      if (coarsePointer || propsRef.current.smoothing <= 0 || reduceMotion) {
+        if (animationFrame) window.cancelAnimationFrame(animationFrame)
+        animationFrame = 0
+        running = false
         current = target
         applyProgress(current)
         return
@@ -205,13 +234,13 @@ export default function ScrollExpand({
     }
 
     const handleResize = () => {
-      measure()
+      if (!measure()) return
       target = readProgress()
       current = target
       applyProgress(current)
     }
 
-    measure()
+    measure(true)
     target = readProgress()
     current = target
     applyProgress(current)
@@ -219,14 +248,14 @@ export default function ScrollExpand({
     const scroller: Window | HTMLDivElement = useWindowScroll ? window : root
     scroller.addEventListener("scroll", handleScroll, { passive: true })
     window.addEventListener("resize", handleResize)
-    const resizeObserver = new ResizeObserver(handleResize)
-    resizeObserver.observe(root)
+    const resizeObserver = useWindowScroll ? null : new ResizeObserver(handleResize)
+    resizeObserver?.observe(root)
 
     return () => {
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
       scroller.removeEventListener("scroll", handleScroll)
       window.removeEventListener("resize", handleResize)
-      resizeObserver.disconnect()
+      resizeObserver?.disconnect()
     }
   }, [applyProgress, useWindowScroll])
 

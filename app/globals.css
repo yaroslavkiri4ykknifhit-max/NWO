@@ -934,6 +934,15 @@ html {
 }
 
 @media (max-width: 760px) {
+  .landing-statement-inner,
+  .landing-paths,
+  .landing-outcomes,
+  .landing-final,
+  .landing-button-ghost {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .landing-header nav a:first-child {
     display: none;
   }
