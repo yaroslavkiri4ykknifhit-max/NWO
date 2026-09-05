@@ -6,12 +6,9 @@ import { CourseHeader } from "@/components/course-header"
 import { Dashboard } from "@/components/dashboard"
 import { LessonSidebar } from "@/components/lesson-sidebar"
 import { LessonViewer } from "@/components/lesson-viewer"
-import { WallOfShame } from "@/components/wall-of-shame"
 import {
   CourseData,
-  ShameTrade,
   fetchPublicCourseData,
-  fetchPublicShameTrades,
   getLocalFreeProgress,
   saveLocalFreeProgress,
 } from "@/lib/sheets-api"
@@ -24,9 +21,6 @@ export default function FreeCoursePage() {
   const [currentLessonId, setCurrentLessonId] = useState("")
   const [completedLessons, setCompletedLessons] = useState<string[]>([])
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isWallOfShameActive, setIsWallOfShameActive] = useState(false)
-  const [shameTrades, setShameTrades] = useState<ShameTrade[]>([])
-  const [shameLoading, setShameLoading] = useState(false)
 
   useEffect(() => {
     setCompletedLessons(getLocalFreeProgress())
@@ -45,7 +39,6 @@ export default function FreeCoursePage() {
       setCourseData(data)
       setCurrentModuleId("")
       setCurrentLessonId("")
-      setIsWallOfShameActive(false)
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -57,20 +50,8 @@ export default function FreeCoursePage() {
     }
   }
 
-  const loadShameTrades = async () => {
-    setShameLoading(true)
-    try {
-      setShameTrades(await fetchPublicShameTrades())
-    } catch (loadError) {
-      console.error("Не удалось загрузить разборы", loadError)
-    } finally {
-      setShameLoading(false)
-    }
-  }
-
   useEffect(() => {
     void loadCourseData()
-    void loadShameTrades()
   }, [])
 
   if (loading) {
@@ -133,7 +114,6 @@ export default function FreeCoursePage() {
   const hasNext = currentIndex >= 0 && currentIndex < allLessons.length - 1
 
   const handleSelectLesson = (moduleId: string, lessonId: string) => {
-    setIsWallOfShameActive(false)
     setCurrentModuleId(moduleId)
     setCurrentLessonId(lessonId)
   }
@@ -171,7 +151,6 @@ export default function FreeCoursePage() {
         backHref="/"
         backLabel="На лендинг"
         onClickLogo={() => {
-          setIsWallOfShameActive(false)
           setCurrentModuleId("")
           setCurrentLessonId("")
         }}
@@ -183,16 +162,8 @@ export default function FreeCoursePage() {
           onSelectLesson={handleSelectLesson}
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
-          isWallOfShameActive={isWallOfShameActive}
-          onSelectWallOfShame={() => {
-            setIsWallOfShameActive(true)
-            setCurrentModuleId("")
-            setCurrentLessonId("")
-          }}
         />
-        {isWallOfShameActive ? (
-          <WallOfShame trades={shameTrades} loading={shameLoading} />
-        ) : currentLesson && currentModule ? (
+        {currentLesson && currentModule ? (
           <LessonViewer
             title={currentLesson.title}
             moduleName={currentModule.title}
