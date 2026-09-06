@@ -151,6 +151,24 @@ export function LandingPage() {
               Получить полный доступ <ArrowRight size={18} />
             </a>
           </article>
+
+          <article className="landing-path landing-path-mentor">
+            <div className="landing-mentor-glow" />
+            <div>
+              <span className="landing-path-label">Обучение с нуля + трудоустройство</span>
+              <h3>Менторство</h3>
+              <p>Работаем лично: от базы до стабильного дохода от 700$ + процент.</p>
+            </div>
+            <ul>
+              <li><Check size={17} /> Практика на реальных разговорах</li>
+              <li><Check size={17} /> Месяц плотной работы со мной</li>
+              <li><Check size={17} /> Гарантия трудоустройства</li>
+              <li><Check size={17} /> Твоя цена: 170$</li>
+            </ul>
+            <a href="/mentorship/" className="landing-path-action" style={{ backgroundColor: "#000", color: "#fff", borderColor: "rgba(255,255,255,0.1)" }}>
+              Посмотреть, что входит <ArrowRight size={18} />
+            </a>
+          </article>
         </div>
       </section>
 
