@@ -488,7 +488,7 @@ function handlePaidSession(sessionToken) {
 }
 
 function handleModules() {
-  var sheet = getSpreadsheet().getSheetByName('Modules');
+  var sheet = getSpreadsheet().getSheetByName('PaidModules');
   if (!sheet) return { modules: [] };
   var data = sheet.getDataRange().getValues();
   var modules = [];
@@ -503,7 +503,7 @@ function handleModules() {
 }
 
 function handleLessons() {
-  var sheet = getSpreadsheet().getSheetByName('Lessons');
+  var sheet = getSpreadsheet().getSheetByName('PaidLessons');
   if (!sheet) return { lessons: [] };
   var data = sheet.getDataRange().getValues();
   var lessons = [];
@@ -523,7 +523,7 @@ function handleLessons() {
 }
 
 function handlePaidModules() {
-  var sheet = getSpreadsheet().getSheetByName('PaidModules');
+  var sheet = getSpreadsheet().getSheetByName('Modules');
   if (!sheet) return { modules: [] };
   var data = sheet.getDataRange().getValues();
   var modules = [];
@@ -538,7 +538,7 @@ function handlePaidModules() {
 }
 
 function handlePaidLessons() {
-  var sheet = getSpreadsheet().getSheetByName('PaidLessons');
+  var sheet = getSpreadsheet().getSheetByName('Lessons');
   if (!sheet) return { lessons: [] };
   var data = sheet.getDataRange().getValues();
   var lessons = [];
