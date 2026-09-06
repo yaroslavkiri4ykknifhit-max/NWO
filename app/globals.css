@@ -689,9 +689,9 @@ html {
 
 .landing-path-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
-  max-width: 78rem;
+  max-width: 82rem;
   margin: 0 auto;
 }
 
@@ -727,6 +727,25 @@ html {
   height: 28rem;
   border-radius: 50%;
   background: rgba(198, 255, 61, 0.12);
+  filter: blur(90px);
+}
+
+.landing-path-mentor {
+  border: 1px solid rgba(177, 76, 255, 0.2);
+  background:
+    linear-gradient(145deg, rgba(177, 76, 255, 0.05), transparent 45%),
+    #0b0d0b;
+  color: #f7f7f4;
+}
+
+.landing-mentor-glow {
+  position: absolute;
+  right: -10rem;
+  bottom: -12rem;
+  width: 28rem;
+  height: 28rem;
+  border-radius: 50%;
+  background: rgba(177, 76, 255, 0.12);
   filter: blur(90px);
 }
 
