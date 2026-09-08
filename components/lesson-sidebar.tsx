@@ -153,20 +153,20 @@ export function LessonSidebar({
         custom={windowHeight}
         variants={sidebarVariants}
         className={cn(
-          "bg-sidebar border-sidebar-border shrink-0 flex flex-col overflow-hidden",
+          "bg-white border-gray-200 shrink-0 flex flex-col overflow-hidden",
           "fixed top-16 bottom-0 left-0 z-50 border-r lg:relative lg:top-0 lg:h-full lg:z-0",
-          isPremium && "premium-course-sidebar"
+          ""
         )}
       >
         <motion.div 
           variants={itemVariants} 
-          className="p-4 border-b border-sidebar-border flex items-center justify-between shrink-0"
+          className="p-4 border-b border-gray-200 flex items-center justify-between shrink-0"
         >
           <div>
-            <h2 className="font-semibold text-sidebar-foreground">
+            <h2 className="font-semibold text-black">
               {isPremium ? "Программа NWO BLACK" : "Содержание курса"}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               {modules.reduce((acc, m) => acc + m.lessons.length, 0)} уроков
             </p>
           </div>
@@ -184,19 +184,19 @@ export function LessonSidebar({
             >
               <button
                 onClick={() => toggleModule(module.id)}
-                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-sidebar-accent transition-colors text-left cursor-pointer"
+                className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-white-accent transition-colors text-left cursor-pointer"
               >
                 <div className="flex items-center gap-3">
                   <span className="flex items-center justify-center w-6 h-6 rounded bg-secondary text-xs font-medium text-secondary-foreground">
                     {moduleIndex + 1}
                   </span>
-                  <span className="font-medium text-sidebar-foreground text-sm">
+                  <span className="font-medium text-black text-sm">
                     {module.title}
                   </span>
                 </div>
                 <ChevronDown
                   className={cn(
-                    "w-4 h-4 text-muted-foreground transition-transform",
+                    "w-4 h-4 text-gray-500 transition-transform",
                     expandedModules.includes(module.id) && "rotate-180"
                   )}
                 />
@@ -223,22 +223,22 @@ export function LessonSidebar({
                           className={cn(
                             "w-full flex items-center gap-3 p-2.5 rounded-lg text-left transition-colors",
                             currentLessonId === lesson.id
-                              ? "bg-sidebar-accent"
-                              : "hover:bg-sidebar-accent/50",
+                              ? "bg-white-accent"
+                              : "hover:bg-white-accent/50",
                             isLocked && "opacity-50 cursor-not-allowed"
                           )}
                         >
                           {isLocked ? (
-                            <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
+                            <Lock className="w-4 h-4 text-gray-500 shrink-0" />
                           ) : lesson.completed ? (
-                            <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-black shrink-0" />
                           ) : (
                             <PlayCircle
                               className={cn(
                                 "w-4 h-4 shrink-0",
                                 currentLessonId === lesson.id
-                                  ? "text-accent"
-                                  : "text-muted-foreground"
+                                  ? "text-black"
+                                  : "text-gray-500"
                               )}
                             />
                           )}
@@ -247,8 +247,8 @@ export function LessonSidebar({
                               className={cn(
                                 "text-sm truncate",
                                 currentLessonId === lesson.id
-                                  ? "text-sidebar-foreground font-medium"
-                                  : "text-muted-foreground"
+                                  ? "text-black font-medium"
+                                  : "text-gray-500"
                               )}
                             >
                               {lesson.title}
@@ -266,14 +266,14 @@ export function LessonSidebar({
 
         <motion.div 
           variants={itemVariants}
-          className="p-3 border-t border-sidebar-border mt-auto shrink-0 flex items-center justify-between text-[11px] text-muted-foreground bg-sidebar-accent/15"
+          className="p-3 border-t border-gray-200 mt-auto shrink-0 flex items-center justify-between text-[11px] text-gray-500 bg-white-accent/15"
         >
           <span>{isPremium ? "NWO BLACK · MEMBERS" : "Закрытый клуб NWO"}</span>
           <a
             href="https://t.me/c0lddev"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-accent font-semibold transition-colors cursor-pointer"
+            className="hover:text-black font-semibold transition-colors cursor-pointer"
           >
             <span>Сделано @c0lddev</span>
           </a>

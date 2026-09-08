@@ -157,13 +157,13 @@ function renderFormattedContent(text: string) {
     if (currentListItems.length > 0) {
       if (currentListType === 'ul') {
         renderedBlocks.push(
-          <ul key={`list-ul-${key}`} className="list-disc pl-6 my-4 space-y-2 text-slate-700 font-sans">
+          <ul key={`list-ul-${key}`} className="list-disc pl-6 my-4 space-y-2 text-black font-ui">
             {...currentListItems}
           </ul>
         );
       } else if (currentListType === 'ol') {
         renderedBlocks.push(
-          <ol key={`list-ol-${key}`} className="list-decimal pl-6 my-4 space-y-2 text-slate-700 font-sans">
+          <ol key={`list-ol-${key}`} className="list-decimal pl-6 my-4 space-y-2 text-black font-ui">
             {...currentListItems}
           </ol>
         );
@@ -189,7 +189,7 @@ function renderFormattedContent(text: string) {
           <img
             src={url}
             alt={alt || "Изображение"}
-            className="rounded-2xl border border-border/40 max-w-full h-auto mx-auto shadow-md hover:scale-[1.01] transition-transform duration-300"
+            className="rounded-none border border-border/40 max-w-full h-auto mx-auto shadow-md hover:scale-[1.01] transition-transform duration-300"
             loading="lazy"
           />
           {alt && (
@@ -206,7 +206,7 @@ function renderFormattedContent(text: string) {
     if (trimmedLine.startsWith('# ')) {
       flushList(String(i));
       renderedBlocks.push(
-        <h3 key={`h3-${i}`} className="text-2xl font-bold text-foreground mt-6 mb-3 tracking-tight font-sans">
+        <h3 key={`h3-${i}`} className="text-2xl font-bold text-foreground mt-6 mb-3 tracking-tight font-ui">
           {parseInlineStyles(trimmedLine.substring(2))}
         </h3>
       );
@@ -215,7 +215,7 @@ function renderFormattedContent(text: string) {
     if (trimmedLine.startsWith('## ')) {
       flushList(String(i));
       renderedBlocks.push(
-        <h4 key={`h4-${i}`} className="text-xl font-bold text-foreground mt-5 mb-2.5 tracking-tight font-sans">
+        <h4 key={`h4-${i}`} className="text-xl font-bold text-foreground mt-5 mb-2.5 tracking-tight font-ui">
           {parseInlineStyles(trimmedLine.substring(3))}
         </h4>
       );
@@ -224,7 +224,7 @@ function renderFormattedContent(text: string) {
     if (trimmedLine.startsWith('### ')) {
       flushList(String(i));
       renderedBlocks.push(
-        <h5 key={`h5-${i}`} className="text-lg font-bold text-foreground mt-4 mb-2 tracking-tight font-sans">
+        <h5 key={`h5-${i}`} className="text-lg font-bold text-foreground mt-4 mb-2 tracking-tight font-ui">
           {parseInlineStyles(trimmedLine.substring(4))}
         </h5>
       );
@@ -235,7 +235,7 @@ function renderFormattedContent(text: string) {
     if (trimmedLine.startsWith('> ')) {
       flushList(String(i));
       renderedBlocks.push(
-        <blockquote key={`quote-${i}`} className="pl-4 py-2.5 border-l-4 border-[#2b9348] bg-[#f5f9f4]/60 rounded-r-xl my-4 text-slate-700 italic font-sans leading-relaxed">
+        <blockquote key={`quote-${i}`} className="pl-4 py-2.5 border-l-4 border-black bg-gray-50 rounded-none my-4 text-black italic font-ui leading-relaxed">
           {parseInlineStyles(trimmedLine.substring(2))}
         </blockquote>
       );
@@ -285,7 +285,7 @@ function renderFormattedContent(text: string) {
     // Обычный абзац текста
     flushList(String(i));
     renderedBlocks.push(
-      <p key={`p-${i}`} className="my-3.5 leading-relaxed text-slate-700 font-sans">
+      <p key={`p-${i}`} className="my-3.5 leading-relaxed text-black font-ui">
         {parseInlineStyles(rawLine)}
       </p>
     );
@@ -341,7 +341,7 @@ export function LessonViewer({
   return (
     <main
       ref={scrollContainerRef}
-      className={cn("flex-1 overflow-y-auto bg-background", isPremium && "premium-lesson-viewer")}
+      className={cn("flex-1 overflow-y-auto bg-white", "")}
     >
       <div className={cn("max-w-4xl mx-auto p-4 sm:p-6 lg:p-8", isPremium && "lg:py-12")}>
         {/* Header */}
@@ -366,7 +366,7 @@ export function LessonViewer({
         {/* Video Player (Отображается только если видео задано) */}
         {hasVideo && (
           <div className={cn(
-            "aspect-video bg-black rounded-2xl mb-6 sm:mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5",
+            "aspect-video bg-black rounded-none mb-6 sm:mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5",
             isPremium && "premium-video-frame rounded-3xl"
           )}>
             {isDirectVideo ? (
@@ -393,9 +393,9 @@ export function LessonViewer({
         {/* Content */}
         {textContent && (
           <div className="lesson-content-section space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <h2 className="text-xl font-semibold text-foreground font-sans">Материалы урока</h2>
+            <h2 className="text-xl font-semibold text-foreground font-ui">Материалы урока</h2>
             <div className={cn(
-              "lesson-reading-content p-4 sm:p-6 bg-card/45 rounded-2xl border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base",
+              "lesson-reading-content p-4 sm:p-6 bg-card/45 rounded-none border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base",
               isPremium && "premium-lesson-content sm:p-8 rounded-3xl"
             )}>
               {renderFormattedContent(textContent)}
@@ -408,7 +408,7 @@ export function LessonViewer({
           <Button
             variant={isCompleted ? "secondary" : "default"}
             onClick={onComplete}
-            className="gap-2 cursor-pointer rounded-xl h-11 px-5 w-full sm:w-auto justify-center"
+            className="gap-2 cursor-pointer rounded-none h-11 px-5 w-full sm:w-auto justify-center"
           >
             {isCompleted ? (
               <>
@@ -427,7 +427,7 @@ export function LessonViewer({
             <Button 
               variant="outline" 
               onClick={onNext} 
-              className="gap-2 cursor-pointer rounded-xl h-11 px-5 hover:bg-secondary/40 w-full sm:w-auto justify-center"
+              className="gap-2 cursor-pointer rounded-none h-11 px-5 hover:bg-secondary/40 w-full sm:w-auto justify-center"
             >
               Следующий урок
               <ChevronRight className="w-4 h-4" />
