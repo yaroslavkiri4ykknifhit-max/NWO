@@ -1,30 +1,34 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  --background: oklch(0.985 0.002 240);
-  --foreground: oklch(0.2 0.01 240);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.01 240);
+  --font-ui: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", Times, serif;
+  
+  /* Light theme by default (NYT style) */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.12 0.01 240);
+  
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.12 0.01 240);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.01 240);
-  --primary: oklch(0.2 0.01 240);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.005 240);
+  --popover-foreground: oklch(0.12 0.01 240);
+  --primary: oklch(0.12 0.01 240);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.94 0.01 240);
   --secondary-foreground: oklch(0.2 0.01 240);
-  --muted: oklch(0.95 0.005 240);
-  --muted-foreground: oklch(0.55 0.01 240);
-  --accent: oklch(0.65 0.15 145);
-  --accent-foreground: oklch(1 0 0);
+  --muted: oklch(0.96 0.01 240);
+  --muted-foreground: oklch(0.45 0.01 240);
+  --accent: oklch(0.96 0.01 240);
+  --accent-foreground: oklch(0.12 0.01 240);
   --destructive: oklch(0.55 0.2 25);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.92 0.005 240);
-  --input: oklch(0.95 0.005 240);
-  --ring: oklch(0.65 0.15 145);
+  --border: oklch(0.90 0.01 240);
+  --input: oklch(0.90 0.01 240);
+  --ring: oklch(0.12 0.01 240);
   --chart-1: oklch(0.65 0.15 145);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
