@@ -3,21 +3,42 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://newwayout.online'),
-  title: 'NWO - научись продавать и влиять на свой доход',
-  description: 'Научись продавать себя, продукты, услуги и идеи. Бесплатная база NWO и полная система продаж NWO BLACK.',
+  title: {
+    default: 'НВО обучение продажам | Курсы и менторство от NWO',
+    template: '%s | NWO (New Way Out)'
+  },
+  description: 'НВО (New Way Out) — мощное обучение продажам с нуля. Научись продавать себя, продукты и услуги. Бесплатная база, NWO BLACK и личное менторство до результата.',
+  keywords: ['НВО обучение продажам', 'НВО', 'NWO', 'New Way Out', 'new Out', 'курсы по продажам', 'обучение продажам', 'как стать менеджером по продажам', 'менторство продажи', 'NWO BLACK', 'продажи B2B', 'заработок на продажах'],
+  authors: [{ name: 'NWO' }],
+  creator: 'NWO',
+  publisher: 'NWO',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
-    title: 'NWO - научись продавать и влиять на свой доход',
-    description: 'Неважно, с какой точки ты начинаешь. Освой навык, который помогает находить клиентов, показывать ценность и договариваться о деньгах.',
+    title: 'НВО обучение продажам | Курсы и менторство от NWO',
+    description: 'Освой навык, который поможет находить клиентов, показывать ценность и договариваться о деньгах. НВО (New Way Out) — твоя система продаж.',
     url: 'https://newwayout.online',
-    siteName: 'NWO',
+    siteName: 'NWO (New Way Out)',
     locale: 'ru_RU',
     type: 'website',
     images: [{ url: '/og.png', width: 1200, height: 630, alt: 'NWO - система обучения продажам' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NWO - научись продавать и влиять на свой доход',
-    description: 'Научись продавать себя, продукты, услуги и идеи с системой NWO.',
+    title: 'НВО обучение продажам | NWO',
+    description: 'Научись продавать себя, продукты и услуги с системой NWO.',
     images: ['/og.png'],
   },
   icons: {
@@ -36,6 +57,71 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "EducationalOrganization",
+        "@id": "https://newwayout.online/#organization",
+        "name": "NWO (New Way Out) - НВО обучение продажам",
+        "url": "https://newwayout.online",
+        "logo": "https://newwayout.online/icon.svg",
+        "description": "Курс и менторство по продажам от NWO (НВО). Научись продавать себя, продукты, услуги и идеи.",
+        "sameAs": [
+          "https://t.me/yaroslav_kiri4yk"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://newwayout.online/#website",
+        "url": "https://newwayout.online",
+        "name": "NWO (New Way Out)",
+        "description": "НВО обучение продажам. Бесплатные курсы, NWO BLACK и менторство.",
+        "publisher": {
+          "@id": "https://newwayout.online/#organization"
+        },
+        "inLanguage": "ru-RU"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Что такое НВО (NWO)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "НВО (New Way Out) — это практическая система обучения продажам. Мы учим доносить ценность, работать с возражениями и экологично закрывать сделки, чтобы вы могли уверенно продавать свои услуги, продукты или идеи на высокие чеки."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Кому подойдет этот курс по продажам?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Обучение продажам NWO идеально подходит новичкам, фрилансерам, предпринимателям и всем, кто хочет стать высокооплачиваемым менеджером по продажам. Навыки применимы как в B2B, так и в B2C."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Как стать менеджером по продажам с нуля?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "В рамках нашего Менторства мы проводим обучение с абсолютного нуля, ставим навык на реальных звонках и гарантируем трудоустройство с выходом на доход от 700$ + процент от сделок."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Чем NWO BLACK отличается от бесплатной базы?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "NWO FREE даёт фундамент и понимание психологии клиента. NWO BLACK — это полная закрытая система, где разбираются конкретные скрипты, сложные переговоры, ответы на «дорого» и доведение до оплаты."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <html lang="ru" className="bg-background">
       <head>
@@ -43,6 +129,10 @@ export default function RootLayout({
         <meta
           httpEquiv="Content-Security-Policy"
           content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' blob: https:; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.googleusercontent.com; frame-src https://oauth.telegram.org https://telegram.org https://www.youtube.com https://youtube.com https://player.vimeo.com https://rutube.ru https://drive.google.com; upgrade-insecure-requests"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="font-sans antialiased bg-background text-foreground">
