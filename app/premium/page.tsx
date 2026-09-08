@@ -89,9 +89,9 @@ export default function PremiumPage() {
 
   if (accessState === "checking") {
     return (
-      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 text-[#b8ff3d] animate-spin" />
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/40">Проверяем NWO BLACK...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 text-black animate-spin" />
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-500">Проверяем NWO BLACK...</p>
       </div>
     )
   }
@@ -106,7 +106,7 @@ export default function PremiumPage() {
       : telegramUser?.first_name || "пользователь"
 
     return (
-      <main className="premium-surface premium-paywall min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+      <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
         <div className="premium-grid absolute inset-0 opacity-40" />
         <section className="premium-paywall-card relative z-10 w-full max-w-lg rounded-[32px] border p-8 sm:p-10 text-center shadow-2xl">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-[#b8ff3d] text-black shadow-[0_0_45px_rgba(184,255,61,0.24)] rotate-[-3deg]">
@@ -150,16 +150,16 @@ export default function PremiumPage() {
 
   if (loading) {
     return (
-      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 text-[#b8ff3d] animate-spin" />
-        <p className="text-white/40 text-sm font-semibold uppercase tracking-[0.16em]">Загрузка NWO BLACK...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 text-black animate-spin" />
+        <p className="text-gray-500 text-sm font-semibold uppercase tracking-[0.16em]">Загрузка NWO BLACK...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
         <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-2xl">⚠️</div>
         <h2 className="premium-display text-2xl font-black uppercase text-white">Не удалось открыть NWO BLACK</h2>
         <p className="max-w-md text-sm text-white/45">{error}</p>
@@ -180,8 +180,8 @@ export default function PremiumPage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="premium-surface min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
-        <div className="w-20 h-20 rounded-3xl bg-[#b8ff3d]/10 border border-[#b8ff3d]/20 flex items-center justify-center text-[#b8ff3d]">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
+        <div className="w-20 h-20 rounded-3xl bg-[#b8ff3d]/10 border border-[#b8ff3d]/20 flex items-center justify-center text-black">
           <Crown className="w-9 h-9" />
         </div>
         <h2 className="premium-display text-3xl font-black uppercase text-white">NWO BLACK подключён</h2>
@@ -240,7 +240,7 @@ export default function PremiumPage() {
   }
 
   return (
-    <div className="premium-surface h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden">
       <CourseHeader
         courseName={courseData.name}
         onLogout={handleLogout}
