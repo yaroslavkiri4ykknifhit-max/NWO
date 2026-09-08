@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://newwayout.online"),
-  title: "Платное обучение | NWO",
-  description: "NWO BLACK - закрытая премиальная система обучения продажам.",
+  title: "Платное обучение продажам NWO BLACK | НВО",
+  description: "NWO BLACK — закрытая премиальная система обучения продажам (НВО). Полный курс, как научиться продавать себя и продукты, договариваться и уверенно называть цену.",
   openGraph: {
-    title: "NWO BLACK · Premium Sales System",
-    description: "Закрытая премиальная система обучения продажам.",
+    title: "Платное обучение продажам NWO BLACK | НВО",
+    description: "Закрытая премиальная система обучения продажам от NWO (New Way Out).",
     url: "/premium/",
     siteName: "NWO BLACK",
     type: "website",
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NWO BLACK · Premium Sales System",
-    description: "Закрытая премиальная система обучения продажам.",
+    title: "Платное обучение продажам NWO BLACK | НВО",
+    description: "Закрытая премиальная система обучения продажам от NWO.",
     images: ["/premium-og.png"],
   },
 }

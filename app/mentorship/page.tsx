@@ -1,4 +1,11 @@
 import { ArrowRight, ArrowLeft, Target, Briefcase, Flame, CheckCircle2 } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: 'Менторство по продажам | НВО (New Way Out)',
+  description: 'Менторство по продажам от NWO (НВО). Обучение с нуля до устройства менеджером по продажам с доходом от 700$ + процент. Личная работа, практика и гарантия результата.',
+  keywords: ['менторство по продажам', 'НВО обучение продажам', 'курсы по продажам с трудоустройством', 'как стать менеджером по продажам', 'NWO', 'НВО', 'New Way Out'],
+}
 
 export default function MentorshipPage() {
   return (

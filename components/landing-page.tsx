@@ -38,10 +38,10 @@ export function LandingPage() {
         aria-label="Заставка NWO"
       >
         <div className="nwo-intro-offer">
-          <p className="landing-eyebrow">Твой доход начинается с умения продавать</p>
-          <h1>Научись продавать - и перестань зависеть от обстоятельств.</h1>
+          <p className="landing-eyebrow">Обучение продажам с нуля до стабильного результата</p>
+          <h1>НВО: Научись продавать - и перестань зависеть от обстоятельств.</h1>
           <p className="nwo-intro-description">
-            Неважно, сколько у тебя денег сейчас и откуда они. Когда ты умеешь продавать,
+            Обучение продажам от NWO (New Way Out). Неважно, сколько у тебя денег сейчас и откуда они. Когда ты умеешь продавать,
             ты можешь находить клиентов, дороже оценивать себя, запускать свои идеи и сам
             влиять на то, сколько зарабатываешь.
           </p>
@@ -202,6 +202,28 @@ export function LandingPage() {
         </div>
       </section>
 
+      <section className="landing-faq" style={{ padding: '6rem 1.5rem', maxWidth: '52rem', margin: '0 auto', color: 'rgba(255,255,255,0.8)' }}>
+        <h2 className="text-3xl font-black uppercase mb-8 text-white">Частые вопросы (FAQ)</h2>
+        <div className="space-y-6">
+          <article>
+            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Что такое НВО (NWO)?</h3>
+            <p className="leading-relaxed">НВО (New Way Out) — это практическая система обучения продажам. Мы учим доносить ценность, работать с возражениями и экологично закрывать сделки, чтобы вы могли уверенно продавать свои услуги, продукты или идеи на высокие чеки.</p>
+          </article>
+          <article>
+            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Кому подойдет этот курс по продажам?</h3>
+            <p className="leading-relaxed">Обучение продажам NWO идеально подходит новичкам, фрилансерам, предпринимателям и всем, кто хочет стать высокооплачиваемым менеджером по продажам. Навыки применимы как в B2B, так и в B2C.</p>
+          </article>
+          <article>
+            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Как стать менеджером по продажам с нуля?</h3>
+            <p className="leading-relaxed">В рамках нашего Менторства мы проводим обучение с абсолютного нуля, ставим навык на реальных звонках и гарантируем трудоустройство с выходом на доход от 700$ + процент от сделок.</p>
+          </article>
+          <article>
+            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Чем NWO BLACK отличается от бесплатной базы?</h3>
+            <p className="leading-relaxed">NWO FREE даёт фундамент и понимание психологии клиента. NWO BLACK — это полная закрытая система, где разбираются конкретные скрипты, сложные переговоры, ответы на «дорого» и доведение до оплаты.</p>
+          </article>
+        </div>
+      </section>
+
       <section className="landing-final">
         <div className="landing-final-mark">NWO</div>
         <p className="landing-eyebrow">Твоя стартовая точка не решает твоё будущее</p>
@@ -222,7 +244,7 @@ export function LandingPage() {
 
       <footer className="landing-footer">
         <span>NWO © {new Date().getFullYear()}</span>
-        <span>Система обучения продажам</span>
+        <span>НВО (New Way Out) — профессиональное обучение продажам</span>
       </footer>
     </main>
   )

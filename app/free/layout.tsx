@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Бесплатный курс | NWO",
-  description: "Бесплатная база по продажам без регистрации, кодов доступа и Telegram.",
+  title: "Бесплатное обучение продажам | NWO (НВО)",
+  description: "Бесплатная база по продажам от NWO (НВО). Узнай основы, пойми, как человек принимает решение о покупке, и научись уверенно продавать.",
 }
 
 export default function FreeCourseLayout({ children }: Readonly<{ children: React.ReactNode }>) {
