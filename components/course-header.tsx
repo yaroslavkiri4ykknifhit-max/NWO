@@ -38,7 +38,7 @@ const Path = (props: PathProps) => (
 const MenuToggle = ({ toggle, isOpen }: { toggle: () => void; isOpen: boolean }) => (
   <button
     onClick={toggle}
-    className="p-2.5 hover:bg-secondary/50 rounded-xl text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+    className="p-2.5 hover:bg-gray-100/50 rounded-xl text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0 flex items-center justify-center"
     aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
   >
     <motion.svg 
@@ -112,7 +112,7 @@ export function CourseHeader({
         {backHref && (
           <a
             href={backHref}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border/40 bg-secondary/30 p-2 sm:px-3 sm:py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border/40 bg-gray-100/30 p-2 sm:px-3 sm:py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-gray-100/60 hover:text-foreground"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{backLabel}</span>
@@ -131,7 +131,7 @@ export function CourseHeader({
         {showUser && (
           <div className={isPremium
             ? "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.035] border border-white/10"
-            : "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-secondary/35 border border-border/30"
+            : "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-gray-100/35 border border-border/30"
           }>
             {telegramUser?.photo_url ? (
               <img
@@ -148,7 +148,7 @@ export function CourseHeader({
             ) : null}
 
             <User
-              className="w-4 h-4 text-accent"
+              className="w-4 h-4 text-black"
               style={{ display: telegramUser?.photo_url ? 'none' : 'block' }}
             />
 
