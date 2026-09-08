@@ -164,21 +164,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
   }
 
   return (
-    <div className={isPremium
-      ? "premium-access min-h-screen flex items-center justify-center p-4 sm:p-6 transition-all duration-300"
-      : "min-h-screen flex items-center justify-center bg-radial from-slate-50 via-slate-100 to-slate-200/50 p-4 sm:p-6 transition-all duration-300"
-    }>
-      <div className={isPremium
-        ? "premium-login-card w-full max-w-[480px] border rounded-[32px] p-8 sm:p-10 shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col"
-        : "w-full max-w-[440px] bg-white border border-slate-100/80 rounded-[32px] p-8 sm:p-10 shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col"
-      }>
-        {isPremium && (
-          <>
-            <div className="premium-login-orb premium-login-orb-one" />
-            <div className="premium-login-orb premium-login-orb-two" />
-            <div className="premium-grid absolute inset-0 pointer-events-none opacity-40" />
-          </>
-        )}
+    <div className="min-h-screen flex items-center justify-center bg-white p-4 transition-all duration-300"><div className="w-full max-w-md bg-white border border-gray-200 p-8 shadow-xl">
+        
         
         {view === "initial" ? (
           <div className="animate-in fade-in zoom-in-95 duration-300">
@@ -192,12 +179,12 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <div className="absolute w-24 h-24 rounded-full border border-blue-300/30" />
               
               {/* White 3D lock container */}
-              <div className="relative bg-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg border border-slate-100/80">
+              <div className="relative bg-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg border border-gray-200">
                 <Lock className="w-8 h-8 text-blue-500 fill-blue-500/10" />
               </div>
 
               {/* Blue shield checkmark overlay */}
-              <div className="absolute top-7 right-7 bg-blue-500 text-white rounded-full p-0.5 shadow-md flex items-center justify-center w-5 h-5 border-2 border-white">
+              <div className="absolute top-7 right-7 bg-blue-500 text-black rounded-full p-0.5 shadow-md flex items-center justify-center w-5 h-5 border-2 border-white">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
@@ -211,11 +198,11 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                   NWO BLACK · MEMBERS ONLY
                 </div>
               )}
-              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 font-sans leading-none">
-                {isPremium ? "Вход в высшую лигу" : "Закрытый доступ"}
+              <h1 className="text-3xl font-extrabold text-black tracking-tight mb-2 font-sans leading-none">
+                {""}
               </h1>
-              <p className="text-slate-500 text-sm font-medium">
-                {isPremium ? "Платная программа, которой нет в открытом доступе" : "Безопасный вход через Telegram"}
+              <p className="text-gray-500 text-sm font-medium">
+                {""}
               </p>
             </div>
 
@@ -224,10 +211,10 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs sm:text-sm font-semibold text-blue-900 leading-tight">
-                  {isPremium ? "Ваш доступ персональный и защищённый" : "Ваш аккаунт и данные надежно защищены"}
+                  {""}
                 </p>
                 <p className="text-[11px] sm:text-xs text-blue-700/80 mt-1 leading-snug">
-                  {isPremium ? "Внутри - расширенная система продаж NWO BLACK" : "Доступ предоставляется только участникам сообщества NWO"}
+                  {""}
                 </p>
               </div>
             </div>
@@ -286,17 +273,17 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <div className="absolute w-32 h-32 rounded-full border border-accent/15" />
               <div className="absolute w-24 h-24 rounded-full border border-accent/20" />
               
-              <div className="relative bg-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg border border-slate-100/80">
+              <div className="relative bg-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg border border-gray-200">
                 <ShieldCheck className="w-8 h-8 text-accent fill-accent/10" />
               </div>
             </div>
 
             {/* Header Title */}
             <div className="text-center mb-6">
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2 font-sans leading-none">
-                {isPremium ? "Активация NWO BLACK" : "Активация доступа"}
+              <h2 className="text-3xl font-extrabold text-black tracking-tight mb-2 font-sans leading-none">
+                {""}
               </h2>
-              <p className="text-slate-500 text-sm font-medium">
+              <p className="text-gray-500 text-sm font-medium">
                 Введите инвайт-код для завершения входа
               </p>
             </div>
