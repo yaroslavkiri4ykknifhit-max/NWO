@@ -1,250 +1,195 @@
 "use client"
 
-import { ArrowRight, Check, LockKeyhole } from "lucide-react"
-import ScrollExpand from "@/components/scroll-expand"
-
-function LandingStaticBackground() {
-  return (
-    <div className="landing-static-background" aria-hidden="true">
-      <div className="landing-static-grid" />
-      <div className="landing-static-ring landing-static-ring-one" />
-      <div className="landing-static-ring landing-static-ring-two" />
-      <div className="landing-static-word">NWO</div>
-      <div className="landing-static-accent" />
-    </div>
-  )
-}
+import Link from 'next/link'
+import { ArrowRight, LockKeyhole, FileText, ChevronRight, PlayCircle } from "lucide-react"
 
 export function LandingPage() {
   return (
-    <main className="landing-shell">
-      <LandingStaticBackground />
-
-      <ScrollExpand
-        mediaType="custom"
-        title="NWO"
-        scrollHint="Листай, чтобы войти"
-        startWidth={44}
-        startHeight={46}
-        startRadius={28}
-        endRadius={0}
-        mediaZoom={1.42}
-        scrollDistance={0.78}
-        holdDistance={0.52}
-        smoothing={0.075}
-        overlayScrim={0.42}
-        useWindowScroll
-        className="nwo-scroll-intro"
-        aria-label="Заставка NWO"
-      >
-        <div className="nwo-intro-offer">
-          <p className="landing-eyebrow">Обучение продажам с нуля до стабильного результата</p>
-          <h1>НВО: Научись продавать - и перестань зависеть от обстоятельств.</h1>
-          <p className="nwo-intro-description">
-            Обучение продажам от NWO (New Way Out). Неважно, сколько у тебя денег сейчас и откуда они. Когда ты умеешь продавать,
-            ты можешь находить клиентов, дороже оценивать себя, запускать свои идеи и сам
-            влиять на то, сколько зарабатываешь.
-          </p>
-          <div className="landing-hero-actions">
-            <a href="/premium/" className="landing-button landing-button-premium">
-              Забрать полный навык <LockKeyhole size={16} />
-            </a>
-            <a href="/free/" className="landing-button landing-button-ghost">
-              Начать бесплатно <ArrowRight size={18} />
-            </a>
+    <main className="min-h-screen bg-white text-[#121212] font-ui selection:bg-black selection:text-white">
+      {/* Header */}
+      <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="font-display font-bold text-2xl tracking-tight">NWO</div>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
+            <Link href="#about" className="hover:text-black transition-colors">Обо мне</Link>
+            <Link href="#programs" className="hover:text-black transition-colors">Программы</Link>
+            <Link href="/blog" className="hover:text-black transition-colors">Журнал</Link>
+            <Link href="#faq" className="hover:text-black transition-colors">FAQ</Link>
+          </nav>
+          <div className="flex items-center gap-4">
+            <Link href="/free" className="text-sm font-bold text-gray-900 hover:text-gray-600 hidden sm:block">Войти</Link>
+            <Link href="/premium" className="text-sm font-bold bg-black text-white px-5 py-2 rounded hover:bg-gray-800 transition-colors">
+              NWO BLACK
+            </Link>
           </div>
-          <p className="nwo-intro-note">
-            Один навык для работы, бизнеса, переговоров и жизни.
-          </p>
         </div>
-      </ScrollExpand>
-
-      <header className="landing-header">
-        <a href="/" className="landing-logo" aria-label="NWO - главная">
-          NWO<span>.</span>
-        </a>
-        <nav aria-label="Основная навигация">
-          <a href="#program">Что внутри</a>
-          <a href="/free/">Бесплатный курс</a>
-          <a href="/premium/" className="landing-nav-black">
-            NWO BLACK
-          </a>
-        </nav>
       </header>
 
-      <section className="landing-statement">
-        <div className="landing-statement-inner">
-          <span className="landing-statement-number">02</span>
-          <p className="landing-eyebrow">Почему одни растут быстрее других</p>
-          <h2>Деньги приходят к тому, кто умеет показать свою ценность.</h2>
-          <p className="landing-statement-lead">
-            Можно быть умным, талантливым и много работать. Но если ты не умеешь объяснить,
-            почему человеку нужен именно твой продукт, услуга или идея, - деньги проходят мимо.
-          </p>
-
-          <div className="landing-problem-grid">
-            <article>
-              <span>01</span>
-              <h3>Ты стоишь дороже, чем получаешь</h3>
-              <p>У тебя есть способности, но ты не умеешь превратить их в понятное предложение и доход.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3>Ты боишься сделать предложение</h3>
-              <p>Думаешь, что покажешься навязчивым, и ждёшь, пока человек сам захочет купить.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3>Ты теряешься после слова «дорого»</h3>
-              <p>Не знаешь, что ответить, начинаешь оправдываться или сразу снижаешь цену.</p>
-            </article>
+      {/* Hero Section */}
+      <section className="border-b border-gray-200" id="about">
+        <div className="max-w-6xl mx-auto px-6 py-20 md:py-32 grid md:grid-cols-12 gap-12 items-center">
+          <div className="md:col-span-7">
+            <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.05] tracking-tight mb-6">
+              Научись продавать. Перестань зависеть от обстоятельств.
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 leading-relaxed font-display mb-8 max-w-2xl">
+              Я — Ярослав Киричук. В 17 лет я заработал $11,000 на продажах с нуля. 
+              Сейчас я учу людей находить клиентов, доносить ценность и уверенно называть высокие чеки.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="#programs" className="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 text-sm font-bold tracking-widest uppercase hover:bg-gray-800 transition-colors">
+                Выбрать программу <ArrowRight size={16} />
+              </Link>
+              <Link href="/blog" className="inline-flex items-center justify-center gap-2 border border-gray-300 px-8 py-4 text-sm font-bold tracking-widest uppercase hover:border-gray-900 transition-colors">
+                Читать журнал <FileText size={16} />
+              </Link>
+            </div>
           </div>
-
-          <p className="landing-statement-bottom">
-            NWO учит не уговаривать. Он учит понимать людей, уверенно говорить о деньгах
-            и вести разговор к решению.
-          </p>
-        </div>
-      </section>
-
-      <section id="program" className="landing-paths">
-        <div className="landing-paths-heading">
-          <p className="landing-eyebrow">Начни с того уровня, на котором ты сейчас</p>
-          <h2>Попробуй бесплатно.<br />Собери полный навык в BLACK.</h2>
-          <p>
-            Бесплатный курс даст понятную базу. NWO BLACK проведёт тебя через весь разговор:
-            от первого контакта до момента, когда человек говорит «да» и оплачивает.
-          </p>
-        </div>
-
-        <div className="landing-path-grid">
-          <article className="landing-path landing-path-free">
-            <div>
-              <span className="landing-path-label">Старт без регистрации</span>
-              <h3>NWO FREE</h3>
-              <p>Пойми, как устроена продажа, и сразу забери приёмы, которые можно применить сегодня.</p>
+          <div className="md:col-span-5 relative">
+            <div className="aspect-[3/4] bg-gray-100 p-8 border border-gray-200 flex flex-col justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Основатель</p>
+                <h3 className="font-display text-2xl font-bold">Ярослав Киричук</h3>
+              </div>
+              <div>
+                <p className="text-gray-600 font-display italic leading-relaxed mb-4">
+                  «Продажи — это не впаривание. Это умение понять проблему человека и показать ему решение. 
+                  Когда ты освоишь этот навык, деньги станут лишь математикой.»
+                </p>
+                <div className="w-12 h-1 bg-black"></div>
+              </div>
             </div>
-            <ul>
-              <li><Check size={17} /> Как человек принимает решение о покупке</li>
-              <li><Check size={17} /> Что говорить, чтобы тебя слушали</li>
-              <li><Check size={17} /> Уроки без регистрации и кодов</li>
-            </ul>
-            <a href="/free/" className="landing-path-action">
-              Начать бесплатно <ArrowRight size={18} />
-            </a>
-          </article>
+          </div>
+        </div>
+      </section>
 
-          <article className="landing-path landing-path-black">
-            <div className="landing-black-glow" />
-            <div>
-              <span className="landing-path-label"><LockKeyhole size={13} /> Полный платный доступ</span>
-              <h3>NWO <em>BLACK</em></h3>
-              <p>Полная система для тех, кто хочет уверенно продавать себя, услуги, товары и идеи.</p>
+      {/* Latest News / Blog Preview */}
+      <section className="border-b border-gray-200 bg-gray-50 py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-end justify-between mb-12 border-b border-gray-300 pb-4">
+            <h2 className="text-3xl font-display font-bold">Журнал NWO</h2>
+            <Link href="/blog" className="text-sm font-bold uppercase tracking-widest hover:text-gray-600 flex items-center gap-1">
+              Все статьи <ChevronRight size={16} />
+            </Link>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Article 1 */}
+            <Link href="/blog/why-managers-burn-out" className="group block">
+              <div className="aspect-[16/9] bg-gray-200 mb-4 border border-gray-300"></div>
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Мышление</p>
+              <h3 className="text-2xl font-display font-bold leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4">
+                Почему 90% менеджеров по продажам выгорают за год
+              </h3>
+              <p className="text-gray-600 line-clamp-2">И как правильная структура диалога помогает закрывать сделки, не теряя себя.</p>
+            </Link>
+            
+            {/* Article 2 */}
+            <Link href="/blog/how-i-made-11k" className="group block">
+              <div className="aspect-[16/9] bg-gray-200 mb-4 border border-gray-300"></div>
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Кейс</p>
+              <h3 className="text-2xl font-display font-bold leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4">
+                Как я заработал $11,000 в 17 лет на продажах
+              </h3>
+              <p className="text-gray-600 line-clamp-2">Никакой магии и успешного успеха. Только дисциплина, скрипты и понимание ценности.</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Programs Grid */}
+      <section id="programs" className="border-b border-gray-200 py-20 md:py-32">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-16">Система Обучения</h2>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Free */}
+            <div className="border border-gray-200 p-8 flex flex-col justify-between hover:shadow-lg transition-shadow">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">База</p>
+                <h3 className="text-2xl font-display font-bold mb-4">NWO FREE</h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  Бесплатная база по продажам. Изучи основы, пойми, как принимаются решения о покупке.
+                </p>
+              </div>
+              <Link href="/free" className="block text-center border border-black py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-50">
+                Начать бесплатно
+              </Link>
             </div>
-            <ul>
-              <li><Check size={17} /> Как быстро понять, чего хочет человек</li>
-              <li><Check size={17} /> Как показать ценность и спокойно назвать цену</li>
-              <li><Check size={17} /> Что отвечать на «дорого», «подумаю» и «не сейчас»</li>
-              <li><Check size={17} /> Как довести разговор до оплаты без давления</li>
-            </ul>
-            <a href="/premium/" className="landing-path-action">
-              Получить полный доступ <ArrowRight size={18} />
-            </a>
-          </article>
 
-          <article className="landing-path landing-path-mentor">
-            <div className="landing-mentor-glow" />
-            <div>
-              <span className="landing-path-label">Обучение с нуля + трудоустройство</span>
-              <h3>Менторство</h3>
-              <p>Работаем лично: от базы до стабильного дохода от 700$ + процент.</p>
+            {/* Black */}
+            <div className="border border-black bg-black text-white p-8 flex flex-col justify-between shadow-2xl scale-[1.02] transform">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Премиум</p>
+                <h3 className="text-2xl font-display font-bold mb-4">NWO BLACK</h3>
+                <p className="text-gray-300 mb-8 leading-relaxed">
+                  Закрытая премиальная система. Скрипты, отработка "дорого", сложные переговоры и выход на высокий чек.
+                </p>
+              </div>
+              <Link href="/premium" className="flex items-center justify-center gap-2 bg-white text-black py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-100">
+                Получить доступ <LockKeyhole size={14} />
+              </Link>
             </div>
-            <ul>
-              <li><Check size={17} /> Практика на реальных разговорах</li>
-              <li><Check size={17} /> Месяц плотной работы со мной</li>
-              <li><Check size={17} /> Гарантия трудоустройства</li>
-              <li><Check size={17} /> Твоя цена: 170$</li>
-            </ul>
-            <a href="/mentorship/" className="landing-path-action" style={{ backgroundColor: "#000", color: "#fff", borderColor: "rgba(255,255,255,0.1)" }}>
-              Посмотреть, что входит <ArrowRight size={18} />
-            </a>
+
+            {/* Mentorship */}
+            <div className="border border-gray-200 p-8 flex flex-col justify-between hover:shadow-lg transition-shadow bg-gray-50">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Индивидуально</p>
+                <h3 className="text-2xl font-display font-bold mb-4">МЕНТОРСТВО</h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  Месяц личной работы. С нуля до гарантированного трудоустройства с доходом от $700 + %.
+                </p>
+              </div>
+              <Link href="/mentorship" className="block text-center border border-black py-3 text-sm font-bold uppercase tracking-widest bg-black text-white hover:bg-gray-800">
+                Забронировать место
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <section className="py-20 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-display font-bold mb-12">Результаты учеников</h2>
+          <div className="grid sm:grid-cols-2 gap-8 text-left">
+            <blockquote className="p-6 bg-gray-50 border border-gray-200">
+              <p className="font-display text-lg italic text-gray-700 mb-4">«До NWO я панически боялся называть цену. Сейчас закрываю 4 из 5 заявок на высокий чек без скидок. Скрипты реально работают.»</p>
+              <cite className="not-italic text-sm font-bold text-gray-900">— Александр, Фрилансер</cite>
+            </blockquote>
+            <blockquote className="p-6 bg-gray-50 border border-gray-200">
+              <p className="font-display text-lg italic text-gray-700 mb-4">«Менторство окупилось в первый месяц работы. Ушел с нелюбимой работы, устроился менеджером B2B. Теперь стабильно делаю $1500+.»</p>
+              <cite className="not-italic text-sm font-bold text-gray-900">— Максим, Sales Manager</cite>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-20 md:py-32 max-w-3xl mx-auto px-6">
+        <h2 className="text-3xl font-display font-bold mb-8">Частые вопросы</h2>
+        <div className="space-y-8 divide-y divide-gray-200">
+          <article className="pt-8">
+            <h3 className="text-xl font-bold mb-3">Что такое НВО (NWO)?</h3>
+            <p className="text-gray-600 leading-relaxed">НВО (New Way Out) — это практическая система обучения продажам. Мы учим доносить ценность, работать с возражениями и экологично закрывать сделки, чтобы вы могли уверенно продавать свои услуги, продукты или идеи.</p>
+          </article>
+          <article className="pt-8">
+            <h3 className="text-xl font-bold mb-3">Как стать менеджером по продажам с нуля?</h3>
+            <p className="text-gray-600 leading-relaxed">В рамках нашего Менторства мы проводим обучение с абсолютного нуля, ставим навык на реальных звонках и гарантируем трудоустройство с выходом на стабильный доход.</p>
+          </article>
+          <article className="pt-8">
+            <h3 className="text-xl font-bold mb-3">Чем NWO BLACK отличается от бесплатной базы?</h3>
+            <p className="text-gray-600 leading-relaxed">NWO FREE даёт фундамент. NWO BLACK — это полная закрытая система, где разбираются конкретные скрипты, сложные переговоры, ответы на «дорого» и доведение до оплаты.</p>
           </article>
         </div>
       </section>
 
-      <section className="landing-outcomes">
-        <div className="landing-outcomes-heading">
-          <p className="landing-eyebrow">Твоя точка Б</p>
-          <h2>Ты умеешь превращать разговоры, идеи и возможности в деньги.</h2>
-          <p>
-            Ты заходишь в любой разговор спокойно. Быстро понимаешь человека, показываешь ему
-            ценность, уверенно называешь цену и знаешь, что сказать дальше. Ты больше не ждёшь,
-            пока кто-то даст тебе шанс, - ты умеешь создавать возможности сам.
-          </p>
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-gray-50 py-12">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 font-semibold">
+          <div className="font-display font-bold text-lg text-black">NWO</div>
+          <p>НВО (New Way Out) — профессиональное обучение продажам © {new Date().getFullYear()}</p>
         </div>
-
-        <div className="landing-outcomes-grid">
-          <article><span>01</span><h3>Умеешь продать себя</h3><p>На собеседовании, в переговорах, перед клиентом или партнёром.</p></article>
-          <article><span>02</span><h3>Умеешь продать продукт</h3><p>Свой или чужой: понятно объясняешь, зачем он нужен человеку.</p></article>
-          <article><span>03</span><h3>Уверенно говоришь о деньгах</h3><p>Не оправдываешь цену и не обесцениваешь себя первой же скидкой.</p></article>
-          <article><span>04</span><h3>Сам создаёшь возможности</h3><p>Можешь найти клиента, договориться и превратить навык или идею в доход.</p></article>
-        </div>
-
-        <div className="landing-honest-note">
-          <p>
-            <strong>NWO BLACK не обещает деньги за один вечер.</strong> Он даёт навык,
-            который останется с тобой при смене работы, ниши, продукта или страны.
-            Чем больше применяешь его в реальных разговорах, тем сильнее становишься.
-          </p>
-          <a href="/premium/" className="landing-button landing-button-premium">
-            Забрать NWO BLACK <ArrowRight size={18} />
-          </a>
-        </div>
-      </section>
-
-      <section className="landing-faq" style={{ padding: '6rem 1.5rem', maxWidth: '52rem', margin: '0 auto', color: 'rgba(255,255,255,0.8)' }}>
-        <h2 className="text-3xl font-black uppercase mb-8 text-white">Частые вопросы (FAQ)</h2>
-        <div className="space-y-6">
-          <article>
-            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Что такое НВО (NWO)?</h3>
-            <p className="leading-relaxed">НВО (New Way Out) — это практическая система обучения продажам. Мы учим доносить ценность, работать с возражениями и экологично закрывать сделки, чтобы вы могли уверенно продавать свои услуги, продукты или идеи на высокие чеки.</p>
-          </article>
-          <article>
-            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Кому подойдет этот курс по продажам?</h3>
-            <p className="leading-relaxed">Обучение продажам NWO идеально подходит новичкам, фрилансерам, предпринимателям и всем, кто хочет стать высокооплачиваемым менеджером по продажам. Навыки применимы как в B2B, так и в B2C.</p>
-          </article>
-          <article>
-            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Как стать менеджером по продажам с нуля?</h3>
-            <p className="leading-relaxed">В рамках нашего Менторства мы проводим обучение с абсолютного нуля, ставим навык на реальных звонках и гарантируем трудоустройство с выходом на доход от 700$ + процент от сделок.</p>
-          </article>
-          <article>
-            <h3 className="text-xl font-bold mb-2 text-[#c6ff3d]">Чем NWO BLACK отличается от бесплатной базы?</h3>
-            <p className="leading-relaxed">NWO FREE даёт фундамент и понимание психологии клиента. NWO BLACK — это полная закрытая система, где разбираются конкретные скрипты, сложные переговоры, ответы на «дорого» и доведение до оплаты.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="landing-final">
-        <div className="landing-final-mark">NWO</div>
-        <p className="landing-eyebrow">Твоя стартовая точка не решает твоё будущее</p>
-        <h2>Не жди идеального момента.<br />Научись создавать его сам.</h2>
-        <p className="landing-final-description">
-          Сегодня ты можешь не знать, с чего начать. После NWO ты знаешь, как найти возможность,
-          показать свою ценность, договориться о деньгах и довести разговор до результата.
-        </p>
-        <div className="landing-final-actions">
-          <a href="/premium/" className="landing-button landing-button-premium">
-            Получить полный навык <LockKeyhole size={16} />
-          </a>
-          <a href="/free/" className="landing-button landing-button-ghost">
-            Попробовать бесплатно <ArrowRight size={18} />
-          </a>
-        </div>
-      </section>
-
-      <footer className="landing-footer">
-        <span>NWO © {new Date().getFullYear()}</span>
-        <span>НВО (New Way Out) — профессиональное обучение продажам</span>
       </footer>
     </main>
   )
