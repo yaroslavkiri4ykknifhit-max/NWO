@@ -1,194 +1,187 @@
 "use client"
 
 import Link from 'next/link'
-import { ArrowRight, LockKeyhole, FileText, ChevronRight, PlayCircle } from "lucide-react"
+import { ArrowRight, PlayCircle, Star } from "lucide-react"
 
 export function LandingPage() {
+  const currentDate = new Date().toLocaleDateString('ru-RU', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  }).replace(/^\w/, c => c.toUpperCase());
+
   return (
-    <main className="min-h-screen bg-white text-[#121212] font-ui selection:bg-black selection:text-white">
-      {/* Header */}
-      <header className="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="font-display font-bold text-2xl tracking-tight">NWO</div>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-600">
-            <Link href="#about" className="hover:text-black transition-colors">Обо мне</Link>
-            <Link href="#programs" className="hover:text-black transition-colors">Программы</Link>
-            <Link href="/blog" className="hover:text-black transition-colors">Журнал</Link>
-            <Link href="#faq" className="hover:text-black transition-colors">FAQ</Link>
-          </nav>
-          <div className="flex items-center gap-4">
-            <Link href="/free" className="text-sm font-bold text-gray-900 hover:text-gray-600 hidden sm:block">Войти</Link>
-            <Link href="/premium" className="text-sm font-bold bg-black text-white px-5 py-2 rounded hover:bg-gray-800 transition-colors">
-              NWO BLACK
-            </Link>
+    <main className="min-h-screen bg-[#f7f7f5] text-[#121212] font-display selection:bg-black selection:text-white pb-20">
+      <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
+      `}} />
+      
+      {/* Top Header */}
+      <div className="border-b border-gray-300 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 py-1 flex items-center justify-between text-[11px] font-ui text-gray-600 uppercase tracking-wide">
+          <div className="flex-1">{currentDate}</div>
+          <div className="flex-1 text-center font-bold">ОБУЧЕНИЕ ПРОДАЖАМ</div>
+          <div className="flex-1 text-right"><Link href="/free" className="hover:text-black">Войти в кабинет</Link></div>
+        </div>
+      </div>
+
+      {/* Main Logo Header */}
+      <header className="bg-white border-b-4 border-double border-black">
+        <div className="max-w-[1200px] mx-auto px-4 py-8 flex flex-col items-center">
+          <Link href="/">
+            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif" }} className="text-6xl md:text-8xl tracking-tight text-center mb-4 leading-none font-normal">
+              New Way Out
+            </h1>
+          </Link>
+          <div className="flex items-center gap-2 text-sm font-display italic text-gray-700">
+            «Научись продавать. Перестань зависеть от обстоятельств.»
           </div>
         </div>
+        
+        {/* Navigation Bar */}
+        <nav className="border-t border-gray-300">
+          <ul className="max-w-[1200px] mx-auto px-4 py-3 flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-[13px] font-bold font-ui uppercase tracking-widest">
+            <li><Link href="#about" className="hover:underline decoration-2 underline-offset-4">Обо мне</Link></li>
+            <li><Link href="/free" className="hover:underline decoration-2 underline-offset-4">Free База</Link></li>
+            <li><Link href="/premium" className="text-red-700 hover:text-red-800 hover:underline decoration-2 underline-offset-4">NWO Black</Link></li>
+            <li><Link href="/mentorship" className="hover:underline decoration-2 underline-offset-4">Менторство</Link></li>
+            <li><Link href="/blog" className="hover:underline decoration-2 underline-offset-4">Журнал</Link></li>
+          </ul>
+        </nav>
       </header>
 
-      {/* Hero Section */}
-      <section className="border-b border-gray-200" id="about">
-        <div className="max-w-6xl mx-auto px-6 py-20 md:py-32 grid md:grid-cols-12 gap-12 items-center">
-          <div className="md:col-span-7">
-            <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.05] tracking-tight mb-6">
-              Научись продавать. Перестань зависеть от обстоятельств.
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 leading-relaxed font-display mb-8 max-w-2xl">
-              Я — Ярослав Киричук. В 17 лет я заработал $11,000 на продажах с нуля. 
-              Сейчас я учу людей находить клиентов, доносить ценность и уверенно называть высокие чеки.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="#programs" className="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 text-sm font-bold tracking-widest uppercase hover:bg-gray-800 transition-colors">
-                Выбрать программу <ArrowRight size={16} />
-              </Link>
-              <Link href="/blog" className="inline-flex items-center justify-center gap-2 border border-gray-300 px-8 py-4 text-sm font-bold tracking-widest uppercase hover:border-gray-900 transition-colors">
-                Читать журнал <FileText size={16} />
-              </Link>
-            </div>
-          </div>
-          <div className="md:col-span-5 relative">
-            <div className="aspect-[3/4] bg-gray-100 p-8 border border-gray-200 flex flex-col justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Основатель</p>
-                <h3 className="font-display text-2xl font-bold">Ярослав Киричук</h3>
-              </div>
-              <div>
-                <p className="text-gray-600 font-display italic leading-relaxed mb-4">
-                  «Продажи — это не впаривание. Это умение понять проблему человека и показать ему решение. 
-                  Когда ты освоишь этот навык, деньги станут лишь математикой.»
-                </p>
-                <div className="w-12 h-1 bg-black"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Latest News / Blog Preview */}
-      <section className="border-b border-gray-200 bg-gray-50 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-12 border-b border-gray-300 pb-4">
-            <h2 className="text-3xl font-display font-bold">Журнал NWO</h2>
-            <Link href="/blog" className="text-sm font-bold uppercase tracking-widest hover:text-gray-600 flex items-center gap-1">
-              Все статьи <ChevronRight size={16} />
-            </Link>
-          </div>
+      {/* Main Newspaper Grid */}
+      <div className="max-w-[1200px] mx-auto px-4 mt-6 bg-[#f7f7f5]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative">
           
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Article 1 */}
-            <Link href="/blog/why-managers-burn-out" className="group block">
-              <div className="aspect-[16/9] bg-gray-200 mb-4 border border-gray-300"></div>
-              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Мышление</p>
-              <h3 className="text-2xl font-display font-bold leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4">
-                Почему 90% менеджеров по продажам выгорают за год
+          {/* Left Column (Narrow) */}
+          <div className="lg:col-span-3 flex flex-col gap-6 lg:border-r border-gray-300 lg:pr-8">
+            <article className="border-b border-gray-300 pb-6">
+              <span className="block text-[11px] font-ui font-bold uppercase tracking-widest text-gray-500 mb-2">Начало</span>
+              <h3 className="text-2xl font-bold leading-tight mb-3 hover:text-gray-600 cursor-pointer">
+                <Link href="/free">Фундамент продаж: с чего начать, если ты новичок?</Link>
               </h3>
-              <p className="text-gray-600 line-clamp-2">И как правильная структура диалога помогает закрывать сделки, не теряя себя.</p>
-            </Link>
+              <p className="text-[15px] leading-relaxed text-gray-700 mb-4">
+                Бесплатная открытая база NWO содержит всё необходимое для старта. Пойми, как клиент принимает решение, и перестань бояться отказов.
+              </p>
+              <Link href="/free" className="text-[11px] font-ui font-bold uppercase tracking-widest text-black hover:underline">Читать материалы →</Link>
+            </article>
+
+            <article className="border-b border-gray-300 pb-6">
+              <span className="block text-[11px] font-ui font-bold uppercase tracking-widest text-gray-500 mb-2">Отзывы</span>
+              <h3 className="text-xl font-bold leading-tight mb-3 italic">
+                «Я отбил стоимость курса с первой сделки»
+              </h3>
+              <p className="text-[14px] leading-relaxed text-gray-700 mb-3">
+                Десятки студентов уже прошли систему NWO BLACK и вышли на стабильные чеки.
+              </p>
+              <div className="flex gap-1 text-yellow-500 mb-3">
+                <Star className="w-3 h-3 fill-current" /><Star className="w-3 h-3 fill-current" /><Star className="w-3 h-3 fill-current" /><Star className="w-3 h-3 fill-current" /><Star className="w-3 h-3 fill-current" />
+              </div>
+            </article>
             
-            {/* Article 2 */}
-            <Link href="/blog/how-i-made-11k" className="group block">
-              <div className="aspect-[16/9] bg-gray-200 mb-4 border border-gray-300"></div>
-              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Кейс</p>
-              <h3 className="text-2xl font-display font-bold leading-tight mb-2 group-hover:underline decoration-2 underline-offset-4">
-                Как я заработал $11,000 в 17 лет на продажах
-              </h3>
-              <p className="text-gray-600 line-clamp-2">Никакой магии и успешного успеха. Только дисциплина, скрипты и понимание ценности.</p>
-            </Link>
+            <article>
+              <h3 className="text-lg font-bold mb-3 uppercase tracking-wide font-ui">The Blog</h3>
+              <ul className="space-y-3 font-display">
+                <li className="flex items-start gap-2 border-b border-gray-200 pb-2">
+                  <span className="font-bold text-lg mt-1">•</span>
+                  <Link href="/blog/how-i-made-11k" className="hover:underline text-[15px] leading-snug">Как я заработал свои первые $11k</Link>
+                </li>
+                <li className="flex items-start gap-2 pb-2">
+                  <span className="font-bold text-lg mt-1">•</span>
+                  <Link href="/blog/why-managers-burn-out" className="hover:underline text-[15px] leading-snug">Почему выгорают менеджеры по продажам</Link>
+                </li>
+              </ul>
+            </article>
           </div>
-        </div>
-      </section>
 
-      {/* Programs Grid */}
-      <section id="programs" className="border-b border-gray-200 py-20 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-16">Система Обучения</h2>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Free */}
-            <div className="border border-gray-200 p-8 flex flex-col justify-between hover:shadow-lg transition-shadow">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">База</p>
-                <h3 className="text-2xl font-display font-bold mb-4">NWO FREE</h3>
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  Бесплатная база по продажам. Изучи основы, пойми, как принимаются решения о покупке.
-                </p>
+          {/* Center Column (Wide Main Story) */}
+          <div className="lg:col-span-6 flex flex-col lg:border-r border-gray-300 lg:pr-8">
+            <article className="mb-8 border-b-2 border-black pb-8" id="about">
+              <h2 className="text-4xl sm:text-[3.5rem] leading-[1.05] font-bold tracking-tight mb-6 text-center italic">
+                Я — Ярослав Киричук. В 17 лет я сделал $11,000 на продажах.
+              </h2>
+              <div className="mb-6 flex justify-center">
+                <div className="aspect-[4/3] w-full bg-gray-200 border border-gray-300 relative overflow-hidden flex items-center justify-center">
+                  <span className="text-gray-400 font-ui text-sm tracking-widest uppercase">Фото основателя</span>
+                </div>
               </div>
-              <Link href="/free" className="block text-center border border-black py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-50">
-                Начать бесплатно
-              </Link>
-            </div>
+              <p className="text-[17px] leading-[1.6] text-gray-800 mb-5 first-letter:float-left first-letter:text-6xl first-letter:pr-2 first-letter:font-bold first-letter:mt-[-4px]">
+                Сейчас я учу людей находить клиентов, доносить ценность и уверенно называть высокие чеки. Моя система не основана на сухой теории из книжек. Она построена на реальной практике, тысячах звонков и живых переговорах.
+              </p>
+              <p className="text-[17px] leading-[1.6] text-gray-800 mb-5">
+                Если вы хотите превратить продажи из стресса в управляемый и прогнозируемый процесс, где вы контролируете каждый этап сделки — добро пожаловать в New Way Out.
+              </p>
+            </article>
 
-            {/* Black */}
-            <div className="border border-black bg-black text-white p-8 flex flex-col justify-between shadow-2xl scale-[1.02] transform">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Премиум</p>
-                <h3 className="text-2xl font-display font-bold mb-4">NWO BLACK</h3>
-                <p className="text-gray-300 mb-8 leading-relaxed">
-                  Закрытая премиальная система. Скрипты, отработка "дорого", сложные переговоры и выход на высокий чек.
+            {/* Secondary articles in center */}
+            <div className="grid sm:grid-cols-2 gap-8">
+              <article>
+                <h3 className="text-2xl font-bold mb-3">
+                  <Link href="/premium" className="hover:text-gray-600">NWO BLACK: Закрытая система</Link>
+                </h3>
+                <p className="text-[15px] leading-relaxed text-gray-700 mb-4">
+                  Продвинутая программа для тех, кто хочет выйти на чеки от $1000+. Скрипты, кризисные переговоры и максимизация прибыли.
                 </p>
-              </div>
-              <Link href="/premium" className="flex items-center justify-center gap-2 bg-white text-black py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-100">
-                Получить доступ <LockKeyhole size={14} />
-              </Link>
-            </div>
-
-            {/* Mentorship */}
-            <div className="border border-gray-200 p-8 flex flex-col justify-between hover:shadow-lg transition-shadow bg-gray-50">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Индивидуально</p>
-                <h3 className="text-2xl font-display font-bold mb-4">МЕНТОРСТВО</h3>
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  Месяц личной работы. С нуля до гарантированного трудоустройства с доходом от $700 + %.
+                <Link href="/premium" className="bg-black text-white px-4 py-2 font-ui font-bold text-xs uppercase tracking-widest hover:bg-gray-800 inline-block">Получить доступ</Link>
+              </article>
+              <article>
+                <h3 className="text-2xl font-bold mb-3">
+                  <Link href="/mentorship" className="hover:text-gray-600">Личное Менторство</Link>
+                </h3>
+                <p className="text-[15px] leading-relaxed text-gray-700 mb-4">
+                  Работа со мной лично до результата. Я беру вас за руку и довожу до трудоустройства на зарплату $700+ и процент.
                 </p>
-              </div>
-              <Link href="/mentorship" className="block text-center border border-black py-3 text-sm font-bold uppercase tracking-widest bg-black text-white hover:bg-gray-800">
-                Забронировать место
-              </Link>
+                <Link href="/mentorship" className="border border-black px-4 py-2 font-ui font-bold text-xs uppercase tracking-widest hover:bg-black hover:text-white inline-block">Узнать детали</Link>
+              </article>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Reviews */}
-      <section className="py-20 border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-display font-bold mb-12">Результаты учеников</h2>
-          <div className="grid sm:grid-cols-2 gap-8 text-left">
-            <blockquote className="p-6 bg-gray-50 border border-gray-200">
-              <p className="font-display text-lg italic text-gray-700 mb-4">«До NWO я панически боялся называть цену. Сейчас закрываю 4 из 5 заявок на высокий чек без скидок. Скрипты реально работают.»</p>
-              <cite className="not-italic text-sm font-bold text-gray-900">— Александр, Фрилансер</cite>
-            </blockquote>
-            <blockquote className="p-6 bg-gray-50 border border-gray-200">
-              <p className="font-display text-lg italic text-gray-700 mb-4">«Менторство окупилось в первый месяц работы. Ушел с нелюбимой работы, устроился менеджером B2B. Теперь стабильно делаю $1500+.»</p>
-              <cite className="not-italic text-sm font-bold text-gray-900">— Максим, Sales Manager</cite>
-            </blockquote>
+          {/* Right Column (Narrow, Opinion/Highlights) */}
+          <div className="lg:col-span-3 flex flex-col gap-6">
+            <div className="border-t-4 border-black pt-4">
+              <h3 className="font-ui font-black uppercase tracking-widest text-xs mb-4 text-gray-500">The NWO Opinion</h3>
+              
+              <article className="border-b border-gray-300 pb-5 mb-5">
+                <h4 className="font-bold text-xl leading-tight mb-2 italic">
+                  «Продажи — это не впаривание, это помощь»
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Почему старые агрессивные методы больше не работают в 2026 году.
+                </p>
+              </article>
+              
+              <article className="border-b border-gray-300 pb-5 mb-5">
+                <h4 className="font-bold text-xl leading-tight mb-2 italic">
+                  Хватит работать за копейки
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Как перейти из сегмента дешевых услуг в премиум B2B сегмент.
+                </p>
+              </article>
+            </div>
+
+            <div className="bg-gray-100 p-5 border border-gray-200 mt-4">
+              <h4 className="font-bold font-ui uppercase tracking-wide text-sm mb-3">Связь со мной</h4>
+              <p className="text-[13px] text-gray-600 mb-4">
+                Остались вопросы по обучению или хотите обсудить сотрудничество?
+              </p>
+              <a href="https://t.me/yaroslav_kiri4yk" target="_blank" rel="noreferrer" className="block w-full text-center bg-black text-white px-4 py-3 font-ui font-bold text-[11px] uppercase tracking-widest hover:bg-gray-800">
+                Написать в Telegram
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="py-20 md:py-32 max-w-3xl mx-auto px-6">
-        <h2 className="text-3xl font-display font-bold mb-8">Частые вопросы</h2>
-        <div className="space-y-8 divide-y divide-gray-200">
-          <article className="pt-8">
-            <h3 className="text-xl font-bold mb-3">Что такое НВО (NWO)?</h3>
-            <p className="text-gray-600 leading-relaxed">НВО (New Way Out) — это практическая система обучения продажам. Мы учим доносить ценность, работать с возражениями и экологично закрывать сделки, чтобы вы могли уверенно продавать свои услуги, продукты или идеи.</p>
-          </article>
-          <article className="pt-8">
-            <h3 className="text-xl font-bold mb-3">Как стать менеджером по продажам с нуля?</h3>
-            <p className="text-gray-600 leading-relaxed">В рамках нашего Менторства мы проводим обучение с абсолютного нуля, ставим навык на реальных звонках и гарантируем трудоустройство с выходом на стабильный доход.</p>
-          </article>
-          <article className="pt-8">
-            <h3 className="text-xl font-bold mb-3">Чем NWO BLACK отличается от бесплатной базы?</h3>
-            <p className="text-gray-600 leading-relaxed">NWO FREE даёт фундамент. NWO BLACK — это полная закрытая система, где разбираются конкретные скрипты, сложные переговоры, ответы на «дорого» и доведение до оплаты.</p>
-          </article>
         </div>
-      </section>
-
+      </div>
+      
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500 font-semibold">
-          <div className="font-display font-bold text-lg text-black">NWO</div>
-          <p>НВО (New Way Out) — профессиональное обучение продажам © {new Date().getFullYear()}</p>
+      <footer className="max-w-[1200px] mx-auto px-4 mt-20 pt-8 border-t border-double border-t-4 border-black text-center font-ui text-xs text-gray-500 pb-10">
+        <p>© {new Date().getFullYear()} NWO (New Way Out). Все права защищены.</p>
+        <div className="mt-4 flex justify-center gap-6">
+          <Link href="/free" className="hover:text-black">Terms of Service</Link>
+          <Link href="/free" className="hover:text-black">Privacy Policy</Link>
         </div>
       </footer>
     </main>
