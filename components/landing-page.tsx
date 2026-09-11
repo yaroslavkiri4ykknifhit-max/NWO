@@ -30,9 +30,9 @@ export function LandingPage() {
       <header className="bg-white border-b-4 border-double border-black">
         <div className="max-w-[1200px] mx-auto px-4 py-8 flex flex-col items-center">
           <Link href="/">
-            <div className="flex justify-center mb-4">
-              <img src="/logo-gothic.jpg" alt="New Way Out" className="h-16 md:h-24 object-contain mix-blend-multiply" />
-            </div>
+            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(3rem, 10vw, 8.5rem)" }} className="text-center mb-4 leading-none font-normal tracking-tight text-black">
+              New Way Out
+            </h1>
           </Link>
           <div className="flex items-center gap-2 text-sm font-display italic text-gray-700">
             «Научись продавать. Перестань зависеть от обстоятельств.»
