@@ -155,7 +155,7 @@ function LeadStory() {
               <img
                 src="/founder.jpg"
                 alt="Ярослав Киричук, основатель New Way Out"
-                className="w-full object-cover grayscale"
+                className="w-full object-cover"
               />
               <figcaption className="mt-2 border-t border-gray-200 px-3 py-2 font-ui text-[10px] uppercase tracking-[0.05em] text-gray-500">
                 Ярослав Киричук, основатель New Way Out.
