@@ -13,9 +13,7 @@ export function LandingPage() {
 
   return (
     <main className="min-h-screen bg-[#f7f7f5] text-[#121212] font-display selection:bg-black selection:text-white pb-20">
-      <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
-      `}} />
+      
       
       {/* Top Header */}
       <div className="border-b border-gray-300 bg-white">
