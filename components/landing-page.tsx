@@ -28,7 +28,7 @@ export function LandingPage() {
       <header className="bg-white border-b-4 border-double border-black">
         <div className="max-w-[1200px] mx-auto px-4 py-8 flex flex-col items-center">
           <Link href="/">
-            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(3rem, 10vw, 8.5rem)" }} className="text-center mb-4 leading-none font-normal tracking-tight text-black">
+            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif", fontSize: "clamp(4rem, 18vw, 15rem)" }} className="text-center mb-4 leading-none font-normal tracking-tight text-black">
               New Way Out
             </h1>
           </Link>
