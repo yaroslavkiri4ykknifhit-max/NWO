@@ -30,9 +30,9 @@ export function LandingPage() {
       <header className="bg-white border-b-4 border-double border-black">
         <div className="max-w-[1200px] mx-auto px-4 py-8 flex flex-col items-center">
           <Link href="/">
-            <h1 style={{ fontFamily: "'UnifrakturMaguntia', serif" }} className="text-6xl md:text-8xl tracking-tight text-center mb-4 leading-none font-normal">
-              New Way Out
-            </h1>
+            <div className="flex justify-center mb-4">
+              <img src="/logo-gothic.jpg" alt="New Way Out" className="h-16 md:h-24 object-contain mix-blend-multiply" />
+            </div>
           </Link>
           <div className="flex items-center gap-2 text-sm font-display italic text-gray-700">
             «Научись продавать. Перестань зависеть от обстоятельств.»
@@ -104,7 +104,7 @@ export function LandingPage() {
               </h2>
               <div className="mb-6 flex justify-center">
                 <div className="aspect-[4/3] w-full bg-gray-200 border border-gray-300 relative overflow-hidden flex items-center justify-center">
-                  <span className="text-gray-400 font-ui text-sm tracking-widest uppercase">Фото основателя</span>
+                  <img src="/founder.jpg" alt="Ярослав Киричук" className="object-cover w-full h-full hover:scale-[1.02] transition-transform duration-700" />
                 </div>
               </div>
               <p className="text-[17px] leading-[1.6] text-gray-800 mb-5 first-letter:float-left first-letter:text-6xl first-letter:pr-2 first-letter:font-bold first-letter:mt-[-4px]">
