@@ -68,7 +68,7 @@ export default function RootLayout({
         "logo": "https://newwayout.online/icon.svg",
         "description": "Курс и менторство по продажам от NWO (НВО). Научись продавать себя, продукты, услуги и идеи.",
         "sameAs": [
-          "https://t.me/yaroslav_kiri4yk"
+          "https://t.me/c0lddev"
         ]
       },
       {
