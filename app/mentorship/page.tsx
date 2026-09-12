@@ -79,7 +79,7 @@ export default function MentorshipPage() {
           </p>
           
           <a 
-            href="https://t.me/yaroslav_kiri4yk" 
+            href="https://t.me/c0lddev" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-black text-white px-8 py-4 font-bold text-sm tracking-widest uppercase hover:bg-gray-800 transition-colors"

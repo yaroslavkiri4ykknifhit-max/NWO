@@ -53,7 +53,7 @@ function Navigation() {
           </div>
 
           <a
-            href="https://t.me/yaroslav_kiri4yk"
+            href="https://t.me/c0lddev"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden text-xs font-semibold text-red-700 hover:underline md:block"
@@ -86,7 +86,7 @@ function Navigation() {
                 </Link>
               ))}
               <a
-                href="https://t.me/yaroslav_kiri4yk"
+                href="https://t.me/c0lddev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-semibold text-red-700"
@@ -438,13 +438,13 @@ function Footer() {
             </h3>
             <div className="space-y-3">
               <a
-                href="https://t.me/yaroslav_kiri4yk"
+                href="https://t.me/c0lddev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 font-ui text-xs font-medium text-gray-600 hover:text-black"
               >
                 <Send size={14} />
-                Telegram: @yaroslav_kiri4yk
+                Telegram: @c0lddev
               </a>
               <p className="flex items-center gap-2 font-ui text-xs font-medium text-gray-600">
                 <Mail size={14} />
