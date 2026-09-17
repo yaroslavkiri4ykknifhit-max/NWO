@@ -2,7 +2,21 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Menu, X, Mail, Send, ArrowUpRight } from "lucide-react"
+import { Menu, X, Mail, Send, ArrowUpRight, Star } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+
 
 // --- Subcomponents ---
 
@@ -472,6 +486,120 @@ function Footer() {
   )
 }
 
+
+const reviewsData = [
+  {
+    author: "Иван М.",
+    role: "Менеджер по продажам",
+    text: "Обучение топовое. До этого боялся холодных звонков, сейчас закрываю чеки на $500+. Реально нет воды, чисто скрипты и психология продаж.",
+    rating: 5,
+  },
+  {
+    author: "Алексей С.",
+    role: "Предприниматель",
+    text: "Лучшая база по B2B продажам, которую я видел. Внедрил пару фишек из сложных переговоров и сразу вытащил сделку, которая висела месяц.",
+    rating: 5,
+  },
+  {
+    author: "Даниил",
+    role: "Фрилансер",
+    text: "Ярослав дает мощный заряд уверенности. Если сомневаетесь — берите, это того стоит, окупается буквально за пару закрытых сделок.",
+    rating: 5,
+  }
+]
+
+function ReviewsSection() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    // Имитация отправки на модерацию
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsSubmitted(false);
+    }, 3000);
+  }
+
+  return (
+    <section className="border-b border-gray-300 bg-white py-10 md:py-14">
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 border-b border-black pb-4">
+          <div>
+            <h3 className="font-display text-3xl font-bold tracking-tight text-black sm:text-4xl">
+              Отзывы студентов
+            </h3>
+            <p className="mt-2 font-display text-sm uppercase tracking-widest text-gray-500">
+              Настоящие результаты с полей
+            </p>
+          </div>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="mt-4 sm:mt-0 font-ui rounded-none border-black hover:bg-black hover:text-white transition-colors">
+                Оставить отзыв
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] rounded-none border-black font-ui">
+              <DialogHeader>
+                <DialogTitle className="font-display font-bold text-2xl">Ваш отзыв</DialogTitle>
+                <DialogDescription>
+                  Напишите о ваших результатах. После проверки модератором отзыв появится на сайте.
+                </DialogDescription>
+              </DialogHeader>
+              {!isSubmitted ? (
+                <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Имя</Label>
+                    <Input id="name" required placeholder="Иван И." className="rounded-none border-gray-300 focus-visible:ring-black" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="role">Кто вы (должность/ниша)</Label>
+                    <Input id="role" required placeholder="Менеджер по продажам" className="rounded-none border-gray-300 focus-visible:ring-black" />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="review">Отзыв</Label>
+                    <Textarea id="review" required placeholder="Как вам обучение? Какие результаты?" className="rounded-none border-gray-300 focus-visible:ring-black min-h-[100px]" />
+                  </div>
+                  <Button type="submit" className="w-full rounded-none bg-black text-white hover:bg-gray-800">
+                    Отправить на модерацию
+                  </Button>
+                </form>
+              ) : (
+                <div className="py-8 text-center text-green-700 font-medium">
+                  Спасибо! Ваш отзыв успешно отправлен на модерацию.
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {reviewsData.map((review, i) => (
+            <div key={i} className="border border-gray-200 p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 mb-4 text-black">
+                  {[...Array(review.rating)].map((_, j) => (
+                    <Star key={j} className="h-4 w-4 fill-current" />
+                  ))}
+                </div>
+                <p className="font-ui text-gray-800 text-sm leading-relaxed mb-6 italic">
+                  "{review.text}"
+                </p>
+              </div>
+              <div>
+                <p className="font-display font-bold text-black">{review.author}</p>
+                <p className="font-ui text-xs text-gray-500 uppercase">{review.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
 export function LandingPage() {
   return (
     <main className="min-h-screen bg-white text-[#121212] font-display selection:bg-black selection:text-white">
@@ -482,6 +610,7 @@ export function LandingPage() {
       <LeadStory />
       <ProgramsSection />
       <ResultsSection />
+      <ReviewsSection />
       
       <Footer />
     </main>
