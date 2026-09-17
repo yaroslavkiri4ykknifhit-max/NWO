@@ -119,6 +119,22 @@ export default function RootLayout({
           }
         ]
       }
+    ,
+      {
+        "@type": "Course",
+        "@id": "https://newwayout.online/#course",
+        "name": "Практический курс по активным продажам NWO",
+        "description": "Мощная система обучения продажам с нуля. Научись уверенно продавать, работать с возражениями и закрывать сделки на высокие чеки.",
+        "provider": {
+          "@id": "https://newwayout.online/#organization"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "ratingCount": "34",
+          "reviewCount": "34"
+        }
+      }
     ]
   };
 
