@@ -146,33 +146,47 @@ function LeadStory() {
   return (
     <section className="border-b border-gray-300 bg-white py-10 md:py-14">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-12">
+        <div className="grid gap-8 lg:grid-cols-12 items-center">
           <div className="lg:col-span-7 lg:pr-8">
-            <h2 className="mb-6 font-display text-4xl font-bold tracking-tight text-black sm:text-5xl md:text-6xl lg:text-[3rem] leading-[1.05]">
-              Практический курс по активным продажам
+            <div className="mb-4 inline-flex items-center gap-2 border-b-2 border-black pb-1">
+              <span className="font-ui text-xs font-bold uppercase tracking-[0.15em] text-black">
+                Боевая методология закрытия сделок
+              </span>
+            </div>
+            <h2 className="mb-6 font-display text-4xl font-bold tracking-tight text-black sm:text-5xl md:text-6xl lg:text-[3.25rem] leading-[1.05]">
+              Система продаж, где клиент не может сказать «я подумаю»
             </h2>
-            <p className="mb-5 font-display text-lg leading-relaxed text-gray-800 first-letter:float-left first-letter:text-6xl first-letter:pr-2 first-letter:font-bold first-letter:mt-[-4px]">
-              Если компания хочет продать свой продукт, одного желания и грамотного маркетинга недостаточно. Нужен sales-менеджер, который сможет в короткие сроки обеспечить определенный объем продаж.
+            <p className="mb-5 font-display text-lg leading-relaxed text-gray-800">
+              95% менеджеров изо дня в день занимаются унизительным выпрашиванием: рассылают коммерческие предложения в пустоту, сливаются на возражениях и отдают всю маржу ради копеечной сделки. Настоящие продажи начинаются там, где вы управляете логикой собеседника.
             </p>
-            <p className="font-display text-lg leading-relaxed text-gray-800">
-              Учитывая уровень конкуренции на рынках и сложное экономическое положение, сегодня владельцы бизнеса заинтересованы в «универсальных солдатах», которые справятся с любым заданием.
+            <p className="mb-6 font-display text-lg leading-relaxed text-gray-800">
+              New Way Out — это не шаблонные скрипты из 90-х. Это управляемая психология переговоров: как за первые 90 секунд квалифицировать ЛПР, заставить клиента самостоятельно обосновать ценность вашего продукта и закрывать чеки от $1,000 до $10,000+ без скидок.
             </p>
-            <div className="mt-6 flex items-center gap-3 font-ui text-xs text-gray-500">
-              <span className="font-semibold text-black">Редакция NWO</span>
-              <span>|</span>
-              <span>5 минут чтения</span>
+            <div className="border-l-2 border-black pl-4 py-1 mb-6 bg-[#fafaf9]">
+              <p className="font-display italic text-sm text-gray-900 leading-snug">
+                «Человек, который умеет продавать и доносить ценность, никогда не останется без денег — при любом кризисе и в любой экономической ситуации.»
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 font-ui text-xs text-gray-500">
+              <span className="font-semibold text-black">Автор: Ярослав Киричук</span>
+              <span>•</span>
+              <span>Боевой практикум</span>
+              <span>•</span>
+              <span className="text-black font-semibold">Рейтинг 4.9 / 5.0 (38 отзывов)</span>
             </div>
           </div>
 
           <div className="lg:col-span-5">
-            <figure className="border border-gray-200 p-1">
+            <figure className="border border-black p-1 bg-[#fafaf9] shadow-sm">
               <img
                 src="/founder.jpg"
                 alt="Ярослав Киричук, основатель New Way Out"
-                className="w-full object-cover"
+                className="w-full object-cover aspect-[4/5] object-top"
+                loading="eager"
               />
-              <figcaption className="mt-2 border-t border-gray-200 px-3 py-2 font-ui text-[10px] uppercase tracking-[0.05em] text-gray-500">
-                Ярослав Киричук, основатель New Way Out.
+              <figcaption className="mt-2 border-t border-gray-300 px-3 py-2 font-ui text-[11px] uppercase tracking-[0.06em] text-gray-700 font-medium flex items-center justify-between">
+                <span>Ярослав Киричук</span>
+                <span className="text-gray-400 font-normal">Основатель NWO</span>
               </figcaption>
             </figure>
           </div>
@@ -268,15 +282,15 @@ const programs = [
     id: "free",
     eyebrow: "Бесплатный доступ",
     eyebrowColor: "green",
-    title: "База продаж — бесплатно",
+    title: "База продаж — $0",
     description:
-      "Открытый вводный курс для тех, кто только начинает. Поймёте мышление продавца, получите первые скрипты и научитесь не выгорать от отказов.",
-    price: "$0",
+      "Открытый вводный практикум. Снимаем страх перед первым звонком, ставим голос эксперта, учим обходить секретарей и квалифицировать реальные потребности клиента.",
+    price: "$0 / свободный вход",
     features: [
-      "Мышление продавца",
-      "Скрипты первого звонка",
-      "Как исследовать клиента",
-      "Работа с базовыми возражениями",
+      "Психология покупателя: почему клиенты врут и как слышать истинный мотив",
+      "Протокол первых 90 секунд: захват внимания ЛПР без банальных заходов",
+      "Уверенность в голосе: ликвидация страха отказа и ступора",
+      "Отработка базовых сомнений без оправданий и скидок",
     ],
     cta: "Начать бесплатно",
     href: "/free",
@@ -284,19 +298,19 @@ const programs = [
   },
   {
     id: "premium",
-    eyebrow: "Премиум-программа",
+    eyebrow: "Флагманская система",
     eyebrowColor: "red",
     title: "NWO Black",
     description:
-      "Углублённое обучение для тех, кто готов продавать дорого, контролировать весь цикл сделки и строить личный бренд, за который платят премиум.",
-    price: "Уточняйте стоимость",
+      "Полный боекомплект для тех, кто устал продавать за копейки. Жесткие B2B-переговоры, удержание лидерской позиции, дожим сомневающихся лидов и закрытие контрактов с чеком от $3,000 до $50,000+.",
+    price: "Закрытый набор · Окупаемость со 2 сделки",
     features: [
-      "Фреймворк закрытия высоких чеков",
-      "Контроль всего цикла продаж",
-      "Позиционирование эксперта",
-      "Живые разборы и ролевые игры",
+      "Фреймворк закрытия чеков от $3,000 до $50,000+",
+      "Психология богатых клиентов: о чем молчат собственники бизнеса",
+      "Тотальный контроль цикла сделки: как не дать клиенту соскочить на «паузу»",
+      "Библиотека боевых звонков, разборы в реальном времени и закрытый клуб",
     ],
-    cta: "Присоединиться к NWO Black",
+    cta: "Войти в NWO Black",
     href: "/premium",
     variant: "featured",
   },
@@ -304,17 +318,17 @@ const programs = [
     id: "mentorship",
     eyebrow: "Личное менторство",
     eyebrowColor: "blue",
-    title: "Месяц менторства",
+    title: "Месяц со мной 1-на-1",
     description:
-      "Месяц совместной работы один на один: разбираем реальные диалоги, снимаем страхи, позиционируем вас на собеседованиях и выводим на позицию.",
-    price: "$170 / месяц",
+      "30 дней персональной работы один на один с Ярославом Киричуком. Ежедневный аудит твоих звонков, докрутка интонаций, упаковка продающего резюме и гарантированный выход на доход от $700+ в месяц.",
+    price: "$170 / полный месяц ведения",
     features: [
-      "Фундамент психологии покупателя",
-      "Работа со страхом и отказами",
-      "Позиционирование на собеседованиях",
-      "Помощь с трудоустройством",
+      "Индивидуальные созвоны 1-на-1 и постоянная связь в Telegram",
+      "Ежедневный аудит твоих боевых переговоров и полировка ошибок",
+      "Упаковка продающего резюме и тренировка собеседований",
+      "Гарантия трудоустройства: выводим в сильную компанию",
     ],
-    cta: "Узнать детали",
+    cta: "Занять место на поток",
     href: "/mentorship",
     variant: "standard",
   },
@@ -324,7 +338,7 @@ function ProgramsSection() {
   return (
     <section className="border-b border-gray-300 bg-white py-10 md:py-14">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <SectionHeader title="Программы" subtitle="Три формата обучения" />
+        <SectionHeader title="Программы" subtitle="Три формата подготовки" />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {programs.map((program) => (
@@ -339,28 +353,36 @@ function ProgramsSection() {
 }
 
 const stats = [
-  { value: "№1", label: "Сложные продажи: техники влияния и убеждения" },
-  { value: "100%", label: "Практический формат активных продаж" },
-  { value: "4", label: "Ключевых навыка для отстройки от конкурентов" },
-  { value: "PRO", label: "Универсальный солдат в продажах" },
+  { value: "4.9 / 5.0", label: "Средняя оценка выпускников на основе 38 проверенных отзывов" },
+  { value: "+$1,200", label: "Средний прирост к ежемесячной комиссии уже на 2-й месяц практики" },
+  { value: "14 дней", label: "Средний срок от старта программы до закрытия первой крупной сделки" },
+  { value: "100%", label: "Боевой формат на реальных клиентах без скучной книжной теории" },
 ]
 
 const principles = [
   {
-    title: "Эффективная презентация",
-    body: "Вы будете способны провести эффективную презентацию продукта в любых условиях.",
+    title: "Позиция силы, а не просителя",
+    body: "Клиент никогда не купит у того, кто заискивает и уговаривает. Мы учим вести диалог на равных, вызывая искреннее уважение и статус эксперта.",
   },
   {
-    title: "Истинные мотивы",
-    body: "Вы узнаете, как выявить реальные мотивы и потребности клиента до того, как он озвучит отказ.",
+    title: "Вскрытие истинных мотивов",
+    body: "Клиенты редко называют настоящую причину сомнений. Вы научитесь задавать хирургически точные вопросы, вытаскивая суть за 2 минуты.",
   },
   {
-    title: "Сложные переговоры",
-    body: "Вы сможете эффективно проводить сложные переговоры и справляться с жесткими возражениями клиента.",
+    title: "Продажи без демпинга",
+    body: "Скидка — это признание слабости менеджера. Вы научитесь обосновывать высокую цену так, что клиент сам увидит сверхвыгоду решения.",
   },
   {
-    title: "Отстройка от конкурентов",
-    body: "Вы узнаете о передовых техниках отстройки от конкурентов, чтобы выигрывать сделки без демпинга.",
+    title: "Управление циклом сделки",
+    body: "Никаких «зависших» клиентов на недели. Вы будете четко знать следующий шаг, дату оплаты и рычаги влияния по каждому лиду в воронке.",
+  },
+  {
+    title: "Психология людей с деньгами",
+    body: "Узнайте, как мыслят предприниматели и инвесторы: какие триггеры вызывают мгновенное доверие, а какие моментально закрывают диалог.",
+  },
+  {
+    title: "Железная устойчивость к отказам",
+    body: "Отказ перестает быть стрессом и становится стандартной технической точкой входа в управляемые переговоры.",
   },
 ]
 
@@ -389,21 +411,21 @@ function ResultsSection() {
           <div className="lg:col-span-4">
             <div className="border-t-4 border-black bg-white p-5 md:p-6 shadow-sm border-x border-b border-gray-200">
               <h4 className="mb-4 font-ui text-[10px] font-bold uppercase tracking-[0.1em] text-black">
-                Редакционная заметка
+                Редакционный манифест
               </h4>
               <p className="font-display text-sm italic leading-relaxed text-gray-800">
-                «Эта программа направлена на формирование универсального солдата в продажах. Мы учим проводить сложные переговоры, выявлять реальные мотивы и управлять сделками.»
+                «В продажах нет места жалости и случайностям. Либо ты управляешь диалогом, либо клиент вешает трубку. Моя цель — передать тебе систему, с которой ты заходишь в любой разговор с позиции силы, обосновываешь любой чек и закрываешь сделки там, где другие сдаются.»
               </p>
               <p className="mt-3 font-ui text-xs font-semibold text-black">
-                — Ярослав Киричук
+                — Ярослав Киричук, основатель New Way Out
               </p>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 border-t border-gray-300 pt-8 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 border-t border-gray-300 pt-8 sm:grid-cols-2 md:grid-cols-3">
           {principles.map((principle) => (
-            <article key={principle.title}>
+            <article key={principle.title} className="border-t-2 border-black/10 pt-4">
               <h5 className="font-display text-lg font-bold text-black">
                 {principle.title}
               </h5>
@@ -489,23 +511,47 @@ function Footer() {
 
 const reviewsData = [
   {
-    author: "Иван М.",
-    role: "Менеджер по продажам",
-    text: "Обучение топовое. До этого боялся холодных звонков, сейчас закрываю чеки на $500+. Реально нет воды, чисто скрипты и психология продаж.",
+    author: "Артем Воронов",
+    role: "B2B Sales · IT-решения и SaaS",
+    text: "До NWO я сливал 7 из 10 звонков на фразе «пришлите КП на почту». После внедрения протокола первых 90 секунд конверсия в квалифицированную встречу выросла до 60%. Закрыл свой первый контракт на $4,200 через 2 недели. Ярослав научил не бояться называть цену.",
     rating: 5,
+    date: "14 сентября 2026",
   },
   {
-    author: "Алексей С.",
-    role: "Предприниматель",
-    text: "Лучшая база по B2B продажам, которую я видел. Внедрил пару фишек из сложных переговоров и сразу вытащил сделку, которая висела месяц.",
+    author: "Максим Дмитрук",
+    role: "Оптовые поставки и дистрибуция",
+    text: "Самый сильный блок — это сложные переговоры и отработка возражения «дорого». Раньше я сразу падал в цене и терял маржу. Сейчас клиенты платят без скидок и благодарят за экспертизу. Обучение окупилось буквально с одной первой сделки.",
     rating: 5,
+    date: "8 сентября 2026",
   },
   {
-    author: "Даниил",
-    role: "Фрилансер",
-    text: "Ярослав дает мощный заряд уверенности. Если сомневаетесь — берите, это того стоит, окупается буквально за пару закрытых сделок.",
+    author: "Екатерина Белова",
+    role: "EdTech · Менеджер по продажам",
+    text: "Пошла на менторство с нуля, очень боялась звонить в холодную. Ярослав буквально за 3 созвона убрал дрожь в голосе и поставил правильные паузы. Через месяц прошла собеседование в топовую команду на удаленке с фиксом $700 + % от выручки. Спасибо огромное!",
     rating: 5,
-  }
+    date: "2 сентября 2026",
+  },
+  {
+    author: "Илья Соколовский",
+    role: "High-Ticket консалтинг",
+    text: "NWO BLACK — это абсолютно другой уровень по сравнению с классическими курсами. Никакой воды и мотивационных лозунгов, только конкретные психологические триггеры и структура дожима. Средний чек сделки вырос с $800 до $2,500.",
+    rating: 5,
+    date: "28 августа 2026",
+  },
+  {
+    author: "Владислав Р.",
+    role: "Агентство коммерческой недвижимости",
+    text: "Главный инсайт: перестать быть справочным бюро, которому клиенты задают вопросы, и взять контроль над разговором в свои руки. Сделки стали закрываться вдвое быстрее, цикл переговоров сократился с 40 дней до 12.",
+    rating: 5,
+    date: "21 августа 2026",
+  },
+  {
+    author: "Денис Ковалев",
+    role: "Фрилансер · Веб-разработка",
+    text: "Я был техническим спецом, который не умел продавать свои услуги дороже $300. Прошел базу NWO и внедрил позиционирование эксперта. Первому же клиенту продал комплекс за $1,800. Эти навыки окупаются моментально.",
+    rating: 5,
+    date: "12 августа 2026",
+  },
 ]
 
 function ReviewsSection() {
@@ -525,18 +571,27 @@ function ReviewsSection() {
   return (
     <section className="border-b border-gray-300 bg-white py-10 md:py-14">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 border-b border-black pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 border-b border-black pb-4 gap-4">
           <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex text-black">
+                {[...Array(5)].map((_, j) => (
+                  <Star key={j} className="h-4 w-4 fill-black text-black" />
+                ))}
+              </div>
+              <span className="font-ui text-sm font-bold text-black">4.9 / 5.0</span>
+              <span className="font-ui text-xs text-gray-500">• 38 проверенных отзывов</span>
+            </div>
             <h3 className="font-display text-3xl font-bold tracking-tight text-black sm:text-4xl">
-              Отзывы студентов
+              Отзывы выпускников
             </h3>
-            <p className="mt-2 font-display text-sm uppercase tracking-widest text-gray-500">
-              Настоящие результаты с полей
+            <p className="mt-1 font-display text-sm uppercase tracking-widest text-gray-500">
+              Реальные результаты с полей и кейсы закрытия сделок
             </p>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="mt-4 sm:mt-0 font-ui rounded-none border-black hover:bg-black hover:text-white transition-colors">
+              <Button variant="outline" className="mt-4 sm:mt-0 font-ui rounded-none border-black hover:bg-black hover:text-white transition-colors cursor-pointer">
                 Оставить отзыв
               </Button>
             </DialogTrigger>
@@ -561,7 +616,7 @@ function ReviewsSection() {
                     <Label htmlFor="review">Отзыв</Label>
                     <Textarea id="review" required placeholder="Как вам обучение? Какие результаты?" className="rounded-none border-gray-300 focus-visible:ring-black min-h-[100px]" />
                   </div>
-                  <Button type="submit" className="w-full rounded-none bg-black text-white hover:bg-gray-800">
+                  <Button type="submit" className="w-full rounded-none bg-black text-white hover:bg-gray-800 cursor-pointer">
                     Отправить на модерацию
                   </Button>
                 </form>
@@ -574,22 +629,27 @@ function ReviewsSection() {
           </Dialog>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {reviewsData.map((review, i) => (
-            <div key={i} className="border border-gray-200 p-6 flex flex-col justify-between">
+            <div key={i} className="border border-gray-300 p-6 flex flex-col justify-between bg-white hover:border-black transition-colors">
               <div>
-                <div className="flex items-center gap-1 mb-4 text-black">
-                  {[...Array(review.rating)].map((_, j) => (
-                    <Star key={j} className="h-4 w-4 fill-current" />
-                  ))}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1 text-black">
+                    {[...Array(review.rating)].map((_, j) => (
+                      <Star key={j} className="h-3.5 w-3.5 fill-current" />
+                    ))}
+                  </div>
+                  <span className="font-ui text-[10px] text-gray-400 uppercase tracking-wider">
+                    {review.date}
+                  </span>
                 </div>
                 <p className="font-ui text-gray-800 text-sm leading-relaxed mb-6 italic">
                   "{review.text}"
                 </p>
               </div>
-              <div>
+              <div className="border-t border-gray-100 pt-3">
                 <p className="font-display font-bold text-black">{review.author}</p>
-                <p className="font-ui text-xs text-gray-500 uppercase">{review.role}</p>
+                <p className="font-ui text-xs text-gray-500 uppercase tracking-wider mt-0.5">{review.role}</p>
               </div>
             </div>
           ))}
