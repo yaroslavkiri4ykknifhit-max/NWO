@@ -345,17 +345,18 @@ export function LessonViewer({
     >
       <div className={cn("max-w-4xl mx-auto p-4 sm:p-6 lg:p-8", isPremium && "lg:py-12")}>
         {/* Header */}
-        <div className={cn("mb-6 sm:mb-8", isPremium && "border-b border-white/10 pb-8")}>
-          {isPremium && <div className="premium-kicker mb-5 w-fit">PREMIUM LESSON</div>}
-          <p className="text-accent text-sm font-medium mb-2">{moduleName}</p>
-          <h1 className={cn(
-            "text-2xl sm:text-3xl font-semibold text-foreground mb-4 text-balance",
-            isPremium && "premium-display sm:text-5xl font-black uppercase tracking-[0.012em] leading-[0.95]"
-          )}>
+        <div className="mb-8 border-b border-gray-300 pb-8">
+          {isPremium && (
+            <span className="inline-block px-2.5 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+              NWO BLACK · Урок закрытого клуба
+            </span>
+          )}
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">{moduleName}</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-black leading-tight mb-4">
             {title}
           </h1>
 
-          <div className="flex items-center gap-6 mt-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-6 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             <span className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-accent" />
               Текстовые материалы доступны ниже
@@ -365,10 +366,7 @@ export function LessonViewer({
 
         {/* Video Player (Отображается только если видео задано) */}
         {hasVideo && (
-          <div className={cn(
-            "aspect-video bg-black rounded-none mb-6 sm:mb-8 overflow-hidden border border-border/40 shadow-2xl shadow-accent/5",
-            isPremium && "premium-video-frame rounded-3xl"
-          )}>
+          <div className="aspect-video bg-black rounded-none mb-8 overflow-hidden border border-black shadow-sm">
             {isDirectVideo ? (
               /* Нативный HTML5 плеер для прямых ссылок (.mp4 / uc?export=download) с защитой от скачивания */
               <video
@@ -394,10 +392,7 @@ export function LessonViewer({
         {textContent && (
           <div className="lesson-content-section space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h2 className="text-xl font-semibold text-foreground font-ui">Материалы урока</h2>
-            <div className={cn(
-              "lesson-reading-content p-4 sm:p-6 bg-card/45 rounded-none border border-border/40 backdrop-blur-sm text-foreground leading-relaxed text-base",
-              isPremium && "premium-lesson-content sm:p-8 rounded-3xl"
-            )}>
+            <div className="lesson-reading-content p-6 sm:p-8 bg-[#fafaf9] rounded-none border border-gray-300 text-gray-900 leading-relaxed text-base font-ui">
               {renderFormattedContent(textContent)}
             </div>
           </div>
@@ -408,7 +403,10 @@ export function LessonViewer({
           <Button
             variant={isCompleted ? "secondary" : "default"}
             onClick={onComplete}
-            className="gap-2 cursor-pointer rounded-none h-11 px-5 w-full sm:w-auto justify-center"
+            className={cn(
+              "gap-2 cursor-pointer rounded-none h-12 px-6 w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors",
+              isCompleted ? "border border-gray-300 bg-gray-100 text-black hover:bg-gray-200" : "bg-black text-white hover:bg-gray-800"
+            )}
           >
             {isCompleted ? (
               <>
@@ -427,7 +425,7 @@ export function LessonViewer({
             <Button 
               variant="outline" 
               onClick={onNext} 
-              className="gap-2 cursor-pointer rounded-none h-11 px-5 hover:bg-secondary/40 w-full sm:w-auto justify-center"
+              className="gap-2 cursor-pointer rounded-none h-12 px-6 border border-black text-black hover:bg-black hover:text-white w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors"
             >
               Следующий урок
               <ChevronRight className="w-4 h-4" />

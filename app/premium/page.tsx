@@ -1,19 +1,19 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { ArrowLeft, Crown, Loader2, LockKeyhole, LogOut } from "lucide-react"
+import { ArrowLeft, Crown, Loader2, LockKeyhole, LogOut, ChevronRight } from "lucide-react"
 import { AccessForm } from "@/components/access-form"
 import { CourseHeader } from "@/components/course-header"
 import { LessonSidebar } from "@/components/lesson-sidebar"
 import { LessonViewer } from "@/components/lesson-viewer"
 import { PremiumDashboard } from "@/components/premium-dashboard"
+import Link from "next/link"
 import {
   CourseData,
   TelegramProfile,
   fetchPaidCourseData,
   getPaidAuthSession,
   logout,
-  savePaidProgress,
 } from "@/lib/sheets-api"
 
 type PaidAccessState = "checking" | "login" | "unpaid" | "granted"
@@ -89,9 +89,9 @@ export default function PremiumPage() {
 
   if (accessState === "checking") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 text-black animate-spin" />
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-500">Проверяем NWO BLACK...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white text-black font-ui">
+        <Loader2 className="w-8 h-8 text-black animate-spin" />
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">Проверка членства NWO BLACK...</p>
       </div>
     )
   }
@@ -106,43 +106,60 @@ export default function PremiumPage() {
       : telegramUser?.first_name || "пользователь"
 
     return (
-      <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
-        <div className="premium-grid absolute inset-0 opacity-40" />
-        <section className="premium-paywall-card relative z-10 w-full max-w-lg rounded-[32px] border p-8 sm:p-10 text-center shadow-2xl">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-[#b8ff3d] text-black shadow-[0_0_45px_rgba(184,255,61,0.24)] rotate-[-3deg]">
-            <LockKeyhole className="w-9 h-9" />
+      <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212]">
+        <section className="w-full max-w-lg border-2 border-black p-8 sm:p-12 text-center bg-[#fafaf9] shadow-sm">
+          <div className="mb-6">
+            <span 
+              className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
+              style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
+            >
+              New Way Out
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-500 block mt-1">
+              Private Members Only
+            </span>
           </div>
-          <div className="premium-kicker mb-5 inline-flex">
-            <Crown className="w-4 h-4" />
-            NWO BLACK · LOCKED
+
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-black bg-black text-white">
+            <LockKeyhole className="w-6 h-6" />
           </div>
-          <h1 className="premium-display text-4xl sm:text-5xl font-black uppercase tracking-[0.012em] leading-[0.92] text-white">
+
+          <h1 className="text-3xl sm:text-4xl font-display font-bold text-black mb-4">
             Доступ пока не подключён
           </h1>
-          <p className="mt-5 text-white/50 leading-relaxed">
-            Аккаунт {displayName} успешно подтверждён, но для него ещё не активирован платный курс.
-            Бесплатное обучение и весь текущий прогресс остаются доступны.
+
+          <p className="text-sm text-gray-700 leading-relaxed font-ui mb-8 max-w-md mx-auto">
+            Telegram-аккаунт <strong>{displayName}</strong> подтверждён, но членство в закрытом клубе NWO BLACK ещё не активировано. Вы можете продолжать учиться в бесплатной базе или активировать инвайт-код.
           </p>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+
+          <div className="space-y-3 max-w-xs mx-auto">
             <a
-              href="/"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#b8ff3d] px-5 py-3 font-bold text-black transition-all hover:bg-[#c8ff67]"
+              href="https://t.me/c0lddev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 bg-black text-white py-3.5 px-6 font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Бесплатный курс
+              <span>Получить доступ ($79)</span>
+              <ChevronRight className="w-4 h-4" />
             </a>
+
+            <Link
+              href="/free"
+              className="w-full inline-flex items-center justify-center gap-2 border border-gray-300 bg-white py-3 px-6 font-semibold text-xs text-gray-800 hover:border-black transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Бесплатная база NWO
+            </Link>
+
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+              className="w-full py-2 text-xs font-semibold text-gray-500 hover:text-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <LogOut className="w-4 h-4" />
-              Другой аккаунт
+              <LogOut className="w-3.5 h-3.5" />
+              Войти с другого аккаунта
             </button>
           </div>
-          <p className="mt-6 text-xs text-white/25">
-            После подключения оплаты доступ будет включаться автоматически.
-          </p>
         </section>
       </main>
     )
@@ -150,29 +167,29 @@ export default function PremiumPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 text-black animate-spin" />
-        <p className="text-gray-500 text-sm font-semibold uppercase tracking-[0.16em]">Загрузка NWO BLACK...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white text-black font-ui">
+        <Loader2 className="w-8 h-8 text-black animate-spin" />
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">Загрузка материалов NWO BLACK...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-2xl">⚠️</div>
-        <h2 className="premium-display text-2xl font-black uppercase text-white">Не удалось открыть NWO BLACK</h2>
-        <p className="max-w-md text-sm text-white/45">{error}</p>
-        <div className="flex flex-wrap justify-center gap-3">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
+        <div className="w-14 h-14 border border-black bg-[#fafaf9] flex items-center justify-center text-xl">⚠️</div>
+        <h2 className="text-2xl font-display font-bold text-black">Не удалось загрузить NWO BLACK</h2>
+        <p className="max-w-md text-xs text-gray-600">{error}</p>
+        <div className="flex flex-wrap justify-center gap-3 mt-4">
           <button
             onClick={loadCourseData}
-            className="rounded-xl bg-[#b8ff3d] px-5 py-2.5 text-sm font-bold text-black cursor-pointer"
+            className="border border-black bg-black text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-gray-800 cursor-pointer"
           >
             Повторить
           </button>
-          <a href="/" className="rounded-xl bg-white/5 border border-white/10 px-5 py-2.5 text-sm font-semibold text-white/60">
-            Вернуться к бесплатному курсу
-          </a>
+          <Link href="/free" className="border border-gray-300 bg-white px-5 py-2.5 text-xs font-semibold text-gray-800 hover:border-black">
+            В бесплатный курс
+          </Link>
         </div>
       </div>
     )
@@ -180,17 +197,17 @@ export default function PremiumPage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center">
-        <div className="w-20 h-20 rounded-3xl bg-[#b8ff3d]/10 border border-[#b8ff3d]/20 flex items-center justify-center text-black">
-          <Crown className="w-9 h-9" />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
+        <div className="w-16 h-16 border border-black bg-black text-white flex items-center justify-center">
+          <Crown className="w-8 h-8" />
         </div>
-        <h2 className="premium-display text-3xl font-black uppercase text-white">NWO BLACK подключён</h2>
-        <p className="max-w-md text-white/45">
-          Доступ работает. Добавьте активные модули и уроки в листы PaidModules и PaidLessons.
+        <h2 className="text-3xl font-display font-bold text-black">NWO BLACK подключён</h2>
+        <p className="max-w-md text-xs text-gray-600">
+          Доступ активен. Наполните листы PaidModules и PaidLessons в таблице Google.
         </p>
-        <a href="/" className="mt-2 rounded-xl bg-[#b8ff3d] px-5 py-3 text-sm font-bold text-black">
-          Вернуться к бесплатному курсу
-        </a>
+        <Link href="/" className="mt-2 border border-black bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-gray-800">
+          Вернуться на главную
+        </Link>
       </div>
     )
   }
@@ -215,13 +232,7 @@ export default function PremiumPage() {
   }
 
   const handleCompleteLesson = () => {
-    if (!completedLessons.includes(currentLessonId)) {
-      const updated = [...completedLessons, currentLessonId]
-      setCompletedLessons(updated)
-      savePaidProgress(updated).catch((saveError) =>
-        console.error("Не удалось сохранить платный прогресс", saveError),
-      )
-    }
+    // В платной версии сохранение происходит в Google Таблицу через API
   }
 
   const handleNextLesson = () => {
@@ -240,20 +251,20 @@ export default function PremiumPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden bg-white text-black font-ui">
       <CourseHeader
         courseName={courseData.name}
-        onLogout={handleLogout}
         telegramUser={telegramUser}
         onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
         isSidebarOpen={isSidebarOpen}
+        onLogout={handleLogout}
+        variant="premium"
+        backHref="/"
+        backLabel="На главную"
         onClickLogo={() => {
           setCurrentModuleId("")
           setCurrentLessonId("")
         }}
-        backHref="/"
-        backLabel="Бесплатный курс"
-        variant="premium"
       />
       <div className="flex flex-1 overflow-hidden relative">
         <LessonSidebar

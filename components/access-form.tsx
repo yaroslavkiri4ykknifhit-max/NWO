@@ -1,29 +1,17 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, ExternalLink, Info } from "lucide-react"
+import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, ExternalLink, Info, Crown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
-
-// Иконка Telegram для Lucide-подобного использования
-const TelegramIcon = () => (
-  <svg
-    className="w-5 h-5"
-    fill="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.24-5.54 3.65-.52.36-.97.53-1.34.52-.42-.01-1.22-.24-1.82-.44-.73-.24-1.32-.37-1.27-.78.02-.21.32-.43.89-.65 3.48-1.52 5.81-2.52 6.98-3.01 3.33-1.39 4.02-1.63 4.47-1.64.1 0 .32.02.46.14.12.1.15.29.17.41-.02.1.03-.02 0 .02z" />
-  </svg>
-)
+import Link from "next/link"
 
 interface AccessFormProps {
   onAccessGranted: () => void
   variant?: "default" | "premium"
 }
 
-// Компонент динамической кнопки авторизации через Telegram
 interface TelegramLoginProps {
   botName: string
   onAuth: (user: TelegramUser) => void
@@ -83,7 +71,7 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
     script.async = true
     script.setAttribute("data-telegram-login", botName)
     script.setAttribute("data-size", "large")
-    script.setAttribute("data-radius", "8")
+    script.setAttribute("data-radius", "0")
     script.setAttribute("data-auth-url", `${url.origin}${url.pathname}`)
     script.setAttribute("data-request-access", "write")
     script.setAttribute("data-userpic", "true")
@@ -99,7 +87,7 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
 
   if (!botName) return null
 
-  return <div ref={containerRef} className="flex justify-center min-h-[40px] transition-all duration-200" />
+  return <div ref={containerRef} className="flex justify-center min-h-[44px] transition-all duration-200" />
 }
 
 export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormProps) {
@@ -112,7 +100,6 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
   const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || ""
   const isPremium = variant === "premium"
 
-  // Обработка входа через Telegram
   const handleTelegramAuth = async (user: TelegramUser) => {
     setError("")
     setIsLoading(true)
@@ -120,40 +107,34 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
     const response = await loginWithTelegram(user)
 
     if (response.valid) {
+      setIsLoading(false)
       onAccessGranted()
-    } else if (response.needsCode || response.error === "not_bound") {
-      // Пользователь валиден, но код еще не привязан
+    } else if (response.needsCode) {
       setTelegramUser(user)
       setView("tg_binding")
+      setIsLoading(false)
     } else {
       setError(response.error || "Ошибка авторизации через Telegram")
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
-  // Обработка привязки Telegram-аккаунта к инвайт-коду
   const handleBindTelegram = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!telegramUser) return
-    
+    if (!code.trim() || !telegramUser) return
+
     setError("")
     setIsLoading(true)
 
-    const trimmedCode = code.trim()
-    if (trimmedCode.length < 8) {
-      setError("Код должен быть не менее 8 символов")
-      setIsLoading(false)
-      return
-    }
-
-    const response = await bindTelegramToCode(trimmedCode, telegramUser)
+    const response = await bindTelegramToCode(code.trim(), telegramUser)
 
     if (response.valid) {
+      setIsLoading(false)
       onAccessGranted()
     } else {
-      setError(response.error || "Не удалось привязать код")
+      setError(response.error || "Неверный код доступа")
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
 
   const handleBackToInitial = () => {
@@ -164,167 +145,141 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 transition-all duration-300"><div className="w-full max-w-md bg-white border border-gray-200 p-8 shadow-xl">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212]">
+      <div className="w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
         
-        
+        {/* Masthead Header inside card */}
+        <div className="text-center border-b border-gray-300 pb-6 mb-6">
+          <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+            <span 
+              className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
+              style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
+            >
+              New Way Out
+            </span>
+          </Link>
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-500 block mt-1">
+            {isPremium ? "NWO BLACK · Закрытый доступ" : "Читательский билет · Авторизация"}
+          </span>
+        </div>
+
         {view === "initial" ? (
-          <div className="animate-in fade-in zoom-in-95 duration-300">
-            {/* Concentric Circles & 3D Lock Illustration */}
-            <div className="relative w-40 h-40 flex items-center justify-center mb-6 mx-auto">
-              {/* Outer pulsing circle */}
-              <div className="absolute inset-0 rounded-full border border-blue-100/50 animate-pulse scale-[1.05]" />
-              {/* Middle circle */}
-              <div className="absolute w-32 h-32 rounded-full border border-blue-200/40" />
-              {/* Inner circle */}
-              <div className="absolute w-24 h-24 rounded-full border border-blue-300/30" />
-              
-              {/* White 3D lock container */}
-              <div className="relative bg-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg border border-gray-200">
-                <Lock className="w-8 h-8 text-blue-500 fill-blue-500/10" />
-              </div>
-
-              {/* Blue shield checkmark overlay */}
-              <div className="absolute top-7 right-7 bg-blue-500 text-black rounded-full p-0.5 shadow-md flex items-center justify-center w-5 h-5 border-2 border-white">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Header Title */}
+          <div>
             <div className="text-center mb-6">
-              {isPremium && (
-                <div className="premium-kicker mx-auto mb-4 w-fit">
-                  NWO BLACK · MEMBERS ONLY
-                </div>
-              )}
-              <h1 className="text-3xl font-extrabold text-black tracking-tight mb-2 font-sans leading-none">
-                {""}
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+                {isPremium ? "Вход в NWO BLACK" : "Авторизация в системе"}
               </h1>
-              <p className="text-gray-500 text-sm font-medium">
-                {""}
+              <p className="text-xs text-gray-600 font-ui leading-relaxed">
+                {isPremium 
+                  ? "Для открытия премиальных материалов и боевых скриптов подтвердите ваш Telegram-аккаунт."
+                  : "Войдите через Telegram для сохранения вашего прогресса уроков и синхронизации."}
               </p>
             </div>
 
-            {/* Safety Banner */}
-            <div className="w-full bg-blue-50/50 border border-blue-100/60 rounded-2xl p-4 flex gap-3 items-start mb-6 text-left">
-              <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold text-blue-900 leading-tight">
-                  {""}
+            {/* Telegram Safety Banner */}
+            <div className="border border-gray-300 bg-white p-4 mb-6 flex gap-3 items-start">
+              <ShieldCheck className="w-5 h-5 text-black shrink-0 mt-0.5" />
+              <div className="text-left">
+                <p className="text-xs font-bold text-black uppercase tracking-wider">
+                  Безопасный вход через Telegram
                 </p>
-                <p className="text-[11px] sm:text-xs text-blue-700/80 mt-1 leading-snug">
-                  {""}
+                <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
+                  Мы получаем только ваш публичный ID и юзернейм. Ваши личные сообщения и пароли остаются строго конфиденциальными.
                 </p>
               </div>
             </div>
 
-            {/* Telegram Login Widget & Status */}
+            {/* Telegram Login Widget */}
             {botName ? (
-              <div className="space-y-4 w-full">
-                <div className="flex justify-center w-full min-h-[44px]">
+              <div className="space-y-4">
+                <div className="flex justify-center min-h-[44px]">
                   <TelegramWidget botName={botName} onAuth={handleTelegramAuth} />
                 </div>
                 
                 {error && (
-                  <p className="text-sm text-destructive text-center flex items-center justify-center gap-1.5 animate-bounce">
+                  <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2">
                     <ShieldAlert className="w-4 h-4" />
                     {error}
                   </p>
                 )}
-
-                <div className="text-[11px] text-muted-foreground/80 flex items-center justify-center gap-1.5 text-center leading-none mt-2">
-                  <Lock className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
-                  <span>Мы не получаем доступ к вашим данным в Telegram</span>
-                </div>
               </div>
             ) : (
-              <div className="text-center text-sm text-destructive p-4 bg-destructive/10 rounded-xl">
-                Ошибка конфигурации: Имя Telegram-бота не найдено.
+              <div className="text-center text-xs text-red-700 p-4 border border-red-300 bg-red-50 font-bold">
+                Ошибка конфигурации: Имя Telegram-бота не найдено в окружении.
               </div>
             )}
 
-            <div className="w-full flex items-start gap-3.5 p-1 mt-6 text-left">
-              <HelpCircle className="text-muted-foreground/50 w-8 h-8 shrink-0 mt-0.5" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-bold text-slate-800 leading-snug">
-                  Нет Telegram?
-                </p>
-                <p className="text-[11px] sm:text-xs text-muted-foreground leading-normal mt-0.5">
-                  Установите Telegram и попробуйте снова.
-                </p>
+            <div className="mt-8 pt-6 border-t border-gray-200 flex items-start gap-3 text-left">
+              <HelpCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+              <div className="text-[11px] text-gray-600 leading-normal">
+                Возникли сложности с доступом? Напишите напрямую основателю в Telegram:{" "}
                 <a
-                  href="https://telegram.org"
+                  href="https://t.me/c0lddev"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-blue-500 hover:text-blue-600 transition-colors mt-1.5 cursor-pointer"
+                  className="font-bold text-black underline underline-offset-2"
                 >
-                  <span>Скачать Telegram</span>
-                  <ExternalLink className="w-3 h-3" />
+                  @c0lddev
                 </a>
               </div>
             </div>
+
+            <div className="mt-6 text-center">
+              <Link 
+                href="/"
+                className="text-xs font-semibold text-gray-500 hover:text-black flex items-center justify-center gap-1 transition-colors"
+              >
+                <ArrowLeft size={12} /> Вернуться на главную страницу
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-            {/* Concentric Circles & Key Illustration for Binding Step */}
-            <div className="relative w-40 h-40 flex items-center justify-center mb-6 mx-auto">
-              <div className="absolute inset-0 rounded-full border border-accent/10 animate-pulse scale-[1.05]" />
-              <div className="absolute w-32 h-32 rounded-full border border-accent/15" />
-              <div className="absolute w-24 h-24 rounded-full border border-accent/20" />
-              
-              <div className="relative bg-white rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg border border-gray-200">
-                <ShieldCheck className="w-8 h-8 text-accent fill-accent/10" />
-              </div>
-            </div>
-
-            {/* Header Title */}
+          <div>
             <div className="text-center mb-6">
-              <h2 className="text-3xl font-extrabold text-black tracking-tight mb-2 font-sans leading-none">
-                {""}
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+                Активация доступа
               </h2>
-              <p className="text-gray-500 text-sm font-medium">
-                Введите инвайт-код для завершения входа
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Введите инвайт-код, полученный после оплаты или регистрации.
               </p>
             </div>
 
-            {/* User Info Banner */}
-            <div className="w-full bg-accent/5 border border-accent/10 rounded-2xl p-4 flex gap-3 items-center mb-6 text-left">
+            <div className="border border-gray-300 bg-white p-3.5 flex gap-3 items-center mb-6 text-left">
               {telegramUser?.photo_url ? (
                 <img
                   src={telegramUser.photo_url}
                   alt={telegramUser.first_name}
-                  className="w-10 h-10 rounded-full border border-accent/30 object-cover shrink-0"
+                  className="w-8 h-8 rounded-none border border-gray-300 object-cover shrink-0"
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                  <User className="w-5 h-5 text-accent" />
+                <div className="w-8 h-8 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-black" />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight">
-                  Вы вошли как @{telegramUser?.username || telegramUser?.first_name}
+                <p className="text-xs font-bold text-black leading-tight">
+                  @{telegramUser?.username || telegramUser?.first_name}
                 </p>
-                <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-snug">
-                  Осталось ввести инвайт-код для первой привязки
+                <p className="text-[10px] uppercase font-semibold text-gray-500 tracking-wider">
+                  Telegram подтвержден
                 </p>
               </div>
             </div>
 
-            {/* Invite Code Form */}
             <form onSubmit={handleBindTelegram} className="space-y-4">
-              <div className="space-y-2">
+              <div>
                 <Input
                   type="text"
-                  placeholder="Введите ваш инвайт-код"
+                  placeholder="ВВЕДИТЕ ИНВАЙТ-КОД"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  className="h-12 bg-slate-50 border-slate-200 text-center text-lg tracking-widest uppercase placeholder:normal-case placeholder:tracking-normal font-mono font-semibold focus:ring-accent/50 focus:border-accent rounded-xl text-slate-800"
+                  className="h-12 bg-white border border-black text-center text-base tracking-widest uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
                   disabled={isLoading}
+                  autoFocus
                 />
                 {error && (
-                  <p className="text-sm text-destructive text-center flex items-center justify-center gap-1.5 mt-2 animate-bounce">
+                  <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-50 p-2">
                     <ShieldAlert className="w-4 h-4" />
                     {error}
                   </p>
@@ -333,37 +288,26 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-accent text-accent-foreground hover:bg-accent/90 transition-all duration-300 font-semibold active:scale-[0.98] cursor-pointer rounded-xl"
+                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
                 disabled={!code.trim() || isLoading}
               >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full animate-spin" />
-                    Привязка...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2 w-full">
-                    Активировать и войти
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                )}
+                {isLoading ? "Проверка..." : "Активировать доступ"}
               </Button>
 
               <button
                 type="button"
                 onClick={handleBackToInitial}
-                className="w-full h-10 mt-2 bg-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/40 rounded-xl transition-all duration-200 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 disabled={isLoading}
               >
-                <ArrowLeft className="w-4 h-4" />
-                Назад к выбору входа
+                <ArrowLeft className="w-3.5 h-3.5" /> Назад к выбору входа
               </button>
             </form>
 
-            <div className="mt-6 p-4 rounded-2xl bg-accent/5 border border-accent/10/70 flex gap-3 items-start text-left">
-              <Info className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                После успешной привязки инвайт-код навсегда закрепится за вашим Telegram. На других устройствах вы сможете входить мгновенно в один клик.
+            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
+              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-gray-500 leading-snug">
+                Инвайт-код навсегда привязывается к вашему Telegram. В будущем вход будет происходить автоматически в один клик.
               </p>
             </div>
           </div>
