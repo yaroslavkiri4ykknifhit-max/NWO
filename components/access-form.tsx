@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, Info, User, Phone, CheckCircle2, X } from "lucide-react"
+import { ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, Info, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
@@ -19,7 +19,7 @@ interface AccessFormProps {
   variant?: "default" | "premium"
 }
 
-// Фирменная векторная иконка Telegram для кнопки авторизации
+// Фирменная векторная иконка Telegram
 function TelegramAirplaneIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
     <svg
@@ -38,7 +38,6 @@ interface TelegramLoginProps {
   onAuth: (user: TelegramUser) => void
   onInitiateLogin: () => void
   isLocalhost: boolean
-  onOpenDevModal: () => void
 }
 
 function TelegramWidget({
@@ -46,19 +45,18 @@ function TelegramWidget({
   onAuth,
   onInitiateLogin,
   isLocalhost,
-  onOpenDevModal,
 }: TelegramLoginProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [iframeLoaded, setIframeLoaded] = useState(false)
+  const popupRef = useRef<Window | null>(null)
 
-  // Храним функции в ref, чтобы не пересоздавать и не очищать контейнер при ререндерах
   const onAuthRef = useRef(onAuth)
   onAuthRef.current = onAuth
   const onInitiateLoginRef = useRef(onInitiateLogin)
   onInitiateLoginRef.current = onInitiateLogin
 
   useEffect(() => {
-    // 1. Проверка параметров Telegram при редиректе (если возвращаются GET-параметры)
+    // 1. Проверка параметров URL при возврате через редирект Telegram
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href)
       const id = Number(url.searchParams.get("id"))
@@ -104,11 +102,31 @@ function TelegramWidget({
         onAuthRef.current(user)
         return
       }
+
+      // Проверка hash tgAuthResult
+      const locationHash = window.location.hash
+      const match = locationHash.match(/[#\?\&]tgAuthResult=([A-Za-z0-9\-_=]*)$/)
+      if (match) {
+        try {
+          window.location.hash = locationHash.replace(/[#\?\&]tgAuthResult=([A-Za-z0-9\-_=]*)$/, "")
+          let raw = (match[1] || "").replace(/-/g, "+").replace(/_/g, "/")
+          const pad = raw.length % 4
+          if (pad > 1) raw += "=".repeat(4 - pad)
+          const user = JSON.parse(window.atob(raw))
+          if (user && user.id) {
+            onInitiateLoginRef.current()
+            onAuthRef.current(user)
+            return
+          }
+        } catch {}
+      }
     }
 
-    // 2. Слушатель window.onmessage для всплывающего окна oauth.telegram.org
+    // 2. Слушатель window.onmessage (обрабатываем и auth_user, и auth_result)
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== "https://oauth.telegram.org") return
+      if (!event.origin.includes("telegram.org") && event.origin !== window.location.origin) {
+        return
+      }
       try {
         let payload: any = event.data
         if (typeof payload === "string") {
@@ -118,27 +136,43 @@ function TelegramWidget({
             return
           }
         }
-        if (payload && (payload.event === "auth_result" || payload.result)) {
-          const user = (payload.result || payload) as TelegramUser
-          if (user && (user.id || user.username)) {
-            onInitiateLoginRef.current()
-            onAuthRef.current(user)
+        if (!payload || typeof payload !== "object") return
+
+        // Извлекаем пользователя из любого формата Telegram
+        const user: TelegramUser | null =
+          payload.auth_data ||
+          payload.result ||
+          payload.user ||
+          (payload.id && payload.hash ? payload : null)
+
+        if (user && (user.id || user.username)) {
+          if (popupRef.current && !popupRef.current.closed) {
+            try {
+              popupRef.current.close()
+            } catch {}
           }
+          onInitiateLoginRef.current()
+          onAuthRef.current(user)
         }
       } catch (err) {
-        console.error("Telegram postMessage parse error:", err)
+        console.error("Telegram postMessage error:", err)
       }
     }
 
     window.addEventListener("message", handleMessage)
 
-    // 3. Callback при подтверждении в официальном виджете Telegram
+    // 3. Callback для виджета Telegram
     window.onTelegramAuth = (user: TelegramUser) => {
+      if (popupRef.current && !popupRef.current.closed) {
+        try {
+          popupRef.current.close()
+        } catch {}
+      }
       onInitiateLoginRef.current()
       onAuthRef.current(user)
     }
 
-    // 4. Подключение официального фрейма Telegram Widget (только один раз, без мерцания)
+    // 4. Подключение официального iframe Telegram Widget
     if (containerRef.current && botName && !isLocalhost) {
       if (!containerRef.current.querySelector("iframe")) {
         const origin = window.location.origin
@@ -175,21 +209,53 @@ function TelegramWidget({
   }, [botName, isLocalhost])
 
   const handleBlueButtonClick = () => {
+    // 1. На localhost: мгновенный тестовый вход без внешних блокировок Telegram и без окон
     if (isLocalhost) {
-      onOpenDevModal()
+      onInitiateLoginRef.current()
+      const mockUser: TelegramUser = {
+        id: 777000,
+        first_name: "Ярослав",
+        username: "c0lddev",
+        auth_date: Math.floor(Date.now() / 1000),
+        hash: "0000000000000000000000000000000000000000000000000000000000000000",
+      }
+      setTimeout(() => {
+        onAuthRef.current(mockUser)
+      }, 500)
       return
     }
 
-    // В продакшене: если виджет загружен, фокусим его
-    const iframe = containerRef.current?.querySelector("iframe")
-    if (iframe) {
-      iframe.focus()
+    // 2. В продакшене: открываем официальный popup Telegram OAuth
+    const botId = "8920383471"
+    const origin = window.location.origin
+    const returnTo = window.location.href
+    const popupUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(
+      origin
+    )}&request_access=write&lang=ru&return_to=${encodeURIComponent(returnTo)}`
+
+    const width = 550
+    const height = 470
+    const left = Math.max(0, (window.screen.width - width) / 2)
+    const top = Math.max(0, (window.screen.height - height) / 2)
+
+    try {
+      const popup = window.open(
+        popupUrl,
+        "telegram_oauth",
+        `width=${width},height=${height},left=${left},top=${top},status=0,location=0,menubar=0,toolbar=0`
+      )
+      popupRef.current = popup
+      if (popup) {
+        popup.focus()
+      }
+    } catch {
+      // Fallback
     }
   }
 
   return (
     <div className="relative inline-flex items-center justify-center min-h-[44px]">
-      {/* 1. Настоящая официальная синяя кнопка Telegram — ВСЕГДА на месте и никогда не пропадает */}
+      {/* 1. Настоящая синяя кнопка Telegram — ВСЕГДА на экране, кликабельна и мгновенно работает */}
       <button
         type="button"
         onClick={handleBlueButtonClick}
@@ -199,7 +265,7 @@ function TelegramWidget({
         <span className="font-sans font-semibold">Войти через Telegram</span>
       </button>
 
-      {/* 2. Официальный iframe Telegram Widget — когда готов, плавно накладывается на синюю кнопку */}
+      {/* 2. Официальный iframe Telegram Widget в продакшене */}
       {!isLocalhost && botName && (
         <div
           ref={containerRef}
@@ -217,9 +283,6 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
   const [code, setCode] = useState("")
   const [error, setError] = useState("")
   const [isLocalhost, setIsLocalhost] = useState(false)
-  const [showDevModal, setShowDevModal] = useState(false)
-  const [devUsername, setDevUsername] = useState("c0lddev")
-  const [devPhone, setDevPhone] = useState("+7 (999) 000-00-00")
   
   // Мгновенно включаем лоадер с рукописной анимацией, если пользователь вернулся после авторизации в Telegram
   const [isLoading, setIsLoading] = useState(() => {
@@ -231,7 +294,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
   
   const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
 
-  const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || ""
+  const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "nwo_academy_bot"
   const isPremium = variant === "premium"
 
   useEffect(() => {
@@ -266,27 +329,11 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
         setIsLoading(false)
       }
     } catch {
-      setError("Ошибка соединения с сервером. Попробуйте еще раз.")
+      // Graceful fallback на экран привязки кода
+      setTelegramUser(user)
+      setView("tg_binding")
       setIsLoading(false)
     }
-  }
-
-  const handleConfirmDevLogin = () => {
-    setShowDevModal(false)
-    setIsLoading(true)
-
-    const cleanUsername = devUsername.replace(/^@/, "").trim() || "c0lddev"
-    const mockUser: TelegramUser = {
-      id: 777000,
-      first_name: "Ярослав",
-      username: cleanUsername,
-      auth_date: Math.floor(Date.now() / 1000),
-      hash: "0000000000000000000000000000000000000000000000000000000000000000",
-    }
-
-    setTimeout(async () => {
-      await handleTelegramAuth(mockUser)
-    }, 400)
   }
 
   const handleBindTelegram = async (e: React.FormEvent) => {
@@ -323,85 +370,9 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212] relative">
-      {/* Если идет авторизация — показываем плавную анимацию, будто ручкой выводится New Way Out */}
+      {/* Плавная рукописная анимация выведения надписи New Way Out при входе и проверке */}
       {isLoading && (
         <GothicHandwrittenLoader />
-      )}
-
-      {/* Модальное окно Telegram для локального тестирования (localhost) */}
-      {showDevModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border-2 border-black w-full max-w-sm p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#54a9eb] flex items-center justify-center text-white shrink-0 shadow-xs">
-                  <TelegramAirplaneIcon className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm text-black">Вход через Telegram</h3>
-                  <p className="text-[10px] text-gray-500 uppercase tracking-wider">Подтверждение аккаунта</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowDevModal(false)}
-                className="text-gray-400 hover:text-black p-1 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-3 bg-neutral-100 border border-neutral-200 text-[11px] text-neutral-800 leading-snug">
-              <span className="font-bold text-black block mb-1">Режим разработки (localhost):</span>
-              Telegram запрашивает номер телефона и отправляет подтверждение в приложение Telegram.
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
-                  Номер телефона:
-                </label>
-                <Input
-                  type="text"
-                  value={devPhone}
-                  onChange={(e) => setDevPhone(e.target.value)}
-                  className="h-10 text-xs font-mono rounded-none border border-black focus:ring-0 focus:border-black"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-700 mb-1">
-                  Telegram Username:
-                </label>
-                <Input
-                  type="text"
-                  value={devUsername}
-                  onChange={(e) => setDevUsername(e.target.value)}
-                  placeholder="@c0lddev"
-                  className="h-10 text-xs font-mono rounded-none border border-black focus:ring-0 focus:border-black"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 pt-1">
-              <Button
-                type="button"
-                onClick={handleConfirmDevLogin}
-                className="h-11 bg-[#54a9eb] hover:bg-[#4ba3e3] text-white font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer flex items-center justify-center gap-2"
-              >
-                <TelegramAirplaneIcon className="w-4 h-4" />
-                <span>Подтвердить вход</span>
-              </Button>
-              <button
-                type="button"
-                onClick={() => setShowDevModal(false)}
-                className="text-xs text-gray-500 hover:text-black py-1 cursor-pointer"
-              >
-                Отмена
-              </button>
-            </div>
-          </div>
-        </div>
       )}
 
       <div className="w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
@@ -453,14 +424,13 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 Официальный вход через Telegram
               </p>
 
-              {/* Синяя кнопка Telegram — ВСЕГДА на месте и сразу отображается */}
+              {/* Синяя кнопка Telegram — ВСЕГДА на месте и сразу функционирует */}
               <div className="py-2 flex justify-center items-center min-h-[48px]">
                 <TelegramWidget 
                   botName={botName} 
                   onAuth={handleTelegramAuth} 
                   onInitiateLogin={() => setIsLoading(true)}
                   isLocalhost={isLocalhost}
-                  onOpenDevModal={() => setShowDevModal(true)}
                 />
               </div>
 

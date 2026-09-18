@@ -40,7 +40,7 @@ export default function PremiumPage() {
 
   const refreshAccess = useCallback(async () => {
     setAccessState("checking")
-    const minDelay = new Promise((resolve) => setTimeout(resolve, 5000))
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 1800))
     const session = await getPaidAuthSession()
     await minDelay
     setTelegramUser(session.telegramUser)
