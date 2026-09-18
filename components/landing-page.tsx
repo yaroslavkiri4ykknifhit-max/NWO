@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Menu, X, Mail, Send, ArrowUpRight, Star } from "lucide-react"
-
+import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
 import {
   Dialog,
   DialogContent,
@@ -601,8 +601,28 @@ function ReviewsSection() {
 
 
 export function LandingPage() {
+  const [siteLoading, setSiteLoading] = useState(true)
+  const [loaderVisible, setLoaderVisible] = useState(true)
+
+  const handleLoaderComplete = () => {
+    setSiteLoading(false)
+    setTimeout(() => {
+      setLoaderVisible(false)
+    }, 600)
+  }
+
   return (
-    <main className="min-h-screen bg-white text-[#121212] font-display selection:bg-black selection:text-white">
+    <main className="min-h-screen bg-white text-[#121212] font-display selection:bg-black selection:text-white relative">
+      {loaderVisible && (
+        <div
+          className={`fixed inset-0 z-[100] transition-opacity duration-700 bg-white ${
+            siteLoading ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <GothicHandwrittenLoader loop={false} onComplete={handleLoaderComplete} />
+        </div>
+      )}
+
       <BreakingNewsBanner />
       <Navigation />
       <Masthead />

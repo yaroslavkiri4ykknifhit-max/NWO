@@ -1,6 +1,6 @@
 "use client"
 
-import { HandwrittenLoader } from "@/components/handwritten-loader"
+import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
 
 import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
@@ -36,12 +36,14 @@ export default function FreeCoursePage() {
   const loadCourseData = async () => {
     setLoading(true)
     setError(null)
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 3600))
     try {
-      const data = await fetchPublicCourseData()
+      const [data] = await Promise.all([fetchPublicCourseData(), minDelay])
       setCourseData(data)
       setCurrentModuleId("")
       setCurrentLessonId("")
     } catch (loadError) {
+      await minDelay
       setError(
         loadError instanceof Error
           ? loadError.message
@@ -58,10 +60,7 @@ export default function FreeCoursePage() {
 
   if (loading) {
     return (
-      <HandwrittenLoader
-        statusText="Открываем курс..."
-        subText="Синхронизируем уроки и материалы NWO FREE"
-      />
+      <GothicHandwrittenLoader />
     )
   }
 

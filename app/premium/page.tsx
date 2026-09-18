@@ -1,6 +1,6 @@
 "use client"
 
-import { HandwrittenLoader } from "@/components/handwritten-loader"
+import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
 
 import { useCallback, useEffect, useState } from "react"
 import { ArrowLeft, Crown, Loader2, LockKeyhole, LogOut, ChevronRight } from "lucide-react"
@@ -40,7 +40,9 @@ export default function PremiumPage() {
 
   const refreshAccess = useCallback(async () => {
     setAccessState("checking")
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 3600))
     const session = await getPaidAuthSession()
+    await minDelay
     setTelegramUser(session.telegramUser)
     setCompletedLessons(session.completedLessons)
 
@@ -91,10 +93,7 @@ export default function PremiumPage() {
 
   if (accessState === "checking") {
     return (
-      <HandwrittenLoader
-        statusText="Проверка доступа..."
-        subText="Синхронизируем членство NWO BLACK"
-      />
+      <GothicHandwrittenLoader />
     )
   }
 
@@ -169,10 +168,7 @@ export default function PremiumPage() {
 
   if (loading) {
     return (
-      <HandwrittenLoader
-        statusText="Загрузка материалов..."
-        subText="Открываем закрытые лекции и боевые скрипты"
-      />
+      <GothicHandwrittenLoader />
     )
   }
 

@@ -5,7 +5,7 @@ import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
-import { HandwrittenLoader } from "@/components/handwritten-loader"
+import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
 import Link from "next/link"
 
 declare global {
@@ -195,10 +195,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212] relative">
       {/* Если идет авторизация — показываем плавную анимацию, будто ручкой выводится New Way Out */}
       {isLoading && (
-        <HandwrittenLoader
-          statusText="Авторизуем..."
-          subText="Проверяем подпись Telegram и открываем материалы"
-        />
+        <GothicHandwrittenLoader />
       )}
 
       <div className="w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
