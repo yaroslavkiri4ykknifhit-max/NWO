@@ -1,5 +1,7 @@
 "use client"
 
+import { HandwrittenLoader } from "@/components/handwritten-loader"
+
 import { useCallback, useEffect, useState } from "react"
 import { ArrowLeft, Crown, Loader2, LockKeyhole, LogOut, ChevronRight } from "lucide-react"
 import { AccessForm } from "@/components/access-form"
@@ -89,10 +91,10 @@ export default function PremiumPage() {
 
   if (accessState === "checking") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white text-black font-ui">
-        <Loader2 className="w-8 h-8 text-black animate-spin" />
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">Проверка членства NWO BLACK...</p>
-      </div>
+      <HandwrittenLoader
+        statusText="Проверка доступа..."
+        subText="Синхронизируем членство NWO BLACK"
+      />
     )
   }
 
@@ -167,10 +169,10 @@ export default function PremiumPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white text-black font-ui">
-        <Loader2 className="w-8 h-8 text-black animate-spin" />
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">Загрузка материалов NWO BLACK...</p>
-      </div>
+      <HandwrittenLoader
+        statusText="Загрузка материалов..."
+        subText="Открываем закрытые лекции и боевые скрипты"
+      />
     )
   }
 

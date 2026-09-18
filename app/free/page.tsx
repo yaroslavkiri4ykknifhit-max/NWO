@@ -1,5 +1,7 @@
 "use client"
 
+import { HandwrittenLoader } from "@/components/handwritten-loader"
+
 import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { CourseHeader } from "@/components/course-header"
@@ -56,10 +58,10 @@ export default function FreeCoursePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
-        <Loader2 className="w-10 h-10 text-accent animate-spin" />
-        <p className="text-muted-foreground text-sm">Открываем бесплатный курс...</p>
-      </div>
+      <HandwrittenLoader
+        statusText="Открываем курс..."
+        subText="Синхронизируем уроки и материалы NWO FREE"
+      />
     )
   }
 

@@ -1,11 +1,18 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, ExternalLink, Info, Crown } from "lucide-react"
+import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
+import { HandwrittenLoader } from "@/components/handwritten-loader"
 import Link from "next/link"
+
+declare global {
+  interface Window {
+    onTelegramAuth?: (user: TelegramUser) => void
+  }
+}
 
 interface AccessFormProps {
   onAccessGranted: () => void
@@ -15,13 +22,20 @@ interface AccessFormProps {
 interface TelegramLoginProps {
   botName: string
   onAuth: (user: TelegramUser) => void
+  onInitiateLogin: () => void
 }
 
-function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
+function TelegramWidget({ botName, onAuth, onInitiateLogin }: TelegramLoginProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!containerRef.current || !botName) return
+
+    // Поддержка мгновенного JS-callback без перезагрузки страницы
+    window.onTelegramAuth = (user: TelegramUser) => {
+      onInitiateLogin()
+      onAuth(user)
+    }
 
     const telegramFields = [
       "id",
@@ -46,6 +60,8 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
       /^[a-f0-9]{64}$/i.test(hash) &&
       firstName
     ) {
+      onInitiateLogin()
+
       const user: TelegramUser = {
         id,
         first_name: firstName,
@@ -72,6 +88,7 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
     script.setAttribute("data-telegram-login", botName)
     script.setAttribute("data-size", "large")
     script.setAttribute("data-radius", "0")
+    script.setAttribute("data-onauth", "onTelegramAuth(user)")
     script.setAttribute("data-auth-url", `${url.origin}${url.pathname}`)
     script.setAttribute("data-request-access", "write")
     script.setAttribute("data-userpic", "true")
@@ -82,19 +99,34 @@ function TelegramWidget({ botName, onAuth }: TelegramLoginProps) {
       if (containerRef.current) {
         containerRef.current.innerHTML = ""
       }
+      delete window.onTelegramAuth
     }
-  }, [botName, onAuth])
+  }, [botName, onAuth, onInitiateLogin])
 
   if (!botName) return null
 
-  return <div ref={containerRef} className="flex justify-center min-h-[44px] transition-all duration-200" />
+  return (
+    <div 
+      ref={containerRef} 
+      className="flex justify-center min-h-[44px] transition-all duration-200 cursor-pointer"
+      onClick={onInitiateLogin}
+    />
+  )
 }
 
 export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormProps) {
   const [view, setView] = useState<"initial" | "tg_binding">("initial")
   const [code, setCode] = useState("")
   const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  
+  // Мгновенно включаем лоадер с рукописной анимацией, если пользователь вернулся после авторизации в Telegram
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window !== "undefined") {
+      return Boolean(new URLSearchParams(window.location.search).get("hash"))
+    }
+    return false
+  })
+  
   const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
 
   const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || ""
@@ -104,17 +136,25 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
     setError("")
     setIsLoading(true)
 
-    const response = await loginWithTelegram(user)
+    try {
+      const response = await loginWithTelegram(user)
 
-    if (response.valid) {
-      setIsLoading(false)
-      onAccessGranted()
-    } else if (response.needsCode) {
-      setTelegramUser(user)
-      setView("tg_binding")
-      setIsLoading(false)
-    } else {
-      setError(response.error || "Ошибка авторизации через Telegram")
+      if (response.valid) {
+        // Небольшая задержка, чтобы пользователь успел насладиться рукописной анимацией
+        setTimeout(() => {
+          setIsLoading(false)
+          onAccessGranted()
+        }, 1200)
+      } else if (response.needsCode) {
+        setTelegramUser(user)
+        setView("tg_binding")
+        setIsLoading(false)
+      } else {
+        setError(response.error || "Ошибка авторизации через Telegram")
+        setIsLoading(false)
+      }
+    } catch (e) {
+      setError("Ошибка соединения. Попробуйте еще раз.")
       setIsLoading(false)
     }
   }
@@ -126,13 +166,20 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
     setError("")
     setIsLoading(true)
 
-    const response = await bindTelegramToCode(code.trim(), telegramUser)
+    try {
+      const response = await bindTelegramToCode(code.trim(), telegramUser)
 
-    if (response.valid) {
-      setIsLoading(false)
-      onAccessGranted()
-    } else {
-      setError(response.error || "Неверный код доступа")
+      if (response.valid) {
+        setTimeout(() => {
+          setIsLoading(false)
+          onAccessGranted()
+        }, 1200)
+      } else {
+        setError(response.error || "Неверный инвайт-код доступа")
+        setIsLoading(false)
+      }
+    } catch (e) {
+      setError("Ошибка проверки кода. Попробуйте еще раз.")
       setIsLoading(false)
     }
   }
@@ -145,7 +192,15 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212]">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212] relative">
+      {/* Если идет авторизация — показываем плавную анимацию, будто ручкой выводится New Way Out */}
+      {isLoading && (
+        <HandwrittenLoader
+          statusText="Авторизуем..."
+          subText="Проверяем подпись Telegram и открываем материалы"
+        />
+      )}
+
       <div className="w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
         
         {/* Masthead Header inside card */}
@@ -181,10 +236,10 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <ShieldCheck className="w-5 h-5 text-black shrink-0 mt-0.5" />
               <div className="text-left">
                 <p className="text-xs font-bold text-black uppercase tracking-wider">
-                  Безопасный вход через Telegram
+                  Вход в один клик через Telegram
                 </p>
                 <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
-                  Мы получаем только ваш публичный ID и юзернейм. Ваши личные сообщения и пароли остаются строго конфиденциальными.
+                  Мы получаем только ваш публичный ID. Ваши личные переписки и данные остаются строго конфиденциальными.
                 </p>
               </div>
             </div>
@@ -193,7 +248,14 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             {botName ? (
               <div className="space-y-4">
                 <div className="flex justify-center min-h-[44px]">
-                  <TelegramWidget botName={botName} onAuth={handleTelegramAuth} />
+                  <TelegramWidget 
+                    botName={botName} 
+                    onAuth={handleTelegramAuth} 
+                    onInitiateLogin={() => {
+                      // При клике сразу ставим лоадер, чтобы не было ощущения подвисания
+                      setIsLoading(true)
+                    }}
+                  />
                 </div>
                 
                 {error && (
@@ -291,7 +353,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
                 disabled={!code.trim() || isLoading}
               >
-                {isLoading ? "Проверка..." : "Активировать доступ"}
+                Активировать доступ
               </Button>
 
               <button
