@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft, Crown, LogOut, User } from "lucide-react"
+import { ArrowLeft, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TelegramProfile } from "@/lib/sheets-api"
 import { motion } from "motion/react"
@@ -28,7 +28,7 @@ interface PathProps {
 const Path = (props: PathProps) => (
   <motion.path
     fill="transparent"
-    strokeWidth="3"
+    strokeWidth="2.5"
     stroke="currentColor"
     strokeLinecap="round"
     {...props}
@@ -38,14 +38,14 @@ const Path = (props: PathProps) => (
 const MenuToggle = ({ toggle, isOpen }: { toggle: () => void; isOpen: boolean }) => (
   <button
     onClick={toggle}
-    className="p-2.5 hover:bg-gray-100/50 rounded-xl text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+    className="p-2 hover:bg-gray-100 rounded-none text-black transition-colors cursor-pointer shrink-0 flex items-center justify-center border border-transparent hover:border-gray-300"
     aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
   >
     <motion.svg 
-      width="23" 
-      height="23" 
+      width="22" 
+      height="22" 
       viewBox="0 0 23 23" 
-      className="w-5 h-5"
+      className="w-5 h-5 text-black"
       initial={false}
       animate={isOpen ? "open" : "closed"}
     >
@@ -81,7 +81,7 @@ export function CourseHeader({
   isSidebarOpen,
   onClickLogo,
   backHref,
-  backLabel = "Назад",
+  backLabel = "На главную",
   variant = "default",
   showUser = true,
 }: CourseHeaderProps) {
@@ -91,28 +91,29 @@ export function CourseHeader({
     : "Студент"
 
   return (
-    <header className={isPremium
-      ? "premium-course-header h-16 backdrop-blur-xl border-b flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300 z-50"
-      : "h-16 bg-card/60 backdrop-blur-md border-b border-border/50 flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300 z-50"
-    }>
-      <div className="flex items-center gap-2 sm:gap-3">
+    <header className="h-16 bg-white border-b border-gray-300 flex items-center justify-between px-4 sm:px-6 shrink-0 z-50">
+      <div className="flex items-center gap-3">
         <MenuToggle isOpen={isSidebarOpen} toggle={onToggleSidebar} />
 
         <button
           onClick={onClickLogo}
-          className={isPremium
-            ? "premium-display flex items-baseline gap-1.5 text-xl font-black text-white select-none tracking-[0.012em] shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
-            : "text-3xl font-bold text-foreground font-caveat select-none tracking-wider italic shrink-0 pr-1 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
-          }
+          className="flex items-baseline gap-2 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
         >
-          NWO
-          {isPremium && <span className="text-[#b8ff3d]">/BLACK</span>}
+          <span 
+            className="text-3xl text-black tracking-tight select-none"
+            style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
+          >
+            NWO
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 border border-black bg-black text-white">
+            {isPremium ? "BLACK" : "FREE"}
+          </span>
         </button>
 
         {backHref && (
           <a
             href={backHref}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-border/40 bg-gray-100/30 p-2 sm:px-3 sm:py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-gray-100/60 hover:text-foreground"
+            className="inline-flex items-center gap-1.5 border border-gray-300 bg-white p-1.5 sm:px-3 sm:py-1 text-xs font-semibold text-gray-700 hover:bg-black hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{backLabel}</span>
@@ -120,24 +121,14 @@ export function CourseHeader({
         )}
       </div>
 
-      {isPremium && (
-        <div className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-[#b8ff3d]/15 bg-[#b8ff3d]/5 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-[#b8ff3d] lg:flex">
-          <Crown className="h-3.5 w-3.5" />
-          Premium access
-        </div>
-      )}
-
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {showUser && (
-          <div className={isPremium
-            ? "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.035] border border-white/10"
-            : "flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-gray-100/35 border border-border/30"
-          }>
+          <div className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 bg-[#fafaf9]">
             {telegramUser?.photo_url ? (
               <img
                 src={telegramUser.photo_url}
                 alt={displayName}
-                className="w-6 h-6 rounded-full object-cover border border-accent/40"
+                className="w-6 h-6 rounded-none object-cover border border-gray-300"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'
@@ -152,7 +143,7 @@ export function CourseHeader({
               style={{ display: telegramUser?.photo_url ? 'none' : 'block' }}
             />
 
-            <span className="text-sm font-medium text-foreground tracking-wide max-w-[120px] truncate">
+            <span className="text-xs font-semibold text-black tracking-wide max-w-[130px] truncate font-ui">
               {displayName}
             </span>
           </div>
@@ -163,13 +154,10 @@ export function CourseHeader({
             variant="ghost"
             size="sm"
             onClick={onLogout}
-            className={isPremium
-              ? "gap-2 text-white/40 hover:text-red-300 hover:bg-red-500/10 rounded-xl px-3 h-9 transition-colors cursor-pointer"
-              : "gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl px-3 h-9 transition-colors cursor-pointer"
-            }
+            className="gap-1.5 text-gray-600 hover:text-black hover:bg-gray-100 rounded-none px-3 h-8 text-xs font-semibold border border-transparent hover:border-gray-200 transition-colors cursor-pointer"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline text-xs font-medium">Выйти</span>
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Выйти</span>
           </Button>
         )}
       </div>
