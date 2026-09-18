@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Lock, ArrowRight, User, ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, Info } from "lucide-react"
+import { ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, Info, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
@@ -19,19 +19,6 @@ interface AccessFormProps {
   variant?: "default" | "premium"
 }
 
-function TelegramIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.24-5.54 3.65-.52.36-.97.53-1.34.52-.42-.01-1.22-.24-1.82-.44-.73-.24-1.32-.37-1.27-.78.02-.21.32-.43.89-.65 3.48-1.52 5.81-2.52 6.98-3.01 3.33-1.39 4.02-1.63 4.47-1.64.1 0 .32.02.46.14.12.1.15.29.17.41-.02.1.03-.02 0 .02z" />
-    </svg>
-  )
-}
-
 interface TelegramLoginProps {
   botName: string
   onAuth: (user: TelegramUser) => void
@@ -44,12 +31,13 @@ function TelegramWidget({ botName, onAuth, onInitiateLogin }: TelegramLoginProps
   useEffect(() => {
     if (!containerRef.current || !botName) return
 
-    // Поддержка мгновенного JS-callback без перезагрузки страницы
+    // Callback при подтверждении в официальном модальном окне Telegram
     window.onTelegramAuth = (user: TelegramUser) => {
       onInitiateLogin()
       onAuth(user)
     }
 
+    // Проверка параметров при возврате через редирект
     const telegramFields = [
       "id",
       "first_name",
@@ -95,14 +83,17 @@ function TelegramWidget({ botName, onAuth, onInitiateLogin }: TelegramLoginProps
       return
     }
 
+    // Очищаем контейнер перед монтированием скрипта
+    containerRef.current.innerHTML = ""
+
     const script = document.createElement("script")
     script.src = "https://telegram.org/js/telegram-widget.js?22"
     script.async = true
     script.setAttribute("data-telegram-login", botName)
     script.setAttribute("data-size", "large")
     script.setAttribute("data-radius", "0")
+    script.setAttribute("data-lang", "ru")
     script.setAttribute("data-onauth", "onTelegramAuth(user)")
-    script.setAttribute("data-auth-url", `${url.origin}${url.pathname}`)
     script.setAttribute("data-request-access", "write")
     script.setAttribute("data-userpic", "true")
 
@@ -121,14 +112,13 @@ function TelegramWidget({ botName, onAuth, onInitiateLogin }: TelegramLoginProps
   return (
     <div 
       ref={containerRef} 
-      className="flex justify-center min-h-[44px] transition-all duration-200 cursor-pointer"
-      onClick={onInitiateLogin}
+      className="flex justify-center items-center min-h-[44px] transition-all"
     />
   )
 }
 
 export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormProps) {
-  const [view, setView] = useState<"initial" | "tg_binding" | "code_direct">("initial")
+  const [view, setView] = useState<"initial" | "tg_binding">("initial")
   const [code, setCode] = useState("")
   const [error, setError] = useState("")
   const [isLocalhost, setIsLocalhost] = useState(false)
@@ -163,12 +153,13 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
       const response = await loginWithTelegram(user)
 
       if (response.valid) {
-        // Небольшая задержка, чтобы пользователь успел насладиться рукописной анимацией
+        // Пользователь уже зарегистрирован и имеет активный доступ
         setTimeout(() => {
           setIsLoading(false)
           onAccessGranted()
         }, 1200)
       } else if (response.needsCode) {
+        // Telegram подтвержден, но инвайт-код еще не привязан к аккаунту
         setTelegramUser(user)
         setView("tg_binding")
         setIsLoading(false)
@@ -177,7 +168,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
         setIsLoading(false)
       }
     } catch {
-      setError("Ошибка соединения. Попробуйте еще раз.")
+      setError("Ошибка соединения с сервером. Попробуйте еще раз.")
       setIsLoading(false)
     }
   }
@@ -196,32 +187,6 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
     }, 400)
   }
 
-  const handleTelegramButtonClick = () => {
-    setError("")
-
-    // На localhost виджет Telegram блокируется Telegram API, поэтому сразу запускаем локальную авторизацию
-    if (isLocalhost) {
-      handleDevQuickLogin()
-      return
-    }
-
-    // Если в DOM уже есть загруженный iframe Telegram Widget
-    const widgetIframe = document.querySelector("iframe[id^='telegram-login']") as HTMLIFrameElement | null
-    if (widgetIframe) {
-      widgetIframe.focus()
-      return
-    }
-
-    // Если есть бот, но виджет заблокирован (например, AdBlock) — открываем бота напрямую
-    if (botName) {
-      window.open(`https://t.me/${botName}?start=auth`, "_blank", "noopener,noreferrer")
-      return
-    }
-
-    // Если бот не указан в окружении — переход к основателю
-    window.open("https://t.me/c0lddev", "_blank", "noopener,noreferrer")
-  }
-
   const handleBindTelegram = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!code.trim() || !telegramUser) return
@@ -232,39 +197,6 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
     try {
       const response = await bindTelegramToCode(code.trim(), telegramUser)
 
-      if (response.valid) {
-        setTimeout(() => {
-          setIsLoading(false)
-          onAccessGranted()
-        }, 1200)
-      } else {
-        setError(response.error || "Неверный инвайт-код доступа")
-        setIsLoading(false)
-      }
-    } catch {
-      setError("Ошибка проверки кода. Попробуйте еще раз.")
-      setIsLoading(false)
-    }
-  }
-
-  const handleDirectCodeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmed = code.trim()
-    if (!trimmed) return
-
-    setError("")
-    setIsLoading(true)
-
-    const fallbackUser: TelegramUser = telegramUser || {
-      id: 777000,
-      first_name: "Участник",
-      username: "member",
-      auth_date: Math.floor(Date.now() / 1000),
-      hash: "0000000000000000000000000000000000000000000000000000000000000000",
-    }
-
-    try {
-      const response = await bindTelegramToCode(trimmed, fallbackUser)
       if (response.valid) {
         setTimeout(() => {
           setIsLoading(false)
@@ -319,7 +251,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               </h1>
               <p className="text-xs text-gray-600 font-ui leading-relaxed">
                 {isPremium 
-                  ? "Для открытия премиальных материалов и боевых скриптов подтвердите ваш Telegram-аккаунт."
+                  ? "Для открытия премиальных материалов и закрытой базы подтвердите ваш Telegram-аккаунт."
                   : "Войдите через Telegram для сохранения вашего прогресса уроков и синхронизации."}
               </p>
             </div>
@@ -329,92 +261,67 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <ShieldCheck className="w-5 h-5 text-black shrink-0 mt-0.5" />
               <div className="text-left">
                 <p className="text-xs font-bold text-black uppercase tracking-wider">
-                  Вход в один клик через Telegram
+                  Вход строго через Telegram
                 </p>
                 <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
-                  Мы получаем только ваш публичный ID. Ваши личные переписки и данные остаются строго конфиденциальными.
+                  Для доступа к материалам необходим подтвержденный Telegram-аккаунт. Инвайт-код привязывается к профилю.
                 </p>
               </div>
             </div>
 
-            {/* Telegram Login Section */}
-            <div className="space-y-4">
-              {/* Главная контрастная кнопка Telegram - ВСЕГДА ВИДНА */}
-              <Button
-                type="button"
-                onClick={handleTelegramButtonClick}
-                className="w-full h-12 bg-black hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-3 rounded-none cursor-pointer transition-all border border-black shadow-sm active:scale-[0.99] group"
-                disabled={isLoading}
-              >
-                <span className="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <TelegramIcon className="w-3.5 h-3.5 fill-current" />
-                </span>
-                <span>Подключить Telegram</span>
-                <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white group-hover:translate-x-0.5 transition-all ml-auto" />
-              </Button>
+            {/* Официальный Telegram Widget блок */}
+            <div className="border border-black bg-white p-6 text-center shadow-xs space-y-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-black">
+                Официальный вход через Telegram
+              </p>
 
-              {/* Официальный Telegram Widget контейнер (если бот настроен) */}
-              {botName && (
-                <div id="telegram-login-container" className="flex justify-center min-h-[44px]">
+              {botName ? (
+                <div className="py-2 flex justify-center items-center min-h-[48px]">
                   <TelegramWidget 
                     botName={botName} 
                     onAuth={handleTelegramAuth} 
                     onInitiateLogin={() => setIsLoading(true)}
                   />
                 </div>
-              )}
-
-              {/* Подсказка для локальной разработки / localhost */}
-              {isLocalhost && (
-                <div className="p-3 bg-neutral-100 border border-neutral-300 text-left">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      Режим разработки
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleDevQuickLogin}
-                      className="text-[11px] font-bold text-black underline underline-offset-2 hover:opacity-70 cursor-pointer"
-                    >
-                      Тестовый вход в 1 клик →
-                    </button>
-                  </div>
-                  <p className="text-[10px] text-gray-600 mt-1 leading-snug">
-                    На localhost официальный виджет Telegram блокируется Telegram API. Кнопка «Подключить Telegram» или «Тестовый вход» выполняет мгновенный вход.
-                  </p>
+              ) : (
+                <div className="text-xs text-red-700 bg-red-50 p-3 border border-red-200 font-bold">
+                  Имя Telegram-бота не задано в окружении.
                 </div>
               )}
 
-              {error && (
-                <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2">
-                  <ShieldAlert className="w-4 h-4 shrink-0" />
-                  {error}
-                </p>
-              )}
-
-              {/* Разделитель и альтернативный вход по коду */}
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
-                </div>
-                <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                  <span className="bg-[#fafaf9] px-2 text-gray-400 font-semibold">или</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setError("")
-                  setView("code_direct")
-                }}
-                className="w-full py-3 border border-gray-300 bg-white hover:border-black text-black font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <Lock className="w-3.5 h-3.5 text-gray-500" />
-                Ввести инвайт-код напрямую
-              </button>
+              <p className="text-[11px] text-gray-500 leading-snug">
+                Нажмите на синюю кнопку Telegram выше. Откроется окно входа, где вы вводите номер телефона и подтверждаете подключение к сайту в Telegram.
+              </p>
             </div>
+
+            {error && (
+              <p className="mt-4 text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-3">
+                <ShieldAlert className="w-4 h-4 shrink-0" />
+                {error}
+              </p>
+            )}
+
+            {/* Подсказка для локальной разработки / localhost */}
+            {isLocalhost && (
+              <div className="mt-4 p-4 border border-neutral-300 bg-neutral-100 text-left">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Режим разработки (localhost)
+                  </span>
+                </div>
+                <p className="text-[10px] text-gray-600 mb-2 leading-snug">
+                  На localhost официальный виджет Telegram блокируется серверами Telegram по домену. Нажмите кнопку для тестового входа:
+                </p>
+                <Button
+                  type="button"
+                  onClick={handleDevQuickLogin}
+                  className="w-full h-9 bg-black text-white hover:bg-neutral-800 text-[11px] font-bold uppercase tracking-wider rounded-none cursor-pointer"
+                >
+                  Тестовый вход через Telegram (Ярослав) →
+                </Button>
+              </div>
+            )}
 
             <div className="mt-8 pt-6 border-t border-gray-200 flex items-start gap-3 text-left">
               <HelpCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
@@ -440,18 +347,43 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               </Link>
             </div>
           </div>
-        ) : view === "code_direct" ? (
+        ) : (
           <div>
             <div className="text-center mb-6">
               <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
-                Вход по инвайт-коду
+                Привязка инвайт-кода
               </h2>
               <p className="text-xs text-gray-600 leading-relaxed">
-                Введите индивидуальный инвайт-код, выданный после покупки или регистрации.
+                Введите инвайт-код, чтобы навсегда закрепить доступ за вашим Telegram-аккаунтом.
               </p>
             </div>
 
-            <form onSubmit={handleDirectCodeSubmit} className="space-y-4">
+            {/* Карточка подтвержденного Telegram профиля */}
+            <div className="border border-black bg-white p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
+              {telegramUser?.photo_url ? (
+                <img
+                  src={telegramUser.photo_url}
+                  alt={telegramUser.first_name}
+                  className="w-9 h-9 rounded-none border border-gray-300 object-cover shrink-0"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-9 h-9 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-black" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-black leading-tight truncate">
+                  @{telegramUser?.username || telegramUser?.first_name}
+                </p>
+                <p className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                  Telegram подтвержден
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleBindTelegram} className="space-y-4">
               <div>
                 <Input
                   type="text"
@@ -475,7 +407,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
                 disabled={!code.trim() || isLoading}
               >
-                {isLoading ? "Проверка..." : "Активировать доступ"}
+                {isLoading ? "Активация..." : "Активировать доступ"}
               </Button>
 
               <button
@@ -484,92 +416,14 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 disabled={isLoading}
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Назад к выбору входа
+                <ArrowLeft className="w-3.5 h-3.5" /> Сменить Telegram-аккаунт
               </button>
             </form>
 
             <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
               <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
               <p className="text-[11px] text-gray-500 leading-snug">
-                Инвайт-код навсегда привязывается к вашему профилю. В будущем вход будет происходить автоматически.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
-                Активация доступа
-              </h2>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Введите инвайт-код, полученный после оплаты или регистрации.
-              </p>
-            </div>
-
-            <div className="border border-gray-300 bg-white p-3.5 flex gap-3 items-center mb-6 text-left">
-              {telegramUser?.photo_url ? (
-                <img
-                  src={telegramUser.photo_url}
-                  alt={telegramUser.first_name}
-                  className="w-8 h-8 rounded-none border border-gray-300 object-cover shrink-0"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-8 h-8 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-black" />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-black leading-tight">
-                  @{telegramUser?.username || telegramUser?.first_name}
-                </p>
-                <p className="text-[10px] uppercase font-semibold text-gray-500 tracking-wider">
-                  Telegram подтвержден
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleBindTelegram} className="space-y-4">
-              <div>
-                <Input
-                  type="text"
-                  placeholder="ВВЕДИТЕ ИНВАЙТ-КОД"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  className="h-12 bg-white border border-black text-center text-base tracking-widest uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
-                  disabled={isLoading}
-                  autoFocus
-                />
-                {error && (
-                  <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-50 p-2">
-                    <ShieldAlert className="w-4 h-4" />
-                    {error}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
-                disabled={!code.trim() || isLoading}
-              >
-                Активировать доступ
-              </Button>
-
-              <button
-                type="button"
-                onClick={handleBackToInitial}
-                className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                disabled={isLoading}
-              >
-                <ArrowLeft className="w-3.5 h-3.5" /> Назад к выбору входа
-              </button>
-            </form>
-
-            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
-              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-gray-500 leading-snug">
-                Инвайт-код навсегда привязывается к вашему Telegram. В будущем вход будет происходить автоматически в один клик.
+                Инвайт-код навсегда закрепляется за вашим Telegram-аккаунтом. В будущем для входа достаточно будет нажать «Войти через Telegram» без повторного ввода кода.
               </p>
             </div>
           </div>
