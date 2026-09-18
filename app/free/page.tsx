@@ -36,7 +36,7 @@ export default function FreeCoursePage() {
   const loadCourseData = async () => {
     setLoading(true)
     setError(null)
-    const minDelay = new Promise((resolve) => setTimeout(resolve, 3600))
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 5000))
     try {
       const [data] = await Promise.all([fetchPublicCourseData(), minDelay])
       setCourseData(data)

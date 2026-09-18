@@ -17,8 +17,14 @@ interface GothicHandwrittenLoaderProps {
 }
 
 const LETTERS: LetterData[] = gothicData as LetterData[]
-const CYCLE_DURATION = 5.4 // секунд на полный цикл
-const WRITE_FINISH_TIME = 3.4 // когда заканчивается последняя буква
+const CYCLE_DURATION = 6.8 // секунд на полный цикл (написание 4.94с + удержание 1.3с + плавный перезапуск)
+const WRITE_FINISH_TIME = 4.94 // когда завершается написание слова Out
+
+// Функция плавности Hermite Smoothstep (S-кривая) для естественного ускорения и замедления руки
+function smoothstep(t: number): number {
+  const clamped = Math.max(0, Math.min(1, t))
+  return clamped * clamped * (3 - 2 * clamped)
+}
 
 export function GothicHandwrittenLoader({
   onComplete,
@@ -33,20 +39,34 @@ export function GothicHandwrittenLoader({
     let animId: number
     const startTime = performance.now()
 
-    // Предварительно вычисляем длины штрихов
-    const lengths = maskStrokesRef.current.map((path) => {
-      try {
-        return path ? path.getTotalLength() : 1
-      } catch {
-        return 1
+    // Состояние каждой буквы: 0 = скрыта, 1 = пишется прямо сейчас, 2 = завершена
+    const letterStates = new Array(LETTERS.length).fill(0)
+    let lastCycle = -1
+
+    const resetAll = () => {
+      for (let i = 0; i < LETTERS.length; i++) {
+        const glyphEl = glyphsRef.current[i]
+        const strokeEl = maskStrokesRef.current[i]
+        if (glyphEl) glyphEl.style.opacity = "0"
+        if (strokeEl) strokeEl.style.strokeDashoffset = "1"
+        letterStates[i] = 0
       }
-    })
+      if (svgRef.current) svgRef.current.style.opacity = "1"
+    }
+
+    resetAll()
 
     const tick = (now: number) => {
-      const elapsedRaw = (now - startTime) / 1000
-      const elapsed = loop ? elapsedRaw % CYCLE_DURATION : elapsedRaw
+      const totalElapsed = (now - startTime) / 1000
+      const currentCycle = Math.floor(totalElapsed / CYCLE_DURATION)
+      const elapsed = loop ? totalElapsed % CYCLE_DURATION : totalElapsed
 
-      if (!loop && elapsedRaw >= WRITE_FINISH_TIME && !completedCalledRef.current) {
+      if (loop && currentCycle !== lastCycle) {
+        lastCycle = currentCycle
+        resetAll()
+      }
+
+      if (!loop && totalElapsed >= WRITE_FINISH_TIME && !completedCalledRef.current) {
         completedCalledRef.current = true
         if (onComplete) onComplete()
       }
@@ -57,31 +77,40 @@ export function GothicHandwrittenLoader({
         const glyphEl = glyphsRef.current[i]
         if (!strokeEl || !glyphEl) continue
 
-        const len = lengths[i] || 1
+        const state = letterStates[i]
 
         if (elapsed < letter.delay) {
-          // Буква еще не началась — АБСОЛЮТНО НЕВИДИМА
-          glyphEl.style.opacity = "0"
-          strokeEl.setAttribute("stroke-dashoffset", "1")
+          // Буква ждет очереди — на 100% невидима
+          if (state !== 0) {
+            glyphEl.style.opacity = "0"
+            strokeEl.style.strokeDashoffset = "1"
+            letterStates[i] = 0
+          }
         } else if (elapsed >= letter.delay && elapsed < letter.delay + letter.dur) {
-          // Буква пишется чернилами прямо сейчас
-          const rawP = (elapsed - letter.delay) / letter.dur
-          const p = Math.max(0, Math.min(1, rawP))
-
-          glyphEl.style.opacity = "1"
-          strokeEl.setAttribute("stroke-dashoffset", String(1 - p))
+          // Буква пишется прямо сейчас на 60 FPS
+          if (state === 0) {
+            glyphEl.style.opacity = "1"
+            letterStates[i] = 1
+          }
+          const rawProgress = (elapsed - letter.delay) / letter.dur
+          const eased = smoothstep(rawProgress)
+          // Обновляем напрямую через CSSOM style без вызова медленного setAttribute
+          strokeEl.style.strokeDashoffset = (1 - eased).toFixed(5)
         } else {
-          // Буква уже полностью написана — остается черной на листе
-          glyphEl.style.opacity = "1"
-          strokeEl.setAttribute("stroke-dashoffset", "0")
+          // Буква уже полностью написана
+          if (state !== 2) {
+            glyphEl.style.opacity = "1"
+            strokeEl.style.strokeDashoffset = "0"
+            letterStates[i] = 2
+          }
         }
       }
 
       // Мягкое угасание перед повтором цикла в режиме loop
       if (svgRef.current && loop) {
-        if (elapsed > 5.0) {
-          const fadeOutProgress = (elapsed - 5.0) / 0.4
-          svgRef.current.style.opacity = String(1 - fadeOutProgress)
+        if (elapsed > 6.2) {
+          const fadeOutProgress = (elapsed - 6.2) / 0.6
+          svgRef.current.style.opacity = String(1 - Math.min(1, fadeOutProgress))
         } else {
           svgRef.current.style.opacity = "1"
         }
@@ -96,12 +125,24 @@ export function GothicHandwrittenLoader({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white select-none overflow-hidden">
-      <div className="w-full max-w-2xl px-6 flex items-center justify-center">
+      <div 
+        className="w-full max-w-2xl px-6 flex items-center justify-center"
+        style={{
+          willChange: "transform",
+          transform: "translateZ(0)",
+          WebkitFontSmoothing: "antialiased",
+        }}
+      >
         <svg
           ref={svgRef}
           viewBox="0 0 650 340"
           className="w-full h-auto overflow-visible select-none"
-          style={{ transition: "opacity 0.2s linear" }}
+          style={{
+            shapeRendering: "geometricPrecision",
+            willChange: "transform",
+            transform: "translateZ(0)",
+            transition: "opacity 0.25s linear",
+          }}
         >
           <defs>
             {LETTERS.map((letter, i) => (
@@ -128,6 +169,7 @@ export function GothicHandwrittenLoader({
                   pathLength="1"
                   strokeDasharray="1"
                   strokeDashoffset="1"
+                  style={{ willChange: "stroke-dashoffset" }}
                 />
               </mask>
             ))}
