@@ -535,18 +535,10 @@ export async function loginWithPasskey(): Promise<{
 
     const challengeData = await getPasskeyChallenge("login")
 
-    const allowCredentials: PublicKeyCredentialDescriptor[] = (challengeData.credentialIds || []).map(
-      (id) => ({
-        type: "public-key" as const,
-        id: base64urlToBuffer(id),
-      }),
-    )
-
     const assertion = (await navigator.credentials.get({
       publicKey: {
         challenge: base64urlToBuffer(challengeData.challenge),
         rpId: challengeData.rpId,
-        ...(allowCredentials.length > 0 ? { allowCredentials } : {}),
         userVerification: "preferred",
         timeout: 60000,
       },
