@@ -102,12 +102,94 @@ function clearSessionToken(): void {
   }
 }
 
+const DEMO_FREE_COURSE: CourseData = {
+  name: "NWO: Бесплатная база продаж",
+  modules: [
+    {
+      id: "module-1",
+      title: "Модуль 01 · Фундамент и психология продаж",
+      lessons: [
+        {
+          id: "lesson-1",
+          moduleId: "1",
+          title: "Урок 1: Архитектура переговоров и мышление",
+          textContent: "Вводный урок открытой программы New Way Out. Разбираем фундамент закрытия сделок, позиционирование эксперта и психологию клиента на первом этапе воронки.",
+          videoUrl: "",
+        },
+        {
+          id: "lesson-2",
+          moduleId: "1",
+          title: "Урок 2: Быстрая квалификация и выявление истинных болей",
+          textContent: "Как за первые 3 минуты разговора отсечь нецелевых лидов и сфокусироваться на клиентах, готовых платить сразу.",
+          videoUrl: "",
+        },
+      ],
+    },
+    {
+      id: "module-2",
+      title: "Модуль 02 · Отработка сомнений и дожим",
+      lessons: [
+        {
+          id: "lesson-3",
+          moduleId: "2",
+          title: "Урок 3: Логика работы с возражением «Дорого»",
+          textContent: "Пошаговая схема деконструкции цены в ценность без скидок и уступок со стороны эксперта.",
+          videoUrl: "",
+        },
+      ],
+    },
+  ],
+}
+
+const DEMO_PAID_COURSE: CourseData = {
+  name: "NWO BLACK: Закрытая база",
+  modules: [
+    {
+      id: "module-101",
+      title: "Модуль 01 · Архитектура крупных сделок ($5,000+)",
+      lessons: [
+        {
+          id: "lesson-101",
+          moduleId: "101",
+          title: "Урок 1: Стратегия закрытия сделок с высоким чеком",
+          textContent: "Эксклюзивные материалы NWO BLACK. Полный разбор переговорных конструкций для закрытия контрактов от $5,000.",
+          videoUrl: "",
+        },
+        {
+          id: "lesson-102",
+          moduleId: "101",
+          title: "Урок 2: Боевые скрипты и психотипы ЛПР",
+          textContent: "Классификация лиц, принимающих решения, и скрипты адаптации аргументации под каждый психотип.",
+          videoUrl: "",
+        },
+      ],
+    },
+    {
+      id: "module-102",
+      title: "Модуль 02 · Системный дожим и закрытие",
+      lessons: [
+        {
+          id: "lesson-103",
+          moduleId: "102",
+          title: "Урок 3: Протокол финального закрытия сделки",
+          textContent: "Пошаговый сценарий вывода клиента на оплату в день звонка без давления и манипуляций.",
+          videoUrl: "",
+        },
+      ],
+    },
+  ],
+}
+
+function isDevMock(): boolean {
+  return !APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_SCRIPT_ID") || APPS_SCRIPT_URL.includes("REPLACE_ME")
+}
+
 async function apiFetch<T extends ApiResult>(
   action: string,
   payload: Record<string, unknown> = {},
   includeSession = true,
 ): Promise<T> {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_SCRIPT_ID")) {
+  if (isDevMock()) {
     throw new Error("API курса не настроен")
   }
 
@@ -202,6 +284,22 @@ export async function getPaidAuthSession(): Promise<PaidAuthSession> {
     }
   }
 
+  if (isDevMock()) {
+    const saved = typeof window !== "undefined"
+      ? JSON.parse(sessionStorage.getItem("nwo_dev_paid_progress") || "[]")
+      : []
+    return {
+      authenticated: true,
+      paidAccess: true,
+      telegramUser: {
+        id: 777000,
+        first_name: "Ярослав",
+        username: "c0lddev",
+      },
+      completedLessons: Array.isArray(saved) ? saved : [],
+    }
+  }
+
   try {
     const result = await apiFetch<
       ApiResult & {
@@ -241,6 +339,11 @@ export async function getPaidAuthSession(): Promise<PaidAuthSession> {
 export async function loginWithTelegram(
   user: TelegramUser,
 ): Promise<{ valid: boolean; needsCode?: boolean; error?: string }> {
+  if (isDevMock()) {
+    saveSessionToken("dev_session_" + Date.now())
+    return { valid: true }
+  }
+
   try {
     const result = await apiFetch<ApiResult>("telegram_login", { ...user }, false)
 
@@ -263,6 +366,11 @@ export async function bindTelegramToCode(
   code: string,
   user: TelegramUser,
 ): Promise<{ valid: boolean; error?: string }> {
+  if (isDevMock()) {
+    saveSessionToken("dev_session_" + Date.now())
+    return { valid: true }
+  }
+
   try {
     const result = await apiFetch<ApiResult>(
       "telegram_bind",
@@ -319,6 +427,10 @@ export async function fetchCourseData(): Promise<CourseData> {
 }
 
 export async function fetchPublicCourseData(): Promise<CourseData> {
+  if (isDevMock()) {
+    return DEMO_FREE_COURSE
+  }
+
   const result = await apiFetch<
     ApiResult & {
       name?: string
@@ -376,6 +488,16 @@ export async function fetchPaidCourseData(): Promise<{
   course: CourseData
   completedLessons: string[]
 }> {
+  if (isDevMock()) {
+    const saved = typeof window !== "undefined"
+      ? JSON.parse(sessionStorage.getItem("nwo_dev_paid_progress") || "[]")
+      : []
+    return {
+      course: DEMO_PAID_COURSE,
+      completedLessons: Array.isArray(saved) ? saved : [],
+    }
+  }
+
   const result = await apiFetch<
     ApiResult & {
       name?: string
@@ -410,6 +532,7 @@ export async function fetchPaidCourseData(): Promise<{
 }
 
 export async function saveProgress(completedLessons: string[]): Promise<void> {
+  if (isDevMock()) return
   const result = await apiFetch<ApiResult>("save_progress", {
     completed_lessons: completedLessons.join(","),
   })
@@ -417,6 +540,12 @@ export async function saveProgress(completedLessons: string[]): Promise<void> {
 }
 
 export async function savePaidProgress(completedLessons: string[]): Promise<void> {
+  if (isDevMock()) {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("nwo_dev_paid_progress", JSON.stringify(completedLessons))
+    }
+    return
+  }
   const result = await apiFetch<ApiResult>("save_paid_progress", {
     completed_lessons: completedLessons.join(","),
   })
@@ -424,6 +553,8 @@ export async function savePaidProgress(completedLessons: string[]): Promise<void
 }
 
 export async function fetchShameTrades(): Promise<ShameTrade[]> {
+  if (isDevMock()) return []
+
   const result = await apiFetch<
     ApiResult & {
       trades?: Array<Omit<ShameTrade, "screenshots"> & { screenshots: string }>
@@ -451,6 +582,8 @@ export async function fetchShameTrades(): Promise<ShameTrade[]> {
 }
 
 export async function fetchPublicShameTrades(): Promise<ShameTrade[]> {
+  if (isDevMock()) return []
+
   const result = await apiFetch<
     ApiResult & {
       trades?: Array<Omit<ShameTrade, "screenshots"> & { screenshots: string }>
