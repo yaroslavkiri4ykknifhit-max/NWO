@@ -202,7 +202,7 @@ async function apiFetch<T extends ApiResult>(
 
   const sessionToken = includeSession ? getSessionToken() : ""
   const controller = new AbortController()
-  const timeout = window.setTimeout(() => controller.abort(), 12_000)
+  const timeout = window.setTimeout(() => controller.abort(), 30_000)
 
   try {
     const response = await fetch(APPS_SCRIPT_URL, {
@@ -272,8 +272,8 @@ export async function requestEmailOTP(
       false,
     )
     return { sent: result.sent === true || result.valid === true, error: result.message }
-  } catch {
-    return { sent: false, error: "Не удалось отправить код" }
+  } catch (err) {
+    return { sent: false, error: (err as Error).message || "Не удалось отправить код" }
   }
 }
 
