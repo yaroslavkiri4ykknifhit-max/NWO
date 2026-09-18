@@ -1,386 +1,242 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, ShieldAlert, ShieldCheck, HelpCircle, Info, User } from "lucide-react"
+import { ArrowLeft, ShieldCheck, HelpCircle, Info, Mail, Fingerprint, KeyRound } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { loginWithTelegram, bindTelegramToCode, TelegramUser } from "@/lib/sheets-api"
+import {
+  requestEmailOTP,
+  verifyEmailOTP,
+  bindEmailToCode,
+  loginWithPasskey,
+  registerPasskey,
+  isPasskeySupported,
+  isPlatformAuthenticatorAvailable,
+} from "@/lib/sheets-api"
 import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
 import Link from "next/link"
-
-declare global {
-  interface Window {
-    onTelegramAuth?: (user: TelegramUser) => void
-  }
-}
 
 interface AccessFormProps {
   onAccessGranted: () => void
   variant?: "default" | "premium"
 }
 
-// Фирменная векторная иконка Telegram
-function TelegramAirplaneIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.24-5.54 3.65-.52.36-.97.53-1.34.52-.42-.01-1.22-.24-1.82-.44-.73-.24-1.32-.37-1.27-.78.02-.21.32-.43.89-.65 3.48-1.52 5.81-2.52 6.98-3.01 3.33-1.39 4.02-1.63 4.47-1.64.1 0 .32.02.46.14.12.1.15.29.17.41-.02.1.03-.02 0 .02z" />
-    </svg>
-  )
-}
-
-interface TelegramLoginProps {
-  botName: string
-  onAuth: (user: TelegramUser) => void
-  onInitiateLogin: () => void
-  isLocalhost: boolean
-}
-
-function TelegramWidget({
-  botName,
-  onAuth,
-  onInitiateLogin,
-  isLocalhost,
-}: TelegramLoginProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [iframeLoaded, setIframeLoaded] = useState(false)
-  const popupRef = useRef<Window | null>(null)
-
-  const onAuthRef = useRef(onAuth)
-  onAuthRef.current = onAuth
-  const onInitiateLoginRef = useRef(onInitiateLogin)
-  onInitiateLoginRef.current = onInitiateLogin
-
-  useEffect(() => {
-    // 1. Проверка параметров URL при возврате через редирект Telegram
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href)
-      const id = Number(url.searchParams.get("id"))
-      const authDate = Number(url.searchParams.get("auth_date"))
-      const hash = url.searchParams.get("hash") || ""
-      const firstName = url.searchParams.get("first_name") || ""
-
-      if (
-        Number.isSafeInteger(id) &&
-        id > 0 &&
-        Number.isSafeInteger(authDate) &&
-        authDate > 0 &&
-        /^[a-f0-9]{64}$/i.test(hash) &&
-        firstName
-      ) {
-        onInitiateLoginRef.current()
-
-        const user: TelegramUser = {
-          id,
-          first_name: firstName,
-          auth_date: authDate,
-          hash,
-        }
-
-        const lastName = url.searchParams.get("last_name")
-        const username = url.searchParams.get("username")
-        const photoUrl = url.searchParams.get("photo_url")
-        if (lastName) user.last_name = lastName
-        if (username) user.username = username
-        if (photoUrl) user.photo_url = photoUrl
-
-        const telegramFields = [
-          "id",
-          "first_name",
-          "last_name",
-          "username",
-          "photo_url",
-          "auth_date",
-          "hash",
-        ]
-        telegramFields.forEach((field) => url.searchParams.delete(field))
-        window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
-        onAuthRef.current(user)
-        return
-      }
-
-      // Проверка hash tgAuthResult
-      const locationHash = window.location.hash
-      const match = locationHash.match(/[#\?\&]tgAuthResult=([A-Za-z0-9\-_=]*)$/)
-      if (match) {
-        try {
-          window.location.hash = locationHash.replace(/[#\?\&]tgAuthResult=([A-Za-z0-9\-_=]*)$/, "")
-          let raw = (match[1] || "").replace(/-/g, "+").replace(/_/g, "/")
-          const pad = raw.length % 4
-          if (pad > 1) raw += "=".repeat(4 - pad)
-          const user = JSON.parse(window.atob(raw))
-          if (user && user.id) {
-            onInitiateLoginRef.current()
-            onAuthRef.current(user)
-            return
-          }
-        } catch {}
-      }
-    }
-
-    // 2. Слушатель window.onmessage (обрабатываем и auth_user, и auth_result)
-    const handleMessage = (event: MessageEvent) => {
-      if (!event.origin.includes("telegram.org") && event.origin !== window.location.origin) {
-        return
-      }
-      try {
-        let payload: any = event.data
-        if (typeof payload === "string") {
-          try {
-            payload = JSON.parse(payload)
-          } catch {
-            return
-          }
-        }
-        if (!payload || typeof payload !== "object") return
-
-        // Извлекаем пользователя из любого формата Telegram
-        const user: TelegramUser | null =
-          payload.auth_data ||
-          payload.result ||
-          payload.user ||
-          (payload.id && payload.hash ? payload : null)
-
-        if (user && (user.id || user.username)) {
-          if (popupRef.current && !popupRef.current.closed) {
-            try {
-              popupRef.current.close()
-            } catch {}
-          }
-          onInitiateLoginRef.current()
-          onAuthRef.current(user)
-        }
-      } catch (err) {
-        console.error("Telegram postMessage error:", err)
-      }
-    }
-
-    window.addEventListener("message", handleMessage)
-
-    // 3. Callback для виджета Telegram
-    window.onTelegramAuth = (user: TelegramUser) => {
-      if (popupRef.current && !popupRef.current.closed) {
-        try {
-          popupRef.current.close()
-        } catch {}
-      }
-      onInitiateLoginRef.current()
-      onAuthRef.current(user)
-    }
-
-    // 4. Подключение официального iframe Telegram Widget
-    if (containerRef.current && botName && !isLocalhost) {
-      if (!containerRef.current.querySelector("iframe")) {
-        const origin = window.location.origin
-        const returnTo = `${origin}${window.location.pathname}`
-
-        const iframe = document.createElement("iframe")
-        iframe.id = `telegram-login-${botName}`
-        iframe.src = `https://oauth.telegram.org/embed/${botName}?origin=${encodeURIComponent(
-          origin
-        )}&return_to=${encodeURIComponent(
-          returnTo
-        )}&size=large&userpic=true&request_access=write&lang=ru`
-        iframe.width = "238"
-        iframe.height = "40"
-        iframe.frameBorder = "0"
-        iframe.scrolling = "no"
-        iframe.style.border = "none"
-        iframe.style.overflow = "hidden"
-        iframe.style.colorScheme = "light"
-
-        iframe.onload = () => {
-          setIframeLoaded(true)
-        }
-
-        containerRef.current.innerHTML = ""
-        containerRef.current.appendChild(iframe)
-      }
-    }
-
-    return () => {
-      window.removeEventListener("message", handleMessage)
-      delete window.onTelegramAuth
-    }
-  }, [botName, isLocalhost])
-
-  const handleBlueButtonClick = () => {
-    // 1. На localhost: мгновенный тестовый вход без внешних блокировок Telegram и без окон
-    if (isLocalhost) {
-      onInitiateLoginRef.current()
-      const mockUser: TelegramUser = {
-        id: 777000,
-        first_name: "Ярослав",
-        username: "c0lddev",
-        auth_date: Math.floor(Date.now() / 1000),
-        hash: "0000000000000000000000000000000000000000000000000000000000000000",
-      }
-      setTimeout(() => {
-        onAuthRef.current(mockUser)
-      }, 500)
-      return
-    }
-
-    // 2. В продакшене: открываем официальный popup Telegram OAuth
-    const botId = "8920383471"
-    const origin = window.location.origin
-    const returnTo = window.location.href
-    const popupUrl = `https://oauth.telegram.org/auth?bot_id=${botId}&origin=${encodeURIComponent(
-      origin
-    )}&request_access=write&lang=ru&return_to=${encodeURIComponent(returnTo)}`
-
-    const width = 550
-    const height = 470
-    const left = Math.max(0, (window.screen.width - width) / 2)
-    const top = Math.max(0, (window.screen.height - height) / 2)
-
-    try {
-      const popup = window.open(
-        popupUrl,
-        "telegram_oauth",
-        `width=${width},height=${height},left=${left},top=${top},status=0,location=0,menubar=0,toolbar=0`
-      )
-      popupRef.current = popup
-      if (popup) {
-        popup.focus()
-      }
-    } catch {
-      // Fallback
-    }
-  }
-
-  return (
-    <div className="relative inline-flex items-center justify-center min-h-[44px]">
-      {/* 1. Настоящая синяя кнопка Telegram — ВСЕГДА на экране, кликабельна и мгновенно работает */}
-      <button
-        type="button"
-        onClick={handleBlueButtonClick}
-        className="h-[42px] px-6 bg-[#54a9eb] hover:bg-[#4ba3e3] active:bg-[#3e96d6] text-white font-medium text-[14px] flex items-center justify-center gap-2.5 rounded-[8px] shadow-sm hover:shadow transition-all cursor-pointer select-none border-none tracking-normal"
-      >
-        <TelegramAirplaneIcon className="w-[20px] h-[20px] fill-current text-white shrink-0" />
-        <span className="font-sans font-semibold">Войти через Telegram</span>
-      </button>
-
-      {/* 2. Официальный iframe Telegram Widget в продакшене */}
-      {!isLocalhost && botName && (
-        <div
-          ref={containerRef}
-          className={`absolute inset-0 flex justify-center items-center transition-opacity duration-200 ${
-            iframeLoaded ? "opacity-100 z-10" : "opacity-0 pointer-events-none"
-          }`}
-        />
-      )}
-    </div>
-  )
-}
+type FormView = "initial" | "email_input" | "otp_verify" | "invite_bind" | "passkey_offer"
 
 export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormProps) {
-  const [view, setView] = useState<"initial" | "tg_binding">("initial")
-  const [code, setCode] = useState("")
+  const [view, setView] = useState<FormView>("initial")
+  const [email, setEmail] = useState("")
+  const [otpCode, setOtpCode] = useState("")
+  const [inviteCode, setInviteCode] = useState("")
   const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpCountdown, setOtpCountdown] = useState(0)
+  const [passkeyAvailable, setPasskeyAvailable] = useState(false)
   const [isLocalhost, setIsLocalhost] = useState(false)
-  
-  // Мгновенно включаем лоадер с рукописной анимацией, если пользователь вернулся после авторизации в Telegram
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window !== "undefined") {
-      return Boolean(new URLSearchParams(window.location.search).get("hash"))
-    }
-    return false
-  })
-  
-  const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null)
 
-  const botName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME || "nwo_academy_bot"
   const isPremium = variant === "premium"
+  const otpInputRef = useRef<HTMLInputElement>(null)
 
+  // Проверяем доступность passkey
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsLocalhost(
-        window.location.hostname === "localhost" || 
+        window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
       )
     }
+
+    if (isPasskeySupported()) {
+      isPlatformAuthenticatorAvailable().then(setPasskeyAvailable)
+    }
   }, [])
 
-  const handleTelegramAuth = async (user: TelegramUser) => {
+  // Таймер обратного отсчёта для повторной отправки OTP
+  useEffect(() => {
+    if (otpCountdown <= 0) return
+    const timer = setTimeout(() => setOtpCountdown((c) => c - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [otpCountdown])
+
+  // ── Passkey login ─────────────────────────────────────────────────
+
+  const handlePasskeyLogin = async () => {
     setError("")
     setIsLoading(true)
 
     try {
-      const response = await loginWithTelegram(user)
-
-      if (response.valid) {
-        // Пользователь уже зарегистрирован и имеет активный доступ
+      const result = await loginWithPasskey()
+      if (result.valid) {
         setTimeout(() => {
           setIsLoading(false)
           onAccessGranted()
         }, 1200)
-      } else if (response.needsCode) {
-        // Telegram подтвержден, но инвайт-код еще не привязан к аккаунту
-        setTelegramUser(user)
-        setView("tg_binding")
-        setIsLoading(false)
       } else {
-        setError(response.error || "Ошибка авторизации через Telegram")
+        setError(result.error || "Passkey не найден")
         setIsLoading(false)
       }
     } catch {
-      // Graceful fallback на экран привязки кода
-      setTelegramUser(user)
-      setView("tg_binding")
+      setError("Ошибка входа через Passkey")
       setIsLoading(false)
     }
   }
 
-  const handleBindTelegram = async (e: React.FormEvent) => {
+  // ── Email OTP ─────────────────────────────────────────────────────
+
+  const handleSendOTP = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (!email.trim()) return
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      setError("Введите корректный email адрес")
+      return
+    }
+
+    setError("")
+    setIsLoading(true)
+
+    try {
+      const result = await requestEmailOTP(email.trim())
+      if (result.sent) {
+        setOtpSent(true)
+        setOtpCountdown(60)
+        setView("otp_verify")
+        setIsLoading(false)
+        // Автофокус на поле ввода OTP
+        setTimeout(() => otpInputRef.current?.focus(), 100)
+      } else {
+        setError(result.error || "Не удалось отправить код")
+        setIsLoading(false)
+      }
+    } catch {
+      setError("Ошибка отправки кода")
+      setIsLoading(false)
+    }
+  }
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!code.trim() || !telegramUser) return
+    if (!otpCode.trim() || otpCode.trim().length !== 6) return
 
     setError("")
     setIsLoading(true)
 
     try {
-      const response = await bindTelegramToCode(code.trim(), telegramUser)
+      const result = await verifyEmailOTP(email.trim(), otpCode.trim())
 
-      if (response.valid) {
-        setTimeout(() => {
+      if (result.valid) {
+        // Вход успешен — предлагаем сохранить passkey
+        if (passkeyAvailable) {
           setIsLoading(false)
-          onAccessGranted()
-        }, 1200)
+          setView("passkey_offer")
+        } else {
+          setTimeout(() => {
+            setIsLoading(false)
+            onAccessGranted()
+          }, 1200)
+        }
+      } else if (result.needsCode) {
+        // Email подтверждён, но нужен инвайт-код
+        setView("invite_bind")
+        setIsLoading(false)
       } else {
-        setError(response.error || "Неверный инвайт-код доступа")
+        setError(result.error || "Неверный код")
         setIsLoading(false)
       }
     } catch {
-      setError("Ошибка проверки кода. Попробуйте еще раз.")
+      setError("Ошибка проверки кода")
       setIsLoading(false)
     }
   }
+
+  // ── Invite code bind ──────────────────────────────────────────────
+
+  const handleBindInvite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inviteCode.trim()) return
+
+    setError("")
+    setIsLoading(true)
+
+    try {
+      const result = await bindEmailToCode(email.trim(), inviteCode.trim())
+
+      if (result.valid) {
+        // Привязка успешна — предлагаем passkey
+        if (passkeyAvailable) {
+          setIsLoading(false)
+          setView("passkey_offer")
+        } else {
+          setTimeout(() => {
+            setIsLoading(false)
+            onAccessGranted()
+          }, 1200)
+        }
+      } else {
+        setError(result.error || "Неверный инвайт-код")
+        setIsLoading(false)
+      }
+    } catch {
+      setError("Ошибка активации кода")
+      setIsLoading(false)
+    }
+  }
+
+  // ── Passkey registration offer ────────────────────────────────────
+
+  const handleRegisterPasskey = async () => {
+    setIsLoading(true)
+    try {
+      const success = await registerPasskey(email.trim(), email.split("@")[0])
+      // Независимо от результата — пускаем дальше
+      if (!success) {
+        console.warn("Passkey registration skipped or failed")
+      }
+    } catch {
+      console.warn("Passkey registration error")
+    }
+    setIsLoading(false)
+    onAccessGranted()
+  }
+
+  const handleSkipPasskey = () => {
+    onAccessGranted()
+  }
+
+  // ── Navigation ────────────────────────────────────────────────────
 
   const handleBackToInitial = () => {
     setView("initial")
-    setCode("")
+    setEmail("")
+    setOtpCode("")
+    setInviteCode("")
     setError("")
-    setTelegramUser(null)
+    setOtpSent(false)
   }
+
+  const handleBackToEmail = () => {
+    setView("email_input")
+    setOtpCode("")
+    setError("")
+  }
+
+  // ── Render ────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212] relative">
-      {/* Плавная рукописная анимация выведения надписи New Way Out при входе и проверке */}
-      {isLoading && (
+      {/* Лоадер с рукописной анимацией */}
+      {isLoading && view !== "passkey_offer" && (
         <GothicHandwrittenLoader />
       )}
 
       <div className="w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
-        
-        {/* Masthead Header inside card */}
+
+        {/* Masthead */}
         <div className="text-center border-b border-gray-300 pb-6 mb-6">
           <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
-            <span 
+            <span
               className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
               style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
             >
@@ -392,56 +248,69 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
           </span>
         </div>
 
-        {view === "initial" ? (
+        {/* ═══════════════════════════════════════════════════════════
+            VIEW: initial — Passkey + Email кнопки
+        ═══════════════════════════════════════════════════════════ */}
+        {view === "initial" && (
           <div>
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
                 {isPremium ? "Вход в NWO BLACK" : "Авторизация в системе"}
               </h1>
               <p className="text-xs text-gray-600 font-ui leading-relaxed">
-                {isPremium 
-                  ? "Для открытия премиальных материалов и закрытой базы подтвердите ваш Telegram-аккаунт."
-                  : "Войдите через Telegram для сохранения вашего прогресса уроков и синхронизации."}
+                {isPremium
+                  ? "Для открытия премиальных материалов и закрытой базы подтвердите вашу личность."
+                  : "Войдите для сохранения вашего прогресса уроков и синхронизации."}
               </p>
             </div>
 
-            {/* Telegram Safety Banner */}
+            {/* Security banner */}
             <div className="border border-gray-300 bg-white p-4 mb-6 flex gap-3 items-start">
               <ShieldCheck className="w-5 h-5 text-black shrink-0 mt-0.5" />
               <div className="text-left">
                 <p className="text-xs font-bold text-black uppercase tracking-wider">
-                  Вход строго через Telegram
+                  Безопасный вход без пароля
                 </p>
                 <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
-                  Для доступа к материалам необходим подтвержденный Telegram-аккаунт. Инвайт-код привязывается к профилю.
+                  Используйте Passkey (Face ID, Touch ID) для мгновенного входа или получите код на вашу почту.
                 </p>
               </div>
             </div>
 
-            {/* Официальный Telegram Widget блок */}
-            <div className="border border-black bg-white p-6 text-center shadow-xs space-y-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-black">
-                Официальный вход через Telegram
-              </p>
+            {/* Action buttons */}
+            <div className="space-y-3">
+              {/* Passkey button — только если браузер поддерживает */}
+              {passkeyAvailable && (
+                <button
+                  type="button"
+                  onClick={handlePasskeyLogin}
+                  disabled={isLoading}
+                  className="w-full h-[52px] bg-black text-white hover:bg-gray-800 active:bg-gray-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
+                >
+                  <Fingerprint className="w-5 h-5 shrink-0" />
+                  <span>Войти через Passkey</span>
+                </button>
+              )}
 
-              {/* Синяя кнопка Telegram — ВСЕГДА на месте и сразу функционирует */}
-              <div className="py-2 flex justify-center items-center min-h-[48px]">
-                <TelegramWidget 
-                  botName={botName} 
-                  onAuth={handleTelegramAuth} 
-                  onInitiateLogin={() => setIsLoading(true)}
-                  isLocalhost={isLocalhost}
-                />
-              </div>
-
-              <p className="text-[11px] text-gray-500 leading-snug">
-                Нажмите на синюю кнопку Telegram выше. Откроется окно входа, где вы вводите номер телефона и подтверждаете подключение к сайту в Telegram.
-              </p>
+              {/* Email button */}
+              <button
+                type="button"
+                onClick={() => setView("email_input")}
+                disabled={isLoading}
+                className={`w-full h-[52px] font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border ${
+                  passkeyAvailable
+                    ? "border-black bg-white text-black hover:bg-gray-50"
+                    : "border-none bg-black text-white hover:bg-gray-800"
+                }`}
+              >
+                <Mail className="w-5 h-5 shrink-0" />
+                <span>Войти по email</span>
+              </button>
             </div>
 
             {error && (
               <p className="mt-4 text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-3">
-                <ShieldAlert className="w-4 h-4 shrink-0" />
+                <KeyRound className="w-4 h-4 shrink-0" />
                 {error}
               </p>
             )}
@@ -462,7 +331,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             </div>
 
             <div className="mt-6 text-center">
-              <Link 
+              <Link
                 href="/"
                 className="text-xs font-semibold text-gray-500 hover:text-black flex items-center justify-center gap-1 transition-colors"
               >
@@ -470,56 +339,200 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               </Link>
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════
+            VIEW: email_input — Ввод email
+        ═══════════════════════════════════════════════════════════ */}
+        {view === "email_input" && (
+          <div>
+            <div className="text-center mb-6">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+                Вход по email
+              </h2>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Введите ваш email — мы отправим 6-значный код для входа.
+              </p>
+            </div>
+
+            <form onSubmit={handleSendOTP} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-12 bg-white border border-black text-center text-base font-medium focus:ring-0 focus:border-black rounded-none text-black lowercase"
+                disabled={isLoading}
+                autoFocus
+                autoComplete="email"
+              />
+
+              {error && (
+                <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2">
+                  <Mail className="w-4 h-4 shrink-0" />
+                  {error}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
+                disabled={!email.trim() || isLoading}
+              >
+                {isLoading ? "Отправляем..." : "Получить код"}
+              </Button>
+
+              <button
+                type="button"
+                onClick={handleBackToInitial}
+                className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                disabled={isLoading}
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Назад
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════
+            VIEW: otp_verify — Ввод OTP кода
+        ═══════════════════════════════════════════════════════════ */}
+        {view === "otp_verify" && (
+          <div>
+            <div className="text-center mb-6">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+                Введите код
+              </h2>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Мы отправили 6-значный код на{" "}
+                <strong className="text-black">{email}</strong>
+              </p>
+            </div>
+
+            {/* Email badge */}
+            <div className="border border-black bg-white p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
+              <div className="w-9 h-9 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-black" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-black leading-tight truncate">
+                  {email}
+                </p>
+                <p className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                  Код отправлен
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleVerifyOTP} className="space-y-4">
+              <Input
+                ref={otpInputRef}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                placeholder="000000"
+                value={otpCode}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 6)
+                  setOtpCode(val)
+                }}
+                className="h-14 bg-white border border-black text-center text-2xl tracking-[0.5em] uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
+                disabled={isLoading}
+                autoFocus
+                autoComplete="one-time-code"
+              />
+
+              {error && (
+                <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2">
+                  <KeyRound className="w-4 h-4 shrink-0" />
+                  {error}
+                </p>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
+                disabled={otpCode.length !== 6 || isLoading}
+              >
+                {isLoading ? "Проверяем..." : "Подтвердить"}
+              </Button>
+
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={handleBackToEmail}
+                  className="text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center gap-1 cursor-pointer"
+                  disabled={isLoading}
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" /> Другой email
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSendOTP()}
+                  className="text-xs font-semibold text-gray-600 hover:text-black transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled={isLoading || otpCountdown > 0}
+                >
+                  {otpCountdown > 0 ? `Повторно через ${otpCountdown}с` : "Отправить ещё раз"}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
+              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-gray-500 leading-snug">
+                Не получили код? Проверьте папку «Спам». Код действителен 5 минут.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════
+            VIEW: invite_bind — Привязка инвайт-кода
+        ═══════════════════════════════════════════════════════════ */}
+        {view === "invite_bind" && (
           <div>
             <div className="text-center mb-6">
               <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
                 Привязка инвайт-кода
               </h2>
               <p className="text-xs text-gray-600 leading-relaxed">
-                Введите инвайт-код, чтобы навсегда закрепить доступ за вашим Telegram-аккаунтом.
+                Введите инвайт-код, чтобы навсегда закрепить доступ за вашим email.
               </p>
             </div>
 
-            {/* Карточка подтвержденного Telegram профиля */}
+            {/* Email badge */}
             <div className="border border-black bg-white p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
-              {telegramUser?.photo_url ? (
-                <img
-                  src={telegramUser.photo_url}
-                  alt={telegramUser.first_name}
-                  className="w-9 h-9 rounded-none border border-gray-300 object-cover shrink-0"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="w-9 h-9 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-black" />
-                </div>
-              )}
+              <div className="w-9 h-9 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-black" />
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold text-black leading-tight truncate">
-                  @{telegramUser?.username || telegramUser?.first_name}
+                  {email}
                 </p>
                 <p className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                  Telegram подтвержден
+                  Email подтверждён
                 </p>
               </div>
             </div>
 
-            <form onSubmit={handleBindTelegram} className="space-y-4">
+            <form onSubmit={handleBindInvite} className="space-y-4">
               <div>
                 <Input
                   type="text"
                   placeholder="ВВЕДИТЕ ИНВАЙТ-КОД"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
                   className="h-12 bg-white border border-black text-center text-base tracking-widest uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
                   disabled={isLoading}
                   autoFocus
                 />
                 {error && (
                   <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-50 p-2">
-                    <ShieldAlert className="w-4 h-4 shrink-0" />
+                    <KeyRound className="w-4 h-4 shrink-0" />
                     {error}
                   </p>
                 )}
@@ -528,7 +541,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <Button
                 type="submit"
                 className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
-                disabled={!code.trim() || isLoading}
+                disabled={!inviteCode.trim() || isLoading}
               >
                 {isLoading ? "Активация..." : "Активировать доступ"}
               </Button>
@@ -539,14 +552,60 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 disabled={isLoading}
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Сменить Telegram-аккаунт
+                <ArrowLeft className="w-3.5 h-3.5" /> Войти с другого email
               </button>
             </form>
 
             <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
               <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
               <p className="text-[11px] text-gray-500 leading-snug">
-                Инвайт-код навсегда закрепляется за вашим Telegram-аккаунтом. В будущем для входа достаточно будет нажать «Войти через Telegram» без повторного ввода кода.
+                Инвайт-код навсегда закрепляется за вашим email. В будущем для входа достаточно будет Passkey или код на почту.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════
+            VIEW: passkey_offer — Предложение сохранить Passkey
+        ═══════════════════════════════════════════════════════════ */}
+        {view === "passkey_offer" && (
+          <div>
+            <div className="text-center mb-6">
+              <div className="mx-auto mb-4 w-14 h-14 border border-black bg-black text-white flex items-center justify-center">
+                <Fingerprint className="w-7 h-7" />
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+                Мгновенный вход
+              </h2>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Сохраните Passkey, чтобы в следующий раз входить в один тап через Face ID, Touch ID или Windows Hello — без кода и без пароля.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={handleRegisterPasskey}
+                disabled={isLoading}
+                className="w-full h-[52px] bg-black text-white hover:bg-gray-800 active:bg-gray-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
+              >
+                <Fingerprint className="w-5 h-5 shrink-0" />
+                {isLoading ? "Сохраняем..." : "Сохранить Passkey"}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSkipPasskey}
+                className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
+              >
+                Пропустить
+              </button>
+            </div>
+
+            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
+              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-gray-500 leading-snug">
+                Passkey хранится на вашем устройстве и защищён биометрией. Вы всегда сможете войти по email, если смените устройство.
               </p>
             </div>
           </div>

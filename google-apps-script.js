@@ -3,12 +3,7 @@
  *
  * Script Properties:
  *   SPREADSHEET_ID       — ID Google Таблицы
- *   TELEGRAM_BOT_TOKEN   — токен @BotFather
  *   SESSION_SECRET       — отдельная случайная строка длиной 32+ символа
- *
- * В браузере нет секретов. После проверки Telegram и инвайт-кода скрипт выдаёт
- * HMAC-подписанный токен на 2 часа. Каждый запрос материалов повторно проверяет
- * подпись токена, Telegram ID, статус и срок доступа в таблице.
  */
 
 var SESSION_TTL_SECONDS = 2 * 60 * 60;
@@ -53,11 +48,23 @@ function doPost(e) {
     var result;
 
     switch (String(params.action || '')) {
-      case 'telegram_login':
-        result = handleTelegramLogin(params);
+      case 'email_otp':
+        result = handleEmailOTP(params);
         break;
-      case 'telegram_bind':
-        result = handleTelegramBind(params);
+      case 'email_verify':
+        result = handleEmailVerify(params);
+        break;
+      case 'email_bind':
+        result = handleEmailBind(params);
+        break;
+      case 'passkey_challenge':
+        result = handlePasskeyChallenge(params);
+        break;
+      case 'passkey_register':
+        result = handlePasskeyRegister(params);
+        break;
+      case 'passkey_login':
+        result = handlePasskeyLogin(params);
         break;
       case 'session':
         result = handleSession(params.session_token);
@@ -144,6 +151,9 @@ function ensureInviteColumns(sheet) {
     'code_hash',
     'telegram_id',
     'telegram_username',
+    'email',
+    'credential_id',
+    'public_key_spki',
     'completed_lessons',
     'paid_completed_lessons',
     'access_status',
@@ -176,6 +186,9 @@ function getInviteContext() {
     data: data,
     codeIndex: headers.indexOf('code') === -1 ? 0 : headers.indexOf('code'),
     hashIndex: headers.indexOf('code_hash'),
+    emailIndex: headers.indexOf('email'),
+    credentialIdIndex: headers.indexOf('credential_id'),
+    publicKeyIndex: headers.indexOf('public_key_spki'),
     telegramIdIndex: headers.indexOf('telegram_id'),
     telegramUsernameIndex: headers.indexOf('telegram_username'),
     progressIndex: headers.indexOf('completed_lessons'),
@@ -231,6 +244,40 @@ function findInviteByAccessId(context, accessId) {
   return null;
 }
 
+function findInviteByEmail(context, email) {
+  var targetEmail = String(email || '').trim().toLowerCase();
+  if (!targetEmail) return null;
+
+  for (var i = 1; i < context.data.length; i++) {
+    var rowEmail = String(context.data[i][context.emailIndex] || '').trim().toLowerCase();
+    if (rowEmail === targetEmail) {
+      var row = context.data[i];
+      return {
+        rowIndex: i,
+        row: row,
+        accessId: accessIdForRow(context, row)
+      };
+    }
+  }
+  return null;
+}
+
+function findInviteByCredentialId(context, credentialId) {
+  var targetId = String(credentialId || '').trim();
+  if (!targetId) return null;
+
+  for (var i = 1; i < context.data.length; i++) {
+    if (String(context.data[i][context.credentialIdIndex] || '').trim() === targetId) {
+      return {
+        rowIndex: i,
+        row: context.data[i],
+        accessId: accessIdForRow(context, context.data[i])
+      };
+    }
+  }
+  return null;
+}
+
 function inviteIsActive(context, invite) {
   var status = String(invite.row[context.statusIndex] || '').trim().toLowerCase();
   if (['active', 'paid', 'trial'].indexOf(status) === -1) return false;
@@ -266,17 +313,16 @@ function signTokenPart(payloadPart) {
   return Utilities.base64EncodeWebSafe(signature).replace(/=+$/g, '');
 }
 
-function issueSessionToken(context, invite, telegramProfile) {
-  var telegramId = String(invite.row[context.telegramIdIndex] || '').trim();
-  if (!telegramId) throw new Error('Cannot issue a session without Telegram ID');
+function issueSessionToken(context, invite, email) {
+  var rowEmail = String(invite.row[context.emailIndex] || '').trim().toLowerCase();
+  if (!rowEmail) throw new Error('Cannot issue a session without Email');
 
   var now = Math.floor(Date.now() / 1000);
   var payload = {
     v: 1,
     sub: invite.accessId,
-    tg: telegramId,
-    fn: String(telegramProfile.first_name || 'Участник').slice(0, 128),
-    un: String(telegramProfile.username || '').slice(0, 64),
+    email: rowEmail,
+    dn: String(email || 'Участник').split('@')[0].slice(0, 128),
     iat: now,
     exp: now + SESSION_TTL_SECONDS,
     jti: Utilities.getUuid()
@@ -307,7 +353,7 @@ function authorizeSession(sessionToken) {
   if (
     payload.v !== 1 ||
     !/^[a-f0-9]{64}$/.test(String(payload.sub || '')) ||
-    !payload.tg ||
+    !payload.email ||
     !payload.iat ||
     payload.iat > now + 30
   ) {
@@ -323,8 +369,8 @@ function authorizeSession(sessionToken) {
     return { valid: false, error: 'access_inactive', message: 'Доступ истёк или был отозван' };
   }
 
-  var rowTelegramId = String(invite.row[context.telegramIdIndex] || '').trim();
-  if (!constantTimeEquals(rowTelegramId, String(payload.tg))) {
+  var rowEmail = String(invite.row[context.emailIndex] || '').trim().toLowerCase();
+  if (!constantTimeEquals(rowEmail, String(payload.email).toLowerCase())) {
     return { valid: false, error: 'session_invalid', message: 'Требуется повторный вход' };
   }
 
@@ -343,117 +389,209 @@ function getPaidProgress(authorization) {
   ).trim();
 }
 
-function verifyTelegramHash(params) {
-  var hash = String(params.hash || '').toLowerCase();
-  if (!/^[a-f0-9]{64}$/.test(hash)) return false;
-
-  var authDate = Number(params.auth_date);
-  var now = Math.floor(Date.now() / 1000);
-  if (!authDate || authDate > now + 30 || now - authDate > 10 * 60) return false;
-
-  var fields = ['auth_date', 'first_name', 'id', 'last_name', 'photo_url', 'username'];
-  var dataCheckList = [];
-  for (var i = 0; i < fields.length; i++) {
-    var field = fields[i];
-    if (params[field] !== undefined && params[field] !== null && params[field] !== '') {
-      dataCheckList.push(field + '=' + params[field]);
-    }
+function handleEmailOTP(params) {
+  var email = String(params.email || '').trim().toLowerCase();
+  if (!/^[\w\.-]+@[\w\.-]+\.\w+$/.test(email)) {
+    return { valid: false, error: 'invalid_email', message: 'Неверный формат email' };
   }
-  dataCheckList.sort();
 
-  var secretKey = Utilities.computeDigest(
-    Utilities.DigestAlgorithm.SHA_256,
-    getRequiredProperty('TELEGRAM_BOT_TOKEN'),
-    Utilities.Charset.UTF_8
-  );
-  var signature = Utilities.computeHmacSha256Signature(
-    Utilities.newBlob(dataCheckList.join('\n')).getBytes(),
-    secretKey
-  );
-  var signatureHex = '';
-  for (var j = 0; j < signature.length; j++) {
-    var byteValue = signature[j];
-    if (byteValue < 0) byteValue += 256;
-    signatureHex += ('0' + byteValue.toString(16)).slice(-2);
+  if (!consumeLoginAttempt(sha256Hex('otp:' + email), 'otp')) {
+    return { valid: false, error: 'rate_limited', message: 'Слишком много попыток. Попробуйте позже' };
   }
-  return constantTimeEquals(signatureHex, hash);
+
+  var code = String(Math.floor(100000 + Math.random() * 900000));
+  CacheService.getScriptCache().put('otp:' + email, code, 5 * 60);
+
+  try {
+    GmailApp.sendEmail(
+      email,
+      'NWO Academy — Код входа',
+      'Ваш код для входа в NWO Academy: ' + code + '\n\nКод действителен 5 минут.\nЕсли вы не запрашивали вход — проигнорируйте это письмо.',
+      { name: 'NWO Academy', noReply: true }
+    );
+  } catch (e) {
+    return { valid: false, error: 'email_failed', message: 'Ошибка отправки письма' };
+  }
+
+  return { valid: true, sent: true };
 }
 
-function handleTelegramLogin(params) {
-  if (!verifyTelegramHash(params)) {
-    return { valid: false, error: 'signature_invalid', message: 'Данные Telegram устарели или повреждены' };
+function handleEmailVerify(params) {
+  var email = String(params.email || '').trim().toLowerCase();
+  var code = String(params.code || '').trim();
+  
+  if (!consumeLoginAttempt(sha256Hex('verify:' + email), 'verify')) {
+    return { valid: false, error: 'rate_limited', message: 'Слишком много попыток. Попробуйте позже' };
   }
 
-  var telegramId = String(params.id || '').trim();
+  var stored = CacheService.getScriptCache().get('otp:' + email);
+  if (!stored || !constantTimeEquals(stored, code)) {
+    return { valid: false, error: 'invalid_code', message: 'Неверный или истёкший код' };
+  }
+
+  CacheService.getScriptCache().remove('otp:' + email);
+
   var context = getInviteContext();
+  var invite = findInviteByEmail(context, email);
 
-  for (var i = 1; i < context.data.length; i++) {
-    if (String(context.data[i][context.telegramIdIndex] || '').trim() === telegramId) {
-      var invite = {
-        rowIndex: i,
-        row: context.data[i],
-        accessId: accessIdForRow(context, context.data[i])
-      };
-      if (!invite.accessId || !inviteIsActive(context, invite)) {
-        return { valid: false, error: 'access_inactive', message: 'Доступ истёк или отозван' };
-      }
-      return {
-        valid: true,
-        session_token: issueSessionToken(context, invite, params),
-        completed_lessons: String(invite.row[context.progressIndex] || '').trim()
-      };
-    }
+  if (invite && inviteIsActive(context, invite)) {
+    return {
+      valid: true,
+      session_token: issueSessionToken(context, invite, email)
+    };
   }
 
-  return { valid: false, error: 'not_bound', message: 'Telegram не привязан к доступу' };
+  return { valid: false, error: 'not_bound', message: 'Email не привязан к доступу' };
 }
 
-function handleTelegramBind(params) {
-  if (!verifyTelegramHash(params)) {
-    return { valid: false, error: 'signature_invalid', message: 'Данные Telegram устарели или повреждены' };
+function handleEmailBind(params) {
+  var email = String(params.email || '').trim().toLowerCase();
+  var inviteCode = String(params.code || '').trim();
+
+  if (!/^[\w\.-]+@[\w\.-]+\.\w+$/.test(email)) {
+    return { valid: false, error: 'invalid_email', message: 'Неверный формат email' };
   }
 
-  var telegramId = String(params.id || '').trim();
-  if (!consumeLoginAttempt(sha256Hex('bind:' + telegramId), 'bind')) {
+  if (!consumeLoginAttempt(sha256Hex('bind:' + email), 'bind')) {
     return { valid: false, error: 'rate_limited', message: 'Слишком много попыток. Попробуйте позже' };
   }
 
   var lock = LockService.getScriptLock();
   lock.waitLock(5000);
   try {
-    var username = String(params.username || '').trim().replace(/^@/, '');
     var context = getInviteContext();
 
-    for (var i = 1; i < context.data.length; i++) {
-      if (String(context.data[i][context.telegramIdIndex] || '').trim() === telegramId) {
-        return { valid: false, error: 'already_bound_self', message: 'Telegram уже привязан к другому доступу' };
-      }
+    var existingInvite = findInviteByEmail(context, email);
+    if (existingInvite) {
+      return { valid: false, error: 'already_bound_self', message: 'Email уже привязан к другому доступу' };
     }
 
-    var invite = findInviteByCode(context, params.code);
+    var invite = findInviteByCode(context, inviteCode);
     if (!invite || !inviteIsActive(context, invite)) {
       return { valid: false, error: 'invalid_code', message: 'Код недействителен или доступ неактивен' };
     }
 
-    var existingTelegramId = String(invite.row[context.telegramIdIndex] || '').trim();
-    if (existingTelegramId && existingTelegramId !== telegramId) {
+    var boundEmail = String(invite.row[context.emailIndex] || '').trim();
+    if (boundEmail && boundEmail.toLowerCase() !== email) {
       return { valid: false, error: 'already_bound_other', message: 'Код уже активирован другим аккаунтом' };
     }
 
-    context.sheet.getRange(invite.rowIndex + 1, context.telegramIdIndex + 1).setValue(telegramId);
-    invite.row[context.telegramIdIndex] = telegramId;
-    if (username) {
-      context.sheet.getRange(invite.rowIndex + 1, context.telegramUsernameIndex + 1).setValue(username);
-    }
+    context.sheet.getRange(invite.rowIndex + 1, context.emailIndex + 1).setValue(email);
+    invite.row[context.emailIndex] = email;
 
     return {
       valid: true,
-      session_token: issueSessionToken(context, invite, params),
+      session_token: issueSessionToken(context, invite, email),
       completed_lessons: String(invite.row[context.progressIndex] || '').trim()
     };
   } finally {
     lock.releaseLock();
   }
+}
+
+function handlePasskeyChallenge(params) {
+  var purpose = String(params.purpose || '');
+  var email = String(params.email || '').trim().toLowerCase();
+  
+  var bytes = [];
+  for (var i = 0; i < 32; i++) bytes.push(Math.floor(Math.random() * 256));
+  var challenge = Utilities.base64EncodeWebSafe(bytes).replace(/=+$/g, '');
+
+  if (purpose === 'register') {
+    var authorization = authorizeSession(params.session_token);
+    if (!authorization.valid) return authorization;
+    
+    email = authorization.payload.email;
+    CacheService.getScriptCache().put('challenge:reg:' + email, challenge, 2 * 60);
+    
+    return { 
+      valid: true, 
+      challenge: challenge, 
+      rpId: 'newwayout.online', 
+      rpName: 'NWO Academy', 
+      userId: base64UrlEncodeString(email) 
+    };
+  } else if (purpose === 'login') {
+    CacheService.getScriptCache().put('challenge:login:' + challenge, '1', 2 * 60);
+    
+    var credentialIds = [];
+    var context = getInviteContext();
+    for (var j = 1; j < context.data.length; j++) {
+      var credId = String(context.data[j][context.credentialIdIndex] || '').trim();
+      if (credId) credentialIds.push({ type: 'public-key', id: credId });
+    }
+    
+    return {
+      valid: true,
+      challenge: challenge,
+      rpId: 'newwayout.online',
+      rpName: 'NWO Academy',
+      credentialIds: credentialIds
+    };
+  }
+  
+  return { valid: false, error: 'invalid_purpose' };
+}
+
+function handlePasskeyRegister(params) {
+  var authorization = authorizeSession(params.session_token);
+  if (!authorization.valid) return authorization;
+
+  var email = authorization.payload.email;
+  var expectedChallenge = CacheService.getScriptCache().get('challenge:reg:' + email);
+  if (!expectedChallenge) {
+    return { valid: false, error: 'challenge_expired', message: 'Время ожидания истекло' };
+  }
+
+  var clientDataJSON = String(params.client_data_json || '');
+  var challenge = String(params.challenge || '');
+  if (clientDataJSON.indexOf(expectedChallenge) === -1 || clientDataJSON.indexOf('newwayout.online') === -1 || expectedChallenge !== challenge) {
+    return { valid: false, error: 'invalid_client_data' };
+  }
+
+  var credentialId = String(params.credential_id || '').trim();
+  var attestationObject = String(params.attestation_object || '').trim();
+
+  if (!credentialId || !attestationObject) {
+    return { valid: false, error: 'invalid_params' };
+  }
+
+  var context = authorization.context;
+  context.sheet.getRange(authorization.invite.rowIndex + 1, context.credentialIdIndex + 1).setValue(credentialId);
+  context.sheet.getRange(authorization.invite.rowIndex + 1, context.publicKeyIndex + 1).setValue(attestationObject);
+  
+  CacheService.getScriptCache().remove('challenge:reg:' + email);
+
+  return { valid: true };
+}
+
+function handlePasskeyLogin(params) {
+  var challenge = String(params.challenge || '');
+  var expected = CacheService.getScriptCache().get('challenge:login:' + challenge);
+  if (!expected) {
+    return { valid: false, error: 'challenge_expired', message: 'Время ожидания истекло' };
+  }
+
+  var clientDataJSON = String(params.client_data_json || '');
+  if (clientDataJSON.indexOf(challenge) === -1 || clientDataJSON.indexOf('newwayout.online') === -1) {
+    return { valid: false, error: 'invalid_client_data' };
+  }
+
+  var credentialId = String(params.credential_id || '').trim();
+  var context = getInviteContext();
+  var invite = findInviteByCredentialId(context, credentialId);
+
+  if (!invite || !inviteIsActive(context, invite)) {
+    return { valid: false, error: 'access_inactive', message: 'Доступ не найден или истёк' };
+  }
+
+  CacheService.getScriptCache().remove('challenge:login:' + challenge);
+
+  var email = String(invite.row[context.emailIndex] || '').trim();
+  return {
+    valid: true,
+    session_token: issueSessionToken(context, invite, email)
+  };
 }
 
 function handleSession(sessionToken) {
@@ -463,10 +601,9 @@ function handleSession(sessionToken) {
   return {
     valid: true,
     completed_lessons: getProgress(authorization),
-    telegram_user: {
-      id: Number(authorization.payload.tg),
-      first_name: String(authorization.payload.fn || 'Участник'),
-      username: String(authorization.payload.un || '')
+    user: {
+      email: authorization.payload.email,
+      display_name: authorization.payload.dn || 'Участник'
     }
   };
 }
@@ -479,10 +616,9 @@ function handlePaidSession(sessionToken) {
     valid: true,
     paid_access: inviteHasPaidAccess(authorization.context, authorization.invite),
     paid_completed_lessons: getPaidProgress(authorization),
-    telegram_user: {
-      id: Number(authorization.payload.tg),
-      first_name: String(authorization.payload.fn || 'Участник'),
-      username: String(authorization.payload.un || '')
+    user: {
+      email: authorization.payload.email,
+      display_name: authorization.payload.dn || 'Участник'
     }
   };
 }

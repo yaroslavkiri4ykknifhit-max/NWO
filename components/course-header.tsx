@@ -2,14 +2,14 @@
 
 import { ArrowLeft, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { TelegramProfile } from "@/lib/sheets-api"
+import { UserProfile } from "@/lib/sheets-api"
 import { motion } from "motion/react"
 import type { Variants } from "motion/react"
 
 interface CourseHeaderProps {
   courseName: string
   onLogout?: () => void
-  telegramUser?: TelegramProfile | null
+  user?: UserProfile | null
   onToggleSidebar: () => void
   isSidebarOpen: boolean
   onClickLogo?: () => void
@@ -76,7 +76,7 @@ const MenuToggle = ({ toggle, isOpen }: { toggle: () => void; isOpen: boolean })
 export function CourseHeader({
   courseName,
   onLogout,
-  telegramUser,
+  user,
   onToggleSidebar,
   isSidebarOpen,
   onClickLogo,
@@ -86,8 +86,8 @@ export function CourseHeader({
   showUser = true,
 }: CourseHeaderProps) {
   const isPremium = variant === "premium"
-  const displayName = telegramUser
-    ? (telegramUser.username ? `@${telegramUser.username}` : telegramUser.first_name)
+  const displayName = user
+    ? (user.display_name || user.email)
     : "Студент"
 
   return (
@@ -124,24 +124,7 @@ export function CourseHeader({
       <div className="flex items-center gap-3">
         {showUser && (
           <div className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 bg-[#fafaf9]">
-            {telegramUser?.photo_url ? (
-              <img
-                src={telegramUser.photo_url}
-                alt={displayName}
-                className="w-6 h-6 rounded-none object-cover border border-gray-300"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                  const sibling = e.currentTarget.nextElementSibling as HTMLElement
-                  if (sibling) sibling.style.display = 'block'
-                }}
-              />
-            ) : null}
-
-            <User
-              className="w-4 h-4 text-black"
-              style={{ display: telegramUser?.photo_url ? 'none' : 'block' }}
-            />
+            <User className="w-4 h-4 text-black" />
 
             <span className="text-xs font-semibold text-black tracking-wide max-w-[130px] truncate font-ui">
               {displayName}

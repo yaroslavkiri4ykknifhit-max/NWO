@@ -10,14 +10,14 @@ import {
   ShieldCheck,
   Trophy,
 } from "lucide-react"
-import { CourseModule, TelegramProfile } from "@/lib/sheets-api"
+import { CourseModule, UserProfile } from "@/lib/sheets-api"
 
 interface PremiumDashboardProps {
   courseName: string
   modules: CourseModule[]
   completedLessons: string[]
   onStartLearning: () => void
-  telegramUser?: TelegramProfile | null
+  user?: UserProfile | null
 }
 
 export function PremiumDashboard({
@@ -25,15 +25,13 @@ export function PremiumDashboard({
   modules,
   completedLessons,
   onStartLearning,
-  telegramUser,
+  user,
 }: PremiumDashboardProps) {
   const lessonsCount = modules.reduce((total, module) => total + module.lessons.length, 0)
   const progressPercent = lessonsCount
     ? Math.min(100, Math.round((completedLessons.length / lessonsCount) * 100))
     : 0
-  const displayName = telegramUser?.username
-    ? `@${telegramUser.username}`
-    : telegramUser?.first_name || "Студент"
+  const displayName = user?.display_name || user?.email || "Студент"
 
   return (
     <main className="flex-1 overflow-y-auto bg-white font-ui text-[#121212]">

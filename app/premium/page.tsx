@@ -3,7 +3,7 @@
 import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
 
 import { useCallback, useEffect, useState } from "react"
-import { ArrowLeft, Crown, Loader2, LockKeyhole, LogOut, ChevronRight } from "lucide-react"
+import { ArrowLeft, Crown, LockKeyhole, LogOut, ChevronRight } from "lucide-react"
 import { AccessForm } from "@/components/access-form"
 import { CourseHeader } from "@/components/course-header"
 import { LessonSidebar } from "@/components/lesson-sidebar"
@@ -12,7 +12,7 @@ import { PremiumDashboard } from "@/components/premium-dashboard"
 import Link from "next/link"
 import {
   CourseData,
-  TelegramProfile,
+  UserProfile,
   fetchPaidCourseData,
   getPaidAuthSession,
   logout,
@@ -22,7 +22,7 @@ type PaidAccessState = "checking" | "login" | "unpaid" | "granted"
 
 export default function PremiumPage() {
   const [accessState, setAccessState] = useState<PaidAccessState>("checking")
-  const [telegramUser, setTelegramUser] = useState<TelegramProfile | null>(null)
+  const [user, setUser] = useState<UserProfile | null>(null)
   const [courseData, setCourseData] = useState<CourseData | null>(null)
   const [completedLessons, setCompletedLessons] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -43,7 +43,7 @@ export default function PremiumPage() {
     const minDelay = new Promise((resolve) => setTimeout(resolve, 1800))
     const session = await getPaidAuthSession()
     await minDelay
-    setTelegramUser(session.telegramUser)
+    setUser(session.user)
     setCompletedLessons(session.completedLessons)
 
     if (!session.authenticated) {
@@ -85,7 +85,7 @@ export default function PremiumPage() {
 
   const handleLogout = async () => {
     await logout()
-    setTelegramUser(null)
+    setUser(null)
     setCourseData(null)
     setCompletedLessons([])
     setAccessState("login")
@@ -102,9 +102,8 @@ export default function PremiumPage() {
   }
 
   if (accessState === "unpaid") {
-    const displayName = telegramUser?.username
-      ? `@${telegramUser.username}`
-      : telegramUser?.first_name || "пользователь"
+    const displayName =
+      user?.display_name || user?.email || "пользователь"
 
     return (
       <main className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212]">
@@ -252,7 +251,7 @@ export default function PremiumPage() {
     <div className="h-screen flex flex-col overflow-hidden bg-white text-black font-ui">
       <CourseHeader
         courseName={courseData.name}
-        telegramUser={telegramUser}
+        user={user}
         onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
         isSidebarOpen={isSidebarOpen}
         onLogout={handleLogout}
@@ -291,7 +290,7 @@ export default function PremiumPage() {
             modules={courseData.modules}
             completedLessons={completedLessons}
             onStartLearning={handleStartLearning}
-            telegramUser={telegramUser}
+            user={user}
           />
         )}
       </div>

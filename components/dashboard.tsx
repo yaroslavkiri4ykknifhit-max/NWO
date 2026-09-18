@@ -1,7 +1,7 @@
 "use client"
 
 import { BookOpen, Crown, Play, CheckCircle2, ArrowRight } from "lucide-react"
-import { TelegramProfile } from "@/lib/sheets-api"
+import { UserProfile } from "@/lib/sheets-api"
 import Link from "next/link"
 
 interface DashboardProps {
@@ -10,7 +10,7 @@ interface DashboardProps {
   lessonsCount: number
   completedCount: number
   onStartLearning: () => void
-  telegramUser?: TelegramProfile | null
+  user?: UserProfile | null
   premiumHref?: string
 }
 
@@ -20,13 +20,11 @@ export function Dashboard({
   lessonsCount,
   completedCount,
   onStartLearning,
-  telegramUser,
+  user,
   premiumHref,
 }: DashboardProps) {
   const progressPercent = lessonsCount > 0 ? Math.round((completedCount / lessonsCount) * 100) : 0
-  const studentName = telegramUser?.username 
-    ? `@${telegramUser.username}` 
-    : telegramUser?.first_name || "Студент"
+  const studentName = user?.display_name || user?.email || "Студент"
 
   return (
     <main className="flex-1 overflow-y-auto bg-white flex flex-col min-h-full font-ui text-[#121212]">
