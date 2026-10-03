@@ -1,74 +1,79 @@
-"use client"
+"use client";
 
-import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
+import { ProgramIntro, CourseLoading } from "@/components/program-intro";
 
-import { useEffect, useState } from "react"
-import { Loader2 } from "lucide-react"
-import { CourseHeader } from "@/components/course-header"
-import { Dashboard } from "@/components/dashboard"
-import { LessonSidebar } from "@/components/lesson-sidebar"
-import { LessonViewer } from "@/components/lesson-viewer"
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { CourseHeader } from "@/components/course-header";
+import { Dashboard } from "@/components/dashboard";
+import { LessonSidebar } from "@/components/lesson-sidebar";
+import { LessonViewer } from "@/components/lesson-viewer";
 import {
   CourseData,
   fetchPublicCourseData,
   getLocalFreeProgress,
   saveLocalFreeProgress,
-} from "@/lib/sheets-api"
+} from "@/lib/sheets-api";
 
 export default function FreeCoursePage() {
-  const [courseData, setCourseData] = useState<CourseData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [currentModuleId, setCurrentModuleId] = useState("")
-  const [currentLessonId, setCurrentLessonId] = useState("")
-  const [completedLessons, setCompletedLessons] = useState<string[]>([])
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [started, setStarted] = useState(false);
+  const [progressError, setProgressError] = useState("");
+  const [courseData, setCourseData] = useState<CourseData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentModuleId, setCurrentModuleId] = useState("");
+  const [currentLessonId, setCurrentLessonId] = useState("");
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setCompletedLessons(getLocalFreeProgress())
+    setCompletedLessons(getLocalFreeProgress());
 
-    const handleResize = () => setIsSidebarOpen(window.innerWidth >= 1024)
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+    const handleResize = () => setIsSidebarOpen(window.innerWidth >= 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const loadCourseData = async () => {
-    setLoading(true)
-    setError(null)
-    const minDelay = new Promise((resolve) => setTimeout(resolve, 5000))
+    setLoading(true);
+    setError(null);
     try {
-      const [data] = await Promise.all([fetchPublicCourseData(), minDelay])
-      setCourseData(data)
-      setCurrentModuleId("")
-      setCurrentLessonId("")
+      const data = await fetchPublicCourseData();
+      setCourseData(data);
+      setCurrentModuleId("");
+      setCurrentLessonId("");
     } catch (loadError) {
-      await minDelay
       setError(
         loadError instanceof Error
           ? loadError.message
           : "Не удалось загрузить бесплатный курс",
-      )
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    void loadCourseData()
-  }, [])
+    void loadCourseData();
+  }, []);
+
+  if (!started)
+    return <ProgramIntro variant="free" onStart={() => setStarted(true)} />;
 
   if (loading) {
-    return (
-      <GothicHandwrittenLoader />
-    )
+    return <CourseLoading />;
   }
 
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
-        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-2xl">⚠️</div>
-        <h1 className="text-xl font-semibold text-black">Курс временно недоступен</h1>
+        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-2xl">
+          ⚠️
+        </div>
+        <h1 className="text-xl font-semibold text-black">
+          Курс временно недоступен
+        </h1>
         <p className="max-w-md text-sm text-muted-foreground">{error}</p>
         <div className="flex flex-wrap justify-center gap-3">
           <button
@@ -78,26 +83,35 @@ export default function FreeCoursePage() {
           >
             Повторить
           </button>
-          <a href="/" className="rounded-xl bg-secondary px-5 py-2.5 text-sm font-semibold text-secondary-foreground">
+          <a
+            href="/"
+            className="rounded-xl bg-secondary px-5 py-2.5 text-sm font-semibold text-secondary-foreground"
+          >
             На главную
           </a>
         </div>
       </div>
-    )
+    );
   }
 
   if (!courseData || courseData.modules.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
-        <h1 className="text-2xl font-semibold text-black">Бесплатный курс готов</h1>
+        <h1 className="text-2xl font-semibold text-black">
+          Материалы пока недоступны
+        </h1>
         <p className="max-w-md text-sm text-muted-foreground">
-          Добавьте активные модули и уроки в листы Modules и Lessons.
+          Материалы скоро появятся. Пока можно посмотреть программы или задать
+          вопрос Ярославу в Telegram.
         </p>
-        <a href="/" className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">
-          Вернуться на лендинг
+        <a
+          href="/"
+          className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
+        >
+          Вернуться на главную
         </a>
       </div>
-    )
+    );
   }
 
   const modulesWithCompletion = courseData.modules.map((module) => ({
@@ -106,56 +120,79 @@ export default function FreeCoursePage() {
       ...lesson,
       completed: completedLessons.includes(lesson.id),
     })),
-  }))
+  }));
 
-  const currentModule = courseData.modules.find((module) => module.id === currentModuleId)
-  const currentLesson = currentModule?.lessons.find((lesson) => lesson.id === currentLessonId)
-  const allLessons = courseData.modules.flatMap((module) => module.lessons)
-  const currentIndex = allLessons.findIndex((lesson) => lesson.id === currentLessonId)
-  const hasNext = currentIndex >= 0 && currentIndex < allLessons.length - 1
+  const currentModule = courseData.modules.find(
+    (module) => module.id === currentModuleId,
+  );
+  const currentLesson = currentModule?.lessons.find(
+    (lesson) => lesson.id === currentLessonId,
+  );
+  const allLessons = courseData.modules.flatMap((module) => module.lessons);
+  const currentIndex = allLessons.findIndex(
+    (lesson) => lesson.id === currentLessonId,
+  );
+  const hasNext = currentIndex >= 0 && currentIndex < allLessons.length - 1;
 
   const handleSelectLesson = (moduleId: string, lessonId: string) => {
-    setCurrentModuleId(moduleId)
-    setCurrentLessonId(lessonId)
-  }
+    setCurrentModuleId(moduleId);
+    setCurrentLessonId(lessonId);
+  };
 
   const handleCompleteLesson = () => {
     if (!completedLessons.includes(currentLessonId)) {
-      const updated = [...completedLessons, currentLessonId]
-      setCompletedLessons(updated)
-      saveLocalFreeProgress(updated)
+      const updated = [...completedLessons, currentLessonId];
+      setCompletedLessons(updated);
+      try {
+        saveLocalFreeProgress(updated);
+        setProgressError("");
+      } catch {
+        setProgressError(
+          "Браузер не разрешил сохранить прогресс. Он останется доступен, пока открыта эта страница.",
+        );
+      }
     }
-  }
+  };
 
   const handleNextLesson = () => {
-    if (!hasNext) return
-    const nextLesson = allLessons[currentIndex + 1]
+    if (!hasNext) return;
+    const nextLesson = allLessons[currentIndex + 1];
     const nextModule = courseData.modules.find((module) =>
       module.lessons.some((lesson) => lesson.id === nextLesson.id),
-    )
-    if (nextModule) handleSelectLesson(nextModule.id, nextLesson.id)
-  }
+    );
+    if (nextModule) handleSelectLesson(nextModule.id, nextLesson.id);
+  };
 
   const handleStartLearning = () => {
-    const firstModule = courseData.modules[0]
-    const firstLesson = firstModule?.lessons[0]
-    if (firstModule && firstLesson) handleSelectLesson(firstModule.id, firstLesson.id)
-  }
+    const nextLesson =
+      allLessons.find((lesson) => !completedLessons.includes(lesson.id)) ||
+      allLessons[0];
+    const nextModule = courseData.modules.find((module) =>
+      module.lessons.some((lesson) => lesson.id === nextLesson?.id),
+    );
+    if (nextModule && nextLesson)
+      handleSelectLesson(nextModule.id, nextLesson.id);
+  };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="learning-shell flex flex-col overflow-hidden">
       <CourseHeader
         courseName={courseData.name}
         onToggleSidebar={() => setIsSidebarOpen((open) => !open)}
         isSidebarOpen={isSidebarOpen}
         showUser={false}
         backHref="/"
-        backLabel="На лендинг"
+        backLabel="На главную"
         onClickLogo={() => {
-          setCurrentModuleId("")
-          setCurrentLessonId("")
+          setCurrentModuleId("");
+          setCurrentLessonId("");
         }}
       />
+      {progressError && (
+        <p role="status" className="px-4 py-2 text-sm bg-amber-50">
+          {progressError}
+        </p>
+      )}
       <div className="flex flex-1 overflow-hidden relative">
         <LessonSidebar
           modules={modulesWithCompletion}
@@ -180,12 +217,16 @@ export default function FreeCoursePage() {
             courseName={courseData.name}
             modulesCount={courseData.modules.length}
             lessonsCount={allLessons.length}
-            completedCount={completedLessons.length}
+            completedCount={
+              allLessons.filter((lesson) =>
+                completedLessons.includes(lesson.id),
+              ).length
+            }
             onStartLearning={handleStartLearning}
             premiumHref="/premium/"
           />
         )}
       </div>
     </div>
-  )
+  );
 }

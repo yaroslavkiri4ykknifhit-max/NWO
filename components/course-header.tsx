@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { ArrowLeft, LogOut, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { UserProfile } from "@/lib/sheets-api"
-import { motion } from "motion/react"
-import type { Variants } from "motion/react"
+import { ArrowLeft, LogOut, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { UserProfile } from "@/lib/sheets-api";
+import { motion } from "motion/react";
+import type { Variants } from "motion/react";
 
 interface CourseHeaderProps {
-  courseName: string
-  onLogout?: () => void
-  user?: UserProfile | null
-  onToggleSidebar: () => void
-  isSidebarOpen: boolean
-  onClickLogo?: () => void
-  backHref?: string
-  backLabel?: string
-  variant?: "default" | "premium"
-  showUser?: boolean
+  courseName: string;
+  onLogout?: () => void;
+  user?: UserProfile | null;
+  onToggleSidebar: () => void;
+  isSidebarOpen: boolean;
+  onClickLogo?: () => void;
+  backHref?: string;
+  backLabel?: string;
+  variant?: "default" | "premium";
+  showUser?: boolean;
 }
 
 interface PathProps {
-  d?: string
-  variants: Variants
-  transition?: { duration: number }
+  d?: string;
+  variants: Variants;
+  transition?: { duration: number };
 }
 
 const Path = (props: PathProps) => (
@@ -33,18 +33,26 @@ const Path = (props: PathProps) => (
     strokeLinecap="round"
     {...props}
   />
-)
+);
 
-const MenuToggle = ({ toggle, isOpen }: { toggle: () => void; isOpen: boolean }) => (
+const MenuToggle = ({
+  toggle,
+  isOpen,
+}: {
+  toggle: () => void;
+  isOpen: boolean;
+}) => (
   <button
     onClick={toggle}
     className="p-2 hover:bg-gray-100 rounded-none text-black transition-colors cursor-pointer shrink-0 flex items-center justify-center border border-transparent hover:border-gray-300"
-    aria-label={isOpen ? "Закрыть меню" : "Открыть меню"}
+    aria-label={isOpen ? "Закрыть оглавление" : "Открыть оглавление"}
+    aria-expanded={isOpen}
+    aria-controls="course-outline"
   >
-    <motion.svg 
-      width="22" 
-      height="22" 
-      viewBox="0 0 23 23" 
+    <motion.svg
+      width="22"
+      height="22"
+      viewBox="0 0 23 23"
       className="w-5 h-5 text-black"
       initial={false}
       animate={isOpen ? "open" : "closed"}
@@ -71,7 +79,7 @@ const MenuToggle = ({ toggle, isOpen }: { toggle: () => void; isOpen: boolean })
       />
     </motion.svg>
   </button>
-)
+);
 
 export function CourseHeader({
   courseName,
@@ -85,10 +93,8 @@ export function CourseHeader({
   variant = "default",
   showUser = true,
 }: CourseHeaderProps) {
-  const isPremium = variant === "premium"
-  const displayName = user
-    ? (user.display_name || user.email)
-    : "Студент"
+  const isPremium = variant === "premium";
+  const displayName = user ? user.display_name || user.email : "Студент";
 
   return (
     <header className="h-16 bg-white border-b border-gray-300 flex items-center justify-between px-4 sm:px-6 shrink-0 z-50">
@@ -97,9 +103,9 @@ export function CourseHeader({
 
         <button
           onClick={onClickLogo}
-          className="flex items-baseline gap-2 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none"
+          className="flex items-baseline gap-2 cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <span 
+          <span
             className="text-3xl text-black tracking-tight select-none"
             style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
           >
@@ -113,6 +119,7 @@ export function CourseHeader({
         {backHref && (
           <a
             href={backHref}
+            aria-label={backLabel}
             className="inline-flex items-center gap-1.5 border border-gray-300 bg-white p-1.5 sm:px-3 sm:py-1 text-xs font-semibold text-gray-700 hover:bg-black hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -145,5 +152,5 @@ export function CourseHeader({
         )}
       </div>
     </header>
-  )
+  );
 }

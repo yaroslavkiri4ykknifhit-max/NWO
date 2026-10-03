@@ -1,18 +1,19 @@
-import Link from 'next/link'
-import { Metadata } from 'next'
-import { getAllPosts } from '@/lib/markdown'
-import { ArrowLeft, Clock, ArrowUpRight } from 'lucide-react'
+import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
+import { getAllPosts } from "@/lib/markdown";
+import { ArrowLeft, Clock, ArrowUpRight } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: 'Журнал о продажах | NWO (New Way Out)',
-  description: 'Статьи, кейсы и разборы сделок от NWO. Практические советы по B2B и B2C продажам без воды.',
-}
+export const metadata = pageMetadata(
+  "Журнал о продажах и переговорах",
+  "Статьи New Way Out: практика продаж, разборы переговоров и работа с клиентами. Читай материалы и пробуй подход в своих диалогах.",
+  "/blog/",
+);
 
 export default function BlogIndex() {
-  const posts = getAllPosts()
+  const posts = getAllPosts();
 
   return (
-    <main className="min-h-screen bg-white text-[#121212] font-ui selection:bg-black selection:text-white">
+    <main className="legacy-editorial min-h-screen bg-white text-[#121212] font-ui selection:bg-black selection:text-white">
       {/* Top Bar */}
       <div className="border-b border-gray-300 bg-black py-2 text-white">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:px-8 text-xs font-medium">
@@ -20,9 +21,14 @@ export default function BlogIndex() {
             <span className="rounded-sm bg-red-700 px-1.5 py-0.5 font-ui text-[10px] font-bold uppercase tracking-[0.08em]">
               Редакция
             </span>
-            <span className="text-gray-300">Статьи, разборы звонков и боевая психология продаж</span>
+            <span className="text-gray-300">
+              Статьи, разборы звонков и боевая психология продаж
+            </span>
           </div>
-          <Link href="/" className="text-gray-300 hover:text-white flex items-center gap-1">
+          <Link
+            href="/"
+            className="text-gray-300 hover:text-white flex items-center gap-1"
+          >
             На главную <ArrowUpRight size={12} />
           </Link>
         </div>
@@ -31,12 +37,15 @@ export default function BlogIndex() {
       {/* Masthead Header */}
       <header className="border-b border-gray-300 bg-white">
         <div className="mx-auto max-w-[1200px] px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-colors">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-black transition-colors"
+          >
             <ArrowLeft size={14} /> На главную
           </Link>
-          
+
           <Link href="/" className="text-center">
-            <span 
+            <span
               className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
               style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
             >
@@ -56,7 +65,8 @@ export default function BlogIndex() {
         </div>
         <div className="border-t border-b border-black py-1.5 text-center bg-[#fafaf9]">
           <p className="font-display text-[11px] uppercase tracking-[0.25em] text-gray-600">
-            Официальное издание NWO · Практические исследования и аналитика переговоров
+            Официальное издание NWO · Практические исследования и аналитика
+            переговоров
           </p>
         </div>
       </header>
@@ -71,7 +81,9 @@ export default function BlogIndex() {
             Журнал NWO
           </h1>
           <p className="text-lg text-gray-700 font-display max-w-2xl leading-relaxed">
-            Разборы реальных звонков, анатомия отказов, психология богатых клиентов и тактики закрытия на высокие чеки. Без воды из устаревших учебников.
+            Разборы реальных звонков, анатомия отказов, психология богатых
+            клиентов и тактики закрытия на высокие чеки. Без воды из устаревших
+            учебников.
           </p>
         </div>
 
@@ -81,7 +93,11 @@ export default function BlogIndex() {
               <Link href={`/blog/${post.slug}`} className="block">
                 <div className="flex flex-wrap items-center gap-3 mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">
                   <time className="text-black font-ui">
-                    {new Date(post.date).toLocaleDateString('ru-RU', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {new Date(post.date).toLocaleDateString("ru-RU", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </time>
                   <span>•</span>
                   <div className="flex items-center gap-1 text-gray-500">
@@ -99,7 +115,9 @@ export default function BlogIndex() {
 
                 <div className="text-xs font-bold uppercase tracking-widest text-black flex items-center gap-1.5 pt-2">
                   <span>Читать расследование</span>
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                  <span className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
                 </div>
               </Link>
             </article>
@@ -110,15 +128,18 @@ export default function BlogIndex() {
       {/* Footer */}
       <footer className="border-t border-gray-300 bg-white py-12 text-center text-xs text-gray-500 font-ui">
         <div className="mx-auto max-w-[1200px] px-4">
-          <span 
+          <span
             className="text-2xl text-black block mb-2 select-none"
             style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
           >
             New Way Out
           </span>
-          <p>© {new Date().getFullYear()} NWO Journal. Независимое издание о практике высоких чеков.</p>
+          <p>
+            © {new Date().getFullYear()} NWO Journal. Независимое издание о
+            практике высоких чеков.
+          </p>
         </div>
       </footer>
     </main>
-  )
+  );
 }

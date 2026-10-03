@@ -1,19 +1,34 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from "next";
+import "./globals.css";
+import "./editorial.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://newwayout.online'),
+  metadataBase: new URL("https://newwayout.online"),
   title: {
-    default: 'НВО обучение продажам | Курсы и менторство от NWO',
-    template: '%s | NWO (New Way Out)'
+    default: "Обучение продажам: бесплатный курс и менторство | NWO",
+    template: "%s | NWO",
   },
-  description: 'НВО (New Way Out) — мощное обучение продажам с нуля. Научись продавать себя, продукты и услуги. Бесплатная база, NWO BLACK и личное менторство до результата.',
-  keywords: ['НВО обучение продажам', 'НВО', 'NWO', 'New Way Out', 'new Out', 'курсы по продажам', 'обучение продажам', 'как стать менеджером по продажам', 'менторство продажи', 'NWO BLACK', 'продажи B2B', 'заработок на продажах'],
-  authors: [{ name: 'NWO' }],
-  creator: 'NWO',
-  publisher: 'NWO',
+  description:
+    "Практическое обучение продажам от New Way Out: бесплатная база, NWO Black за $17 и личное менторство. Первый контакт, ценность, цена и переговоры.",
+  keywords: [
+    "НВО обучение продажам",
+    "НВО",
+    "NWO",
+    "New Way Out",
+    "new Out",
+    "курсы по продажам",
+    "обучение продажам",
+    "как стать менеджером по продажам",
+    "менторство продажи",
+    "NWO BLACK",
+    "продажи B2B",
+    "заработок на продажах",
+  ],
+  authors: [{ name: "NWO" }],
+  creator: "NWO",
+  publisher: "NWO",
   alternates: {
-    canonical: '/',
+    canonical: "/",
   },
   robots: {
     index: true,
@@ -21,41 +36,49 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
-    title: 'НВО обучение продажам | Курсы и менторство от NWO',
-    description: 'Освой навык, который поможет находить клиентов, показывать ценность и договариваться о деньгах. НВО (New Way Out) — твоя система продаж.',
-    url: 'https://newwayout.online',
-    siteName: 'NWO (New Way Out)',
-    locale: 'ru_RU',
-    type: 'website',
-    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'NWO - система обучения продажам' }],
+    title: "Обучение продажам: бесплатный курс и менторство",
+    description:
+      "Освой навык, который поможет находить клиентов, показывать ценность и договариваться о деньгах. НВО (New Way Out) — твоя система продаж.",
+    url: "https://newwayout.online",
+    siteName: "NWO (New Way Out)",
+    locale: "ru_RU",
+    type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "NWO - система обучения продажам",
+      },
+    ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'НВО обучение продажам | NWO',
-    description: 'Научись продавать себя, продукты и услуги с системой NWO.',
-    images: ['/og.png'],
+    card: "summary_large_image",
+    title: "НВО обучение продажам | NWO",
+    description: "Научись продавать себя, продукты и услуги с системой NWO.",
+    images: ["/og.png"],
   },
   icons: {
     icon: [
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: "/icon.svg",
+        type: "image/svg+xml",
       },
     ],
-    apple: '/icon.svg',
+    apple: "/icon.svg",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -63,133 +86,41 @@ export default function RootLayout({
       {
         "@type": "EducationalOrganization",
         "@id": "https://newwayout.online/#organization",
-        "name": "NWO (New Way Out) - НВО обучение продажам",
-        "url": "https://newwayout.online",
-        "logo": "https://newwayout.online/icon.svg",
-        "description": "Курс и менторство по продажам от NWO (НВО). Научись продавать себя, продукты, услуги и идеи.",
-        "sameAs": [
-          "https://t.me/c0lddev"
-        ]
+        name: "New Way Out (NWO)",
+        url: "https://newwayout.online",
+        logo: "https://newwayout.online/icon.svg",
+        description:
+          "Курс и менторство по продажам от NWO (НВО). Научись продавать себя, продукты, услуги и идеи.",
+        sameAs: ["https://t.me/c0lddev"],
       },
       {
         "@type": "WebSite",
         "@id": "https://newwayout.online/#website",
-        "url": "https://newwayout.online",
-        "name": "NWO (New Way Out)",
-        "description": "НВО обучение продажам. Бесплатные курсы, NWO BLACK и менторство.",
-        "publisher": {
-          "@id": "https://newwayout.online/#organization"
+        url: "https://newwayout.online",
+        name: "NWO (New Way Out)",
+        description:
+          "НВО обучение продажам. Бесплатные курсы, NWO BLACK и менторство.",
+        publisher: {
+          "@id": "https://newwayout.online/#organization",
         },
-        "inLanguage": "ru-RU"
+        inLanguage: "ru-RU",
       },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Что такое НВО (NWO)?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "НВО (New Way Out) — это практическая система обучения продажам. Мы учим доносить ценность, работать с возражениями и экологично закрывать сделки, чтобы вы могли уверенно продавать свои услуги, продукты или идеи на высокие чеки."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Кому подойдет этот курс по продажам?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Обучение продажам NWO идеально подходит новичкам, фрилансерам, предпринимателям и всем, кто хочет стать высокооплачиваемым менеджером по продажам. Навыки применимы как в B2B, так и в B2C."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Как стать менеджером по продажам с нуля?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "В рамках нашего Менторства мы проводим обучение с абсолютного нуля, ставим навык на реальных звонках и гарантируем трудоустройство с выходом на доход от 700$ + процент от сделок."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Чем NWO BLACK отличается от бесплатной базы?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "NWO FREE даёт фундамент и понимание психологии клиента. NWO BLACK — это полная закрытая система, где разбираются конкретные скрипты, сложные переговоры, ответы на «дорого» и доведение до оплаты."
-            }
-          }
-        ]
-      }
-    ,
-      {
-        "@type": "Course",
-        "@id": "https://newwayout.online/#course",
-        "name": "Практический курс по активным продажам NWO (New Way Out)",
-        "description": "Мощная система обучения продажам с нуля. Научись уверенно продавать, работать с возражениями и закрывать сделки на высокие чеки от $1,000 до $10,000+.",
-        "provider": {
-          "@id": "https://newwayout.online/#organization"
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.9",
-          "bestRating": "5",
-          "worstRating": "1",
-          "ratingCount": "38",
-          "reviewCount": "38"
-        },
-        "review": [
-          {
-            "@type": "Review",
-            "author": {
-              "@type": "Person",
-              "name": "Артем Воронов"
-            },
-            "datePublished": "2026-09-14",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            },
-            "reviewBody": "До NWO я сливал 7 из 10 звонков на фразе «пришлите КП на почту». После внедрения протокола первых 90 секунд конверсия в квалифицированную встречу выросла до 60%. Закрыл свой первый контракт на $4,200 через 2 недели."
-          },
-          {
-            "@type": "Review",
-            "author": {
-              "@type": "Person",
-              "name": "Максим Дмитрук"
-            },
-            "datePublished": "2026-09-08",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            },
-            "reviewBody": "Самый сильный блок — это сложные переговоры и отработка возражения «дорого». Раньше я сразу падал в цене и терял маржу. Сейчас клиенты платят без скидок и благодарят за экспертизу. Обучение окупилось с первой сделки."
-          },
-          {
-            "@type": "Review",
-            "author": {
-              "@type": "Person",
-              "name": "Екатерина Белова"
-            },
-            "datePublished": "2026-09-02",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            },
-            "reviewBody": "Пошла на менторство с нуля, очень боялась звонить в холодную. Ярослав буквально за 3 созвона убрал дрожь в голосе и поставил правильные паузы. Через месяц прошла собеседование в топовую команду на удаленке с фиксом $700 + % от выручки."
-          }
-        ]
-      }
-    ]
+    ],
   };
 
   return (
     <html lang="ru" className="bg-background">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap"
+          rel="stylesheet"
+        />
         <meta httpEquiv="Referrer-Policy" content="no-referrer" />
         <meta
           httpEquiv="Content-Security-Policy"
@@ -204,5 +135,5 @@ export default function RootLayout({
         {children}
       </body>
     </html>
-  )
+  );
 }

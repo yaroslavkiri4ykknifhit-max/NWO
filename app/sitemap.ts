@@ -1,32 +1,15 @@
-import { MetadataRoute } from 'next'
-
-export const dynamic = 'force-static'
-
+import { MetadataRoute } from "next";
+import { getAllPosts } from "@/lib/markdown";
+export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
+  const base = "https://newwayout.online";
   return [
-    {
-      url: 'https://newwayout.online',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: 'https://newwayout.online/free',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://newwayout.online/premium',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: 'https://newwayout.online/mentorship',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-  ]
+    ...["/", "/free/", "/premium/", "/mentorship/", "/blog/"].map((path) => ({
+      url: `${base}${path}`,
+    })),
+    ...getAllPosts().map((post) => ({
+      url: `${base}/blog/${post.slug}/`,
+      lastModified: post.date,
+    })),
+  ];
 }

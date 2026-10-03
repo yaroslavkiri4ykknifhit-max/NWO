@@ -1,9 +1,17 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, ShieldCheck, HelpCircle, Info, Mail, Fingerprint, KeyRound } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState, useEffect, useRef } from "react";
+import {
+  ArrowLeft,
+  ShieldCheck,
+  HelpCircle,
+  Info,
+  Mail,
+  Fingerprint,
+  KeyRound,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   requestEmailOTP,
   verifyEmailOTP,
@@ -12,230 +20,231 @@ import {
   registerPasskey,
   isPasskeySupported,
   isPlatformAuthenticatorAvailable,
-} from "@/lib/sheets-api"
-import { GothicHandwrittenLoader } from "@/components/gothic-handwritten-loader"
-import Link from "next/link"
+} from "@/lib/sheets-api";
+import Link from "next/link";
 
 interface AccessFormProps {
-  onAccessGranted: () => void
-  variant?: "default" | "premium"
+  onAccessGranted: () => void;
+  variant?: "default" | "premium";
+  onBack?: () => void;
 }
 
-type FormView = "initial" | "email_input" | "otp_verify" | "invite_bind" | "passkey_offer"
+type FormView =
+  "initial" | "email_input" | "otp_verify" | "invite_bind" | "passkey_offer";
 
-export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormProps) {
-  const [view, setView] = useState<FormView>("initial")
-  const [email, setEmail] = useState("")
-  const [otpCode, setOtpCode] = useState("")
-  const [inviteCode, setInviteCode] = useState("")
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-  const [otpCountdown, setOtpCountdown] = useState(0)
-  const [passkeyAvailable, setPasskeyAvailable] = useState(false)
-  const [isLocalhost, setIsLocalhost] = useState(false)
+export function AccessForm({
+  onAccessGranted,
+  onBack,
+  variant = "default",
+}: AccessFormProps) {
+  const [view, setView] = useState<FormView>("initial");
+  const [email, setEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCountdown, setOtpCountdown] = useState(0);
+  const [passkeyAvailable, setPasskeyAvailable] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
 
-  const isPremium = variant === "premium"
-  const otpInputRef = useRef<HTMLInputElement>(null)
+  const isPremium = variant === "premium";
+  const otpInputRef = useRef<HTMLInputElement>(null);
 
   // Проверяем доступность passkey
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsLocalhost(
         window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-      )
+          window.location.hostname === "127.0.0.1",
+      );
     }
 
     if (isPasskeySupported()) {
-      isPlatformAuthenticatorAvailable().then(setPasskeyAvailable)
+      isPlatformAuthenticatorAvailable().then(setPasskeyAvailable);
     }
-  }, [])
+  }, []);
 
   // Таймер обратного отсчёта для повторной отправки OTP
   useEffect(() => {
-    if (otpCountdown <= 0) return
-    const timer = setTimeout(() => setOtpCountdown((c) => c - 1), 1000)
-    return () => clearTimeout(timer)
-  }, [otpCountdown])
+    if (otpCountdown <= 0) return;
+    const timer = setTimeout(() => setOtpCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [otpCountdown]);
 
   // ── Passkey login ─────────────────────────────────────────────────
 
   const handlePasskeyLogin = async () => {
-    setError("")
-    setIsLoading(true)
+    setError("");
+    setIsLoading(true);
 
     try {
-      const result = await loginWithPasskey()
+      const result = await loginWithPasskey();
       if (result.valid) {
-        setTimeout(() => {
-          setIsLoading(false)
-          onAccessGranted()
-        }, 1200)
+        setIsLoading(false);
+        onAccessGranted();
       } else {
-        setError(result.error || "Passkey не найден")
-        setIsLoading(false)
+        setError(result.error || "Passkey не найден");
+        setIsLoading(false);
       }
     } catch {
-      setError("Ошибка входа через Passkey")
-      setIsLoading(false)
+      setError("Ошибка входа через Passkey");
+      setIsLoading(false);
     }
-  }
+  };
 
   // ── Email OTP ─────────────────────────────────────────────────────
 
   const handleSendOTP = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
-    if (!email.trim()) return
+    if (e) e.preventDefault();
+    if (!email.trim()) return;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setError("Введите корректный email адрес")
-      return
+      setError("Введите корректный email адрес");
+      return;
     }
 
-    setError("")
-    setIsLoading(true)
+    setError("");
+    setIsLoading(true);
 
     try {
-      const result = await requestEmailOTP(email.trim())
+      const result = await requestEmailOTP(email.trim());
       if (result.sent) {
-        setOtpSent(true)
-        setOtpCountdown(60)
-        setView("otp_verify")
-        setIsLoading(false)
+        setOtpSent(true);
+        setOtpCountdown(60);
+        setView("otp_verify");
+        setIsLoading(false);
         // Автофокус на поле ввода OTP
-        setTimeout(() => otpInputRef.current?.focus(), 100)
+        setTimeout(() => otpInputRef.current?.focus(), 100);
       } else {
-        setError(result.error || "Не удалось отправить код")
-        setIsLoading(false)
+        setError(result.error || "Не удалось отправить код");
+        setIsLoading(false);
       }
     } catch {
-      setError("Ошибка отправки кода")
-      setIsLoading(false)
+      setError("Ошибка отправки кода");
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!otpCode.trim() || otpCode.trim().length !== 6) return
+    e.preventDefault();
+    if (!otpCode.trim() || otpCode.trim().length !== 6) return;
 
-    setError("")
-    setIsLoading(true)
+    setError("");
+    setIsLoading(true);
 
     try {
-      const result = await verifyEmailOTP(email.trim(), otpCode.trim())
+      const result = await verifyEmailOTP(email.trim(), otpCode.trim());
 
       if (result.valid) {
         // Вход успешен — предлагаем сохранить passkey
         if (passkeyAvailable) {
-          setIsLoading(false)
-          setView("passkey_offer")
+          setIsLoading(false);
+          setView("passkey_offer");
         } else {
-          setTimeout(() => {
-            setIsLoading(false)
-            onAccessGranted()
-          }, 1200)
+          setIsLoading(false);
+          onAccessGranted();
         }
       } else if (result.needsCode) {
         // Email подтверждён, но нужен инвайт-код
-        setView("invite_bind")
-        setIsLoading(false)
+        setView("invite_bind");
+        setIsLoading(false);
       } else {
-        setError(result.error || "Неверный код")
-        setIsLoading(false)
+        setError(result.error || "Неверный код");
+        setIsLoading(false);
       }
     } catch {
-      setError("Ошибка проверки кода")
-      setIsLoading(false)
+      setError("Ошибка проверки кода");
+      setIsLoading(false);
     }
-  }
+  };
 
   // ── Invite code bind ──────────────────────────────────────────────
 
   const handleBindInvite = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!inviteCode.trim()) return
+    e.preventDefault();
+    if (!inviteCode.trim()) return;
 
-    setError("")
-    setIsLoading(true)
+    setError("");
+    setIsLoading(true);
 
     try {
-      const result = await bindEmailToCode(email.trim(), inviteCode.trim())
+      const result = await bindEmailToCode(email.trim(), inviteCode.trim());
 
       if (result.valid) {
         // Привязка успешна — предлагаем passkey
         if (passkeyAvailable) {
-          setIsLoading(false)
-          setView("passkey_offer")
+          setIsLoading(false);
+          setView("passkey_offer");
         } else {
-          setTimeout(() => {
-            setIsLoading(false)
-            onAccessGranted()
-          }, 1200)
+          setIsLoading(false);
+          onAccessGranted();
         }
       } else {
-        setError(result.error || "Неверный инвайт-код")
-        setIsLoading(false)
+        setError(result.error || "Неверный инвайт-код");
+        setIsLoading(false);
       }
     } catch {
-      setError("Ошибка активации кода")
-      setIsLoading(false)
+      setError("Ошибка активации кода");
+      setIsLoading(false);
     }
-  }
+  };
 
   // ── Passkey registration offer ────────────────────────────────────
 
   const handleRegisterPasskey = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const success = await registerPasskey(email.trim(), email.split("@")[0])
+      const success = await registerPasskey(email.trim(), email.split("@")[0]);
       // Независимо от результата — пускаем дальше
       if (!success) {
-        console.warn("Passkey registration skipped or failed")
+        console.warn("Passkey registration skipped or failed");
       }
     } catch {
-      console.warn("Passkey registration error")
+      console.warn("Passkey registration error");
     }
-    setIsLoading(false)
-    onAccessGranted()
-  }
+    setIsLoading(false);
+    onAccessGranted();
+  };
 
   const handleSkipPasskey = () => {
-    onAccessGranted()
-  }
+    onAccessGranted();
+  };
 
   // ── Navigation ────────────────────────────────────────────────────
 
   const handleBackToInitial = () => {
-    setView("initial")
-    setEmail("")
-    setOtpCode("")
-    setInviteCode("")
-    setError("")
-    setOtpSent(false)
-  }
+    setView("initial");
+    setEmail("");
+    setOtpCode("");
+    setInviteCode("");
+    setError("");
+    setOtpSent(false);
+  };
 
   const handleBackToEmail = () => {
-    setView("email_input")
-    setOtpCode("")
-    setError("")
-  }
+    setView("email_input");
+    setOtpCode("");
+    setError("");
+  };
 
   // ── Render ────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-white font-ui text-[#121212] relative">
-      {/* Лоадер с рукописной анимацией */}
-      {isLoading && view !== "passkey_offer" && (
-        <GothicHandwrittenLoader />
+    <div className="access-surface flex flex-col items-center justify-center p-4 sm:p-6 font-ui text-[#121212] relative">
+      {onBack && (
+        <button className="access-back" onClick={onBack}>
+          <ArrowLeft size={14} /> О программе NWO Black
+        </button>
       )}
-
-      <div className="w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
-
+      <div className="access-card w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
         {/* Masthead */}
         <div className="text-center border-b border-gray-300 pb-6 mb-6">
-          <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="inline-block hover:opacity-80 transition-opacity"
+          >
             <span
               className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
               style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
@@ -244,7 +253,9 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             </span>
           </Link>
           <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-500 block mt-1">
-            {isPremium ? "NWO BLACK · Закрытый доступ" : "Читательский билет · Авторизация"}
+            {isPremium
+              ? "NWO BLACK · Закрытый доступ"
+              : "Читательский билет · Авторизация"}
           </span>
         </div>
 
@@ -259,7 +270,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               </h1>
               <p className="text-xs text-gray-600 font-ui leading-relaxed">
                 {isPremium
-                  ? "Для открытия премиальных материалов и закрытой базы подтвердите вашу личность."
+                  ? "Введи email, на который активирован доступ. При первом входе после покупки понадобится инвайт-код."
                   : "Войдите для сохранения вашего прогресса уроков и синхронизации."}
               </p>
             </div>
@@ -272,7 +283,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                   Безопасный вход без пароля
                 </p>
                 <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
-                  Используйте Passkey (Face ID, Touch ID) для мгновенного входа или получите код на вашу почту.
+                  Используйте Passkey (Face ID, Touch ID) для мгновенного входа
+                  или получите код на вашу почту.
                 </p>
               </div>
             </div>
@@ -288,7 +300,9 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                   className="w-full h-[52px] bg-black text-white hover:bg-gray-800 active:bg-gray-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
                 >
                   <Fingerprint className="w-5 h-5 shrink-0" />
-                  <span>Войти через Passkey</span>
+                  <span>
+                    {isLoading ? "Входим…" : "Войти через Face ID / Touch ID"}
+                  </span>
                 </button>
               )}
 
@@ -304,12 +318,15 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 }`}
               >
                 <Mail className="w-5 h-5 shrink-0" />
-                <span>Войти по email</span>
+                <span>Получить код на email</span>
               </button>
             </div>
 
             {error && (
-              <p className="mt-4 text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-3">
+              <p
+                role="alert"
+                className="mt-4 text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-3"
+              >
                 <KeyRound className="w-4 h-4 shrink-0" />
                 {error}
               </p>
@@ -318,7 +335,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             <div className="mt-8 pt-6 border-t border-gray-200 flex items-start gap-3 text-left">
               <HelpCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
               <div className="text-[11px] text-gray-600 leading-normal">
-                Возникли сложности с доступом? Напишите напрямую основателю в Telegram:{" "}
+                Возникли сложности с доступом? Напишите напрямую основателю в
+                Telegram:{" "}
                 <a
                   href="https://t.me/c0lddev"
                   target="_blank"
@@ -356,7 +374,10 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             </div>
 
             <form onSubmit={handleSendOTP} className="space-y-4">
+              <label htmlFor="access-email">Твой email</label>
               <Input
+                id="access-email"
+                required
                 type="email"
                 placeholder="your@email.com"
                 value={email}
@@ -368,7 +389,10 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               />
 
               {error && (
-                <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2">
+                <p
+                  role="alert"
+                  className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2"
+                >
                   <Mail className="w-4 h-4 shrink-0" />
                   {error}
                 </p>
@@ -427,6 +451,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
 
             <form onSubmit={handleVerifyOTP} className="space-y-4">
               <Input
+                id="access-otp"
+                aria-label="Код из письма"
                 ref={otpInputRef}
                 type="text"
                 inputMode="numeric"
@@ -435,8 +461,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 placeholder="000000"
                 value={otpCode}
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "").slice(0, 6)
-                  setOtpCode(val)
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                  setOtpCode(val);
                 }}
                 className="h-14 bg-white border border-black text-center text-2xl tracking-[0.5em] uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
                 disabled={isLoading}
@@ -445,7 +471,10 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               />
 
               {error && (
-                <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2">
+                <p
+                  role="alert"
+                  className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2"
+                >
                   <KeyRound className="w-4 h-4 shrink-0" />
                   {error}
                 </p>
@@ -475,7 +504,9 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                   className="text-xs font-semibold text-gray-600 hover:text-black transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   disabled={isLoading || otpCountdown > 0}
                 >
-                  {otpCountdown > 0 ? `Повторно через ${otpCountdown}с` : "Отправить ещё раз"}
+                  {otpCountdown > 0
+                    ? `Повторно через ${otpCountdown}с`
+                    : "Отправить ещё раз"}
                 </button>
               </div>
             </form>
@@ -483,7 +514,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
               <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
               <p className="text-[11px] text-gray-500 leading-snug">
-                Не получили код? Проверьте папку «Спам». Код действителен 5 минут.
+                Не получили код? Проверьте папку «Спам». Код действителен 5
+                минут.
               </p>
             </div>
           </div>
@@ -499,7 +531,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 Привязка инвайт-кода
               </h2>
               <p className="text-xs text-gray-600 leading-relaxed">
-                Введите инвайт-код, чтобы навсегда закрепить доступ за вашим email.
+                Введите инвайт-код, чтобы навсегда закрепить доступ за вашим
+                email.
               </p>
             </div>
 
@@ -523,6 +556,7 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
               <div>
                 <Input
                   type="text"
+                  aria-label="Инвайт-код после покупки"
                   placeholder="ВВЕДИТЕ ИНВАЙТ-КОД"
                   value={inviteCode}
                   onChange={(e) => setInviteCode(e.target.value)}
@@ -531,7 +565,10 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                   autoFocus
                 />
                 {error && (
-                  <p className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-50 p-2">
+                  <p
+                    role="alert"
+                    className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-50 p-2"
+                  >
                     <KeyRound className="w-4 h-4 shrink-0" />
                     {error}
                   </p>
@@ -559,7 +596,8 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
               <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
               <p className="text-[11px] text-gray-500 leading-snug">
-                Инвайт-код навсегда закрепляется за вашим email. В будущем для входа достаточно будет Passkey или код на почту.
+                Инвайт-код навсегда закрепляется за вашим email. В будущем для
+                входа достаточно будет Passkey или код на почту.
               </p>
             </div>
           </div>
@@ -578,7 +616,9 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
                 Мгновенный вход
               </h2>
               <p className="text-xs text-gray-600 leading-relaxed">
-                Сохраните Passkey, чтобы в следующий раз входить в один тап через Face ID, Touch ID или Windows Hello — без кода и без пароля.
+                Сохраните Passkey, чтобы в следующий раз входить в один тап
+                через Face ID, Touch ID или Windows Hello — без кода и без
+                пароля.
               </p>
             </div>
 
@@ -605,13 +645,19 @@ export function AccessForm({ onAccessGranted, variant = "default" }: AccessFormP
             <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
               <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
               <p className="text-[11px] text-gray-500 leading-snug">
-                Passkey хранится на вашем устройстве и защищён биометрией. Вы всегда сможете войти по email, если смените устройство.
+                Passkey хранится на вашем устройстве и защищён биометрией. Вы
+                всегда сможете войти по email, если смените устройство.
               </p>
             </div>
           </div>
         )}
 
+        {isLoading && (
+          <p role="status" className="mt-4 text-center text-sm">
+            Обрабатываем запрос…
+          </p>
+        )}
       </div>
     </div>
-  )
+  );
 }

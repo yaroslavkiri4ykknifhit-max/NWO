@@ -1,20 +1,27 @@
-"use client"
+"use client";
 
-import { useRef, useEffect } from "react"
-import { Play, CheckCircle2, ChevronRight, Clock, BookOpen } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { useRef, useEffect } from "react";
+import {
+  Play,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  BookOpen,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface LessonViewerProps {
-  title: string
-  moduleName: string
-  textContent: string
-  videoUrl?: string
-  onComplete: () => void
-  isCompleted: boolean
-  onNext: () => void
-  hasNext: boolean
-  variant?: "default" | "premium"
+  title: string;
+  moduleName: string;
+  textContent: string;
+  videoUrl?: string;
+  onComplete: () => void;
+  isCompleted: boolean;
+  onNext: () => void;
+  hasNext: boolean;
+  variant?: "default" | "premium";
+  saving?: boolean;
 }
 
 // Функция для парсинга текста и рендеринга Markdown-изображений
@@ -29,7 +36,7 @@ function parseInlineStyles(text: string): React.ReactNode[] {
 
     // Жирный текст: **текст**
     current = current.flatMap((part, i) => {
-      if (typeof part !== 'string') return part;
+      if (typeof part !== "string") return part;
       const regex = /\*\*([^*]+)\*\*/g;
       const subparts = [];
       let lastIndex = 0;
@@ -38,7 +45,14 @@ function parseInlineStyles(text: string): React.ReactNode[] {
         if (match.index > lastIndex) {
           subparts.push(part.substring(lastIndex, match.index));
         }
-        subparts.push(<strong key={`bold-${i}-${match.index}`} className="font-bold text-foreground">{match[1]}</strong>);
+        subparts.push(
+          <strong
+            key={`bold-${i}-${match.index}`}
+            className="font-bold text-foreground"
+          >
+            {match[1]}
+          </strong>,
+        );
         lastIndex = regex.lastIndex;
       }
       if (lastIndex < part.length) {
@@ -49,7 +63,7 @@ function parseInlineStyles(text: string): React.ReactNode[] {
 
     // Подчеркнутый текст: __текст__
     current = current.flatMap((part, i) => {
-      if (typeof part !== 'string') return part;
+      if (typeof part !== "string") return part;
       const regex = /__([^_]+)__/g;
       const subparts = [];
       let lastIndex = 0;
@@ -58,7 +72,11 @@ function parseInlineStyles(text: string): React.ReactNode[] {
         if (match.index > lastIndex) {
           subparts.push(part.substring(lastIndex, match.index));
         }
-        subparts.push(<u key={`u-${i}-${match.index}`} className="underline">{match[1]}</u>);
+        subparts.push(
+          <u key={`u-${i}-${match.index}`} className="underline">
+            {match[1]}
+          </u>,
+        );
         lastIndex = regex.lastIndex;
       }
       if (lastIndex < part.length) {
@@ -69,7 +87,7 @@ function parseInlineStyles(text: string): React.ReactNode[] {
 
     // Курсив: *текст*
     current = current.flatMap((part, i) => {
-      if (typeof part !== 'string') return part;
+      if (typeof part !== "string") return part;
       const regex = /\*([^*]+)\*/g;
       const subparts = [];
       let lastIndex = 0;
@@ -78,7 +96,11 @@ function parseInlineStyles(text: string): React.ReactNode[] {
         if (match.index > lastIndex) {
           subparts.push(part.substring(lastIndex, match.index));
         }
-        subparts.push(<em key={`em-${i}-${match.index}`} className="italic">{match[1]}</em>);
+        subparts.push(
+          <em key={`em-${i}-${match.index}`} className="italic">
+            {match[1]}
+          </em>,
+        );
         lastIndex = regex.lastIndex;
       }
       if (lastIndex < part.length) {
@@ -89,17 +111,17 @@ function parseInlineStyles(text: string): React.ReactNode[] {
 
     // Готовые цветные теги: <green>, <blue>, <red>, <orange>, <gray>
     const colors = [
-      { tag: 'green', className: 'text-[#2b9348] font-semibold' },
-      { tag: 'blue', className: 'text-blue-500 font-semibold' },
-      { tag: 'red', className: 'text-red-500 font-semibold' },
-      { tag: 'orange', className: 'text-orange-500 font-semibold' },
-      { tag: 'gray', className: 'text-slate-400 font-medium' }
+      { tag: "green", className: "text-[#2b9348] font-semibold" },
+      { tag: "blue", className: "text-blue-500 font-semibold" },
+      { tag: "red", className: "text-red-500 font-semibold" },
+      { tag: "orange", className: "text-orange-500 font-semibold" },
+      { tag: "gray", className: "text-slate-400 font-medium" },
     ];
 
     colors.forEach(({ tag, className }) => {
       current = current.flatMap((part, i) => {
-        if (typeof part !== 'string') return part;
-        const regex = new RegExp(`<${tag}>([^<]+)</${tag}>`, 'g');
+        if (typeof part !== "string") return part;
+        const regex = new RegExp(`<${tag}>([^<]+)</${tag}>`, "g");
         const subparts = [];
         let lastIndex = 0;
         let match;
@@ -107,7 +129,11 @@ function parseInlineStyles(text: string): React.ReactNode[] {
           if (match.index > lastIndex) {
             subparts.push(part.substring(lastIndex, match.index));
           }
-          subparts.push(<span key={`col-${tag}-${i}-${match.index}`} className={className}>{match[1]}</span>);
+          subparts.push(
+            <span key={`col-${tag}-${i}-${match.index}`} className={className}>
+              {match[1]}
+            </span>,
+          );
           lastIndex = regex.lastIndex;
         }
         if (lastIndex < part.length) {
@@ -119,7 +145,7 @@ function parseInlineStyles(text: string): React.ReactNode[] {
 
     // Кастомные цвета: <color=#HEX>текст</color> или <color=red>текст</color>
     current = current.flatMap((part, i) => {
-      if (typeof part !== 'string') return part;
+      if (typeof part !== "string") return part;
       const regex = /<color=([^>]+)>([^<]+)<\/color>/g;
       const subparts = [];
       let lastIndex = 0;
@@ -129,7 +155,15 @@ function parseInlineStyles(text: string): React.ReactNode[] {
           subparts.push(part.substring(lastIndex, match.index));
         }
         const colorVal = match[1];
-        subparts.push(<span key={`col-custom-${i}-${match.index}`} style={{ color: colorVal }} className="font-semibold">{match[2]}</span>);
+        subparts.push(
+          <span
+            key={`col-custom-${i}-${match.index}`}
+            style={{ color: colorVal }}
+            className="font-semibold"
+          >
+            {match[2]}
+          </span>,
+        );
         lastIndex = regex.lastIndex;
       }
       if (lastIndex < part.length) {
@@ -148,24 +182,30 @@ function parseInlineStyles(text: string): React.ReactNode[] {
 function renderFormattedContent(text: string) {
   if (!text) return null;
 
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const renderedBlocks: React.ReactNode[] = [];
   let currentListItems: React.ReactNode[] = [];
-  let currentListType: 'ul' | 'ol' | null = null;
+  let currentListType: "ul" | "ol" | null = null;
 
   const flushList = (key: string) => {
     if (currentListItems.length > 0) {
-      if (currentListType === 'ul') {
+      if (currentListType === "ul") {
         renderedBlocks.push(
-          <ul key={`list-ul-${key}`} className="list-disc pl-6 my-4 space-y-2 text-black font-ui">
+          <ul
+            key={`list-ul-${key}`}
+            className="list-disc pl-6 my-4 space-y-2 text-black font-ui"
+          >
             {...currentListItems}
-          </ul>
+          </ul>,
         );
-      } else if (currentListType === 'ol') {
+      } else if (currentListType === "ol") {
         renderedBlocks.push(
-          <ol key={`list-ol-${key}`} className="list-decimal pl-6 my-4 space-y-2 text-black font-ui">
+          <ol
+            key={`list-ol-${key}`}
+            className="list-decimal pl-6 my-4 space-y-2 text-black font-ui"
+          >
             {...currentListItems}
-          </ol>
+          </ol>,
         );
       }
       currentListItems = [];
@@ -185,7 +225,10 @@ function renderFormattedContent(text: string) {
       const alt = imgMatch[1] || "";
       const url = imgMatch[2];
       renderedBlocks.push(
-        <div key={`img-block-${i}`} className="block my-6 max-w-xl mx-auto text-center">
+        <div
+          key={`img-block-${i}`}
+          className="block my-6 max-w-xl mx-auto text-center"
+        >
           <img
             src={url}
             alt={alt || "Изображение"}
@@ -197,86 +240,102 @@ function renderFormattedContent(text: string) {
               {alt}
             </span>
           )}
-        </div>
+        </div>,
       );
       continue;
     }
 
     // Заголовки
-    if (trimmedLine.startsWith('# ')) {
+    if (trimmedLine.startsWith("# ")) {
       flushList(String(i));
       renderedBlocks.push(
-        <h3 key={`h3-${i}`} className="text-2xl font-bold text-foreground mt-6 mb-3 tracking-tight font-ui">
+        <h3
+          key={`h3-${i}`}
+          className="text-2xl font-bold text-foreground mt-6 mb-3 tracking-tight font-ui"
+        >
           {parseInlineStyles(trimmedLine.substring(2))}
-        </h3>
+        </h3>,
       );
       continue;
     }
-    if (trimmedLine.startsWith('## ')) {
+    if (trimmedLine.startsWith("## ")) {
       flushList(String(i));
       renderedBlocks.push(
-        <h4 key={`h4-${i}`} className="text-xl font-bold text-foreground mt-5 mb-2.5 tracking-tight font-ui">
+        <h4
+          key={`h4-${i}`}
+          className="text-xl font-bold text-foreground mt-5 mb-2.5 tracking-tight font-ui"
+        >
           {parseInlineStyles(trimmedLine.substring(3))}
-        </h4>
+        </h4>,
       );
       continue;
     }
-    if (trimmedLine.startsWith('### ')) {
+    if (trimmedLine.startsWith("### ")) {
       flushList(String(i));
       renderedBlocks.push(
-        <h5 key={`h5-${i}`} className="text-lg font-bold text-foreground mt-4 mb-2 tracking-tight font-ui">
+        <h5
+          key={`h5-${i}`}
+          className="text-lg font-bold text-foreground mt-4 mb-2 tracking-tight font-ui"
+        >
           {parseInlineStyles(trimmedLine.substring(4))}
-        </h5>
+        </h5>,
       );
       continue;
     }
 
     // Выделенный блок/цитата: > текст
-    if (trimmedLine.startsWith('> ')) {
+    if (trimmedLine.startsWith("> ")) {
       flushList(String(i));
       renderedBlocks.push(
-        <blockquote key={`quote-${i}`} className="pl-4 py-2.5 border-l-4 border-black bg-gray-50 rounded-none my-4 text-black italic font-ui leading-relaxed">
+        <blockquote
+          key={`quote-${i}`}
+          className="pl-4 py-2.5 border-l-4 border-black bg-gray-50 rounded-none my-4 text-black italic font-ui leading-relaxed"
+        >
           {parseInlineStyles(trimmedLine.substring(2))}
-        </blockquote>
+        </blockquote>,
       );
       continue;
     }
 
     // Маркированные списки: •, -, *, ⁃
-    const isBulletList = trimmedLine.startsWith('• ') || trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ') || trimmedLine.startsWith('⁃ ');
+    const isBulletList =
+      trimmedLine.startsWith("• ") ||
+      trimmedLine.startsWith("- ") ||
+      trimmedLine.startsWith("* ") ||
+      trimmedLine.startsWith("⁃ ");
     // Нумерованные списки: "1. "
     const isNumberedList = /^\d+\.\s+/.test(trimmedLine);
 
     if (isBulletList) {
-      if (currentListType !== 'ul') {
+      if (currentListType !== "ul") {
         flushList(String(i));
-        currentListType = 'ul';
+        currentListType = "ul";
       }
-      const content = trimmedLine.replace(/^(•|-|\*|⁃)\s+/, '');
+      const content = trimmedLine.replace(/^(•|-|\*|⁃)\s+/, "");
       currentListItems.push(
         <li key={`li-${i}`} className="leading-relaxed">
           {parseInlineStyles(content)}
-        </li>
+        </li>,
       );
       continue;
     }
 
     if (isNumberedList) {
-      if (currentListType !== 'ol') {
+      if (currentListType !== "ol") {
         flushList(String(i));
-        currentListType = 'ol';
+        currentListType = "ol";
       }
-      const content = trimmedLine.replace(/^\d+\.\s+/, '');
+      const content = trimmedLine.replace(/^\d+\.\s+/, "");
       currentListItems.push(
         <li key={`li-${i}`} className="leading-relaxed">
           {parseInlineStyles(content)}
-        </li>
+        </li>,
       );
       continue;
     }
 
     // Пустая строка
-    if (trimmedLine === '') {
+    if (trimmedLine === "") {
       flushList(String(i));
       renderedBlocks.push(<div key={`spacer-${i}`} className="h-3" />);
       continue;
@@ -287,12 +346,12 @@ function renderFormattedContent(text: string) {
     renderedBlocks.push(
       <p key={`p-${i}`} className="my-3.5 leading-relaxed text-black font-ui">
         {parseInlineStyles(rawLine)}
-      </p>
+      </p>,
     );
   }
 
   // Сбрасываем последний список, если остался
-  flushList('final');
+  flushList("final");
 
   return renderedBlocks;
 }
@@ -307,43 +366,49 @@ export function LessonViewer({
   onNext,
   hasNext,
   variant = "default",
+  saving = false,
 }: LessonViewerProps) {
-  const isPremium = variant === "premium"
-  const scrollContainerRef = useRef<HTMLElement>(null)
+  const isPremium = variant === "premium";
+  const scrollContainerRef = useRef<HTMLElement>(null);
 
   // При изменении урока (когда меняется title) скроллим контейнер вверх
   useEffect(() => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0
+      scrollContainerRef.current.scrollTop = 0;
     }
-  }, [title])
+  }, [title]);
 
   // Очищаем ссылку от пробелов
-  const cleanVideoUrl = videoUrl?.trim() || ""
-  
+  const cleanVideoUrl = videoUrl?.trim() || "";
+
   // Урок считается видео-уроком только если ссылка заполнена и не равна прочерку "-"
-  const hasVideo = cleanVideoUrl !== "" && cleanVideoUrl !== "-"
+  const hasVideo = cleanVideoUrl !== "" && cleanVideoUrl !== "-";
 
   // Проверяем, является ли ссылка прямым файлом видео или прямым стримом с Google Диска
-  const isDirectVideo = hasVideo && (
-    cleanVideoUrl.toLowerCase().endsWith(".mp4") ||
-    cleanVideoUrl.toLowerCase().endsWith(".webm") ||
-    cleanVideoUrl.toLowerCase().endsWith(".mov") ||
-    cleanVideoUrl.toLowerCase().includes(".mp4?") ||
-    cleanVideoUrl.toLowerCase().includes(".webm?") ||
-    cleanVideoUrl.toLowerCase().includes("/raw") ||
-    // Поддержка прямых ссылок на скачивание с Google Диска для нативного плеера!
-    cleanVideoUrl.toLowerCase().includes("drive.google.com/uc?") ||
-    cleanVideoUrl.toLowerCase().includes("docs.google.com/uc?") ||
-    cleanVideoUrl.toLowerCase().includes("export=download")
-  )
+  const isDirectVideo =
+    hasVideo &&
+    (cleanVideoUrl.toLowerCase().endsWith(".mp4") ||
+      cleanVideoUrl.toLowerCase().endsWith(".webm") ||
+      cleanVideoUrl.toLowerCase().endsWith(".mov") ||
+      cleanVideoUrl.toLowerCase().includes(".mp4?") ||
+      cleanVideoUrl.toLowerCase().includes(".webm?") ||
+      cleanVideoUrl.toLowerCase().includes("/raw") ||
+      // Поддержка прямых ссылок на скачивание с Google Диска для нативного плеера!
+      cleanVideoUrl.toLowerCase().includes("drive.google.com/uc?") ||
+      cleanVideoUrl.toLowerCase().includes("docs.google.com/uc?") ||
+      cleanVideoUrl.toLowerCase().includes("export=download"));
 
   return (
     <main
       ref={scrollContainerRef}
       className={cn("flex-1 overflow-y-auto bg-white", "")}
     >
-      <div className={cn("max-w-4xl mx-auto p-4 sm:p-6 lg:p-8", isPremium && "lg:py-12")}>
+      <div
+        className={cn(
+          "max-w-4xl mx-auto p-4 sm:p-6 lg:p-8",
+          isPremium && "lg:py-12",
+        )}
+      >
         {/* Header */}
         <div className="mb-8 border-b border-gray-300 pb-8">
           {isPremium && (
@@ -351,14 +416,16 @@ export function LessonViewer({
               NWO BLACK · Урок закрытого клуба
             </span>
           )}
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">{moduleName}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+            {moduleName}
+          </p>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-black leading-tight mb-4">
             {title}
           </h1>
 
           <div className="flex items-center gap-6 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             <span className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-accent" />
+              <BookOpen className="w-4 h-4 text-[#793630]" />
               Текстовые материалы доступны ниже
             </span>
           </div>
@@ -380,6 +447,7 @@ export function LessonViewer({
               /* Iframe для YouTube, Vimeo, Rutube или Google Drive (в формате /preview) */
               <iframe
                 src={cleanVideoUrl}
+                title={title}
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -391,7 +459,9 @@ export function LessonViewer({
         {/* Content */}
         {textContent && (
           <div className="lesson-content-section space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <h2 className="text-xl font-semibold text-foreground font-ui">Материалы урока</h2>
+            <h2 className="text-xl font-semibold text-foreground font-ui">
+              Материалы урока
+            </h2>
             <div className="lesson-reading-content p-6 sm:p-8 bg-[#fafaf9] rounded-none border border-gray-300 text-gray-900 leading-relaxed text-base font-ui">
               {renderFormattedContent(textContent)}
             </div>
@@ -399,32 +469,35 @@ export function LessonViewer({
         )}
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between pt-6 border-t border-border/40">
+        <div className="lesson-actions flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between pt-6 border-t border-border/40">
           <Button
             variant={isCompleted ? "secondary" : "default"}
             onClick={onComplete}
+            disabled={saving || isCompleted}
             className={cn(
               "gap-2 cursor-pointer rounded-none h-12 px-6 w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors",
-              isCompleted ? "border border-gray-300 bg-gray-100 text-black hover:bg-gray-200" : "bg-black text-white hover:bg-gray-800"
+              isCompleted
+                ? "border border-gray-300 bg-gray-100 text-black hover:bg-gray-200"
+                : "bg-black text-white hover:bg-gray-800",
             )}
           >
             {isCompleted ? (
               <>
-                <CheckCircle2 className="w-4 h-4 text-accent" />
+                <CheckCircle2 className="w-4 h-4 text-[#793630]" />
                 Урок завершён
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                Отметить как завершённый
+                {saving ? "Сохраняем…" : "Завершить урок"}
               </>
             )}
           </Button>
 
           {hasNext && (
-            <Button 
-              variant="outline" 
-              onClick={onNext} 
+            <Button
+              variant="default"
+              onClick={onNext}
               className="gap-2 cursor-pointer rounded-none h-12 px-6 border border-black text-black hover:bg-black hover:text-white w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors"
             >
               Следующий урок
@@ -434,5 +507,5 @@ export function LessonViewer({
         </div>
       </div>
     </main>
-  )
+  );
 }
