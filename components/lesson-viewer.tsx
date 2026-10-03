@@ -458,7 +458,7 @@ export function LessonViewer({
 
         {/* Content */}
         {textContent && (
-          <div className="lesson-content-section space-y-4 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="lesson-content-section space-y-4 mb-6 sm:mb-8">
             <h2 className="text-xl font-semibold text-foreground font-ui">
               Материалы урока
             </h2>
@@ -498,7 +498,7 @@ export function LessonViewer({
             <Button
               variant="default"
               onClick={onNext}
-              className="gap-2 cursor-pointer rounded-none h-12 px-6 border border-black text-black hover:bg-black hover:text-white w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors"
+              className="gap-2 cursor-pointer rounded-none h-12 px-6 border border-black bg-black text-white hover:bg-gray-800 w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors"
             >
               Следующий урок
               <ChevronRight className="w-4 h-4" />

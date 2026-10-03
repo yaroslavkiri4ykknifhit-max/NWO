@@ -130,11 +130,7 @@ export function LessonSidebar({
                 <div>
                   {module.lessons.map((lesson) => (
                     <button
-                      className={cn(
-                        "outline-lesson",
-                        currentLessonId === lesson.id &&
-                          "outline-lesson-active",
-                      )}
+                      className={`outline-lesson ${currentLessonId === lesson.id ? "outline-lesson-active" : ""}`}
                       aria-current={
                         currentLessonId === lesson.id ? "step" : undefined
                       }
