@@ -215,12 +215,14 @@ function findInviteByCode(context, code) {
     var row = context.data[i];
     var storedHash = String(row[context.hashIndex] || '').trim().toLowerCase();
     var legacyCode = normalizeCode(row[context.codeIndex]);
+    var hashMatches = /^[a-f0-9]{64}$/.test(storedHash) &&
+      constantTimeEquals(storedHash, expectedHash);
+    var legacyCodeMatches = legacyCode && constantTimeEquals(legacyCode, cleanCode);
 
-    if (
-      (storedHash && constantTimeEquals(storedHash, expectedHash)) ||
-      (!storedHash && legacyCode && constantTimeEquals(legacyCode, cleanCode))
-    ) {
-      if (!storedHash) {
+    // Пока исходный код ещё хранится в таблице, он остаётся источником истины.
+    // Это также чинит строки, где code_hash устарел после замены инвайт-кода.
+    if (hashMatches || legacyCodeMatches) {
+      if (!hashMatches && legacyCodeMatches) {
         context.sheet.getRange(i + 1, context.hashIndex + 1).setValue(expectedHash);
         row[context.hashIndex] = expectedHash;
       }
@@ -278,16 +280,36 @@ function findInviteByCredentialId(context, credentialId) {
   return null;
 }
 
-function inviteIsActive(context, invite) {
+function getInviteAccessProblem(context, invite) {
   var status = String(invite.row[context.statusIndex] || '').trim().toLowerCase();
-  if (['active', 'paid', 'trial'].indexOf(status) === -1) return false;
+  if (['active', 'paid', 'trial'].indexOf(status) === -1) {
+    return {
+      error: 'access_inactive',
+      message: 'Этот инвайт-код найден, но доступ для него не активирован'
+    };
+  }
 
   var expiresValue = invite.row[context.expiresIndex];
   if (expiresValue) {
     var expiresAt = expiresValue instanceof Date ? expiresValue : new Date(expiresValue);
-    if (isNaN(expiresAt.getTime()) || Date.now() >= expiresAt.getTime()) return false;
+    if (isNaN(expiresAt.getTime())) {
+      return {
+        error: 'access_expiration_invalid',
+        message: 'Для этого инвайт-кода неверно указана дата окончания доступа'
+      };
+    }
+    if (Date.now() >= expiresAt.getTime()) {
+      return {
+        error: 'access_expired',
+        message: 'Срок действия этого инвайт-кода истёк'
+      };
+    }
   }
-  return true;
+  return null;
+}
+
+function inviteIsActive(context, invite) {
+  return getInviteAccessProblem(context, invite) === null;
 }
 
 function inviteHasPaidAccess(context, invite) {
@@ -429,7 +451,8 @@ function handleEmailVerify(params) {
     return { valid: false, error: 'invalid_code', message: 'Неверный или истёкший код' };
   }
 
-  CacheService.getScriptCache().remove('otp:' + email);
+  var cache = CacheService.getScriptCache();
+  cache.remove('otp:' + email);
 
   var context = getInviteContext();
   var invite = findInviteByEmail(context, email);
@@ -441,6 +464,8 @@ function handleEmailVerify(params) {
     };
   }
 
+  // Разрешаем привязку инвайта только после подтверждения этого email.
+  cache.put('email_verified:' + sha256Hex(email), '1', 5 * 60);
   return { valid: false, error: 'not_bound', message: 'Email не привязан к доступу' };
 }
 
@@ -452,6 +477,16 @@ function handleEmailBind(params) {
     return { valid: false, error: 'invalid_email', message: 'Неверный формат email' };
   }
 
+  var verificationKey = 'email_verified:' + sha256Hex(email);
+  var cache = CacheService.getScriptCache();
+  if (!cache.get(verificationKey)) {
+    return {
+      valid: false,
+      error: 'email_not_verified',
+      message: 'Сначала заново подтвердите email кодом из письма'
+    };
+  }
+
   if (!consumeLoginAttempt(sha256Hex('bind:' + email), 'bind')) {
     return { valid: false, error: 'rate_limited', message: 'Слишком много попыток. Попробуйте позже' };
   }
@@ -460,15 +495,35 @@ function handleEmailBind(params) {
   lock.waitLock(5000);
   try {
     var context = getInviteContext();
+    var invite = findInviteByCode(context, inviteCode);
+    if (!invite) {
+      return {
+        valid: false,
+        error: 'invite_not_found',
+        message: 'Инвайт-код не найден. Проверьте каждый символ и попробуйте снова'
+      };
+    }
+
+    var accessProblem = getInviteAccessProblem(context, invite);
+    if (accessProblem) {
+      return { valid: false, error: accessProblem.error, message: accessProblem.message };
+    }
 
     var existingInvite = findInviteByEmail(context, email);
     if (existingInvite) {
-      return { valid: false, error: 'already_bound_self', message: 'Email уже привязан к другому доступу' };
-    }
-
-    var invite = findInviteByCode(context, inviteCode);
-    if (!invite || !inviteIsActive(context, invite)) {
-      return { valid: false, error: 'invalid_code', message: 'Код недействителен или доступ неактивен' };
+      if (constantTimeEquals(existingInvite.accessId, invite.accessId)) {
+        cache.remove(verificationKey);
+        return {
+          valid: true,
+          session_token: issueSessionToken(context, existingInvite, email),
+          completed_lessons: String(existingInvite.row[context.progressIndex] || '').trim()
+        };
+      }
+      return {
+        valid: false,
+        error: 'already_bound_self',
+        message: 'Этот email уже привязан к другому доступу'
+      };
     }
 
     var boundEmail = String(invite.row[context.emailIndex] || '').trim();
@@ -478,6 +533,7 @@ function handleEmailBind(params) {
 
     context.sheet.getRange(invite.rowIndex + 1, context.emailIndex + 1).setValue(email);
     invite.row[context.emailIndex] = email;
+    cache.remove(verificationKey);
 
     return {
       valid: true,
