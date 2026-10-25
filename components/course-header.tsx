@@ -107,7 +107,7 @@ export function CourseHeader({
         >
           <span
             className="text-3xl text-black tracking-tight select-none"
-            style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
+            style={{ fontFamily: "var(--font-display)" }}
           >
             NWO
           </span>

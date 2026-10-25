@@ -118,7 +118,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&family=UnifrakturMaguntia&display=swap"
           rel="stylesheet"
         />
         <meta httpEquiv="Referrer-Policy" content="no-referrer" />

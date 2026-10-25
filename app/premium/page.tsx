@@ -29,6 +29,15 @@ type PaidAccessState = "checking" | "login" | "unpaid" | "granted";
 
 export default function PremiumPage() {
   const [showLogin, setShowLogin] = useState(false);
+
+  useEffect(() => {
+    const syncHash = () => {
+      if (window.location.hash === "#login") setShowLogin(true);
+    };
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, []);
   const [savingProgress, setSavingProgress] = useState(false);
   const [progressError, setProgressError] = useState("");
   const [accessState, setAccessState] = useState<PaidAccessState>("checking");
@@ -113,7 +122,10 @@ export default function PremiumPage() {
     return (
       <AccessForm
         onAccessGranted={refreshAccess}
-        onBack={() => setShowLogin(false)}
+        onBack={() => {
+          window.history.replaceState(null, "", window.location.pathname);
+          setShowLogin(false);
+        }}
         variant="premium"
       />
     );
@@ -194,7 +206,7 @@ export default function PremiumPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
         <div className="w-14 h-14 border border-black bg-[#fafaf9] flex items-center justify-center text-xl">
           ⚠️
         </div>
@@ -222,7 +234,7 @@ export default function PremiumPage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
         <div className="w-16 h-16 border border-black bg-black text-white flex items-center justify-center">
           <Crown className="w-8 h-8" />
         </div>

@@ -1,19 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 
 export const contactHref = "https://t.me/c0lddev";
 const navigation = [
-  { href: "/free/", label: "Бесплатный курс" },
-  { href: "/premium/", label: "NWO Black" },
+  { href: "/#formats", label: "Обучение" },
   { href: "/mentorship/", label: "Менторство" },
   { href: "/blog/", label: "Журнал" },
 ];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const toggle = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggle.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", dismiss);
+    return () => window.removeEventListener("keydown", dismiss);
+  }, [open]);
   return (
     <>
       <a className="skip-link" href="#main-content">
@@ -26,27 +42,34 @@ export function SiteHeader() {
             className="site-wordmark"
             aria-label="New Way Out — главная"
           >
-            New Way Out<span>Школа практических продаж</span>
+            NWO<span>NEW WAY OUT</span>
           </Link>
           <nav className="site-desktop-nav" aria-label="Основная навигация">
             {navigation.map((item) => (
-              <Link key={item.href} href={item.href}>
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={pathname === item.href ? "page" : undefined}
+              >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <Link className="site-nav-cta" href="/free/">
-            Начать бесплатно <ArrowUpRight size={15} />
-          </Link>
-          <button
-            className="site-menu-toggle"
-            aria-label={open ? "Закрыть меню" : "Открыть меню"}
-            aria-expanded={open}
-            aria-controls="site-mobile-menu"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <X /> : <Menu />}
-          </button>
+          <div className="nav-end">
+            <Link className="site-nav-cta" href="/premium/#login">
+              Войти в Black <ArrowUpRight size={15} />
+            </Link>
+            <button
+              ref={toggle}
+              className="site-menu-toggle"
+              aria-label={open ? "Закрыть меню" : "Открыть меню"}
+              aria-expanded={open}
+              aria-controls="site-mobile-menu"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <X /> : <Menu />}
+            </button>
+          </div>
         </div>
         {open && (
           <nav
@@ -61,12 +84,12 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
               >
                 {item.label}
-                <ArrowUpRight size={16} />
+                <ArrowUpRight size={17} />
               </Link>
             ))}
-            <a href={contactHref} target="_blank" rel="noopener noreferrer">
-              Задать вопрос в Telegram <ArrowUpRight size={16} />
-            </a>
+            <Link href="/free/" onClick={() => setOpen(false)}>
+              Бесплатный курс <ArrowUpRight size={17} />
+            </Link>
           </nav>
         )}
       </header>
@@ -78,43 +101,29 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="site-container">
-        <div className="site-footer-grid">
-          <div>
-            <Link className="site-wordmark" href="/">
-              New Way Out
-            </Link>
-            <p>
-              Умение продавать начинается
-              <br />с умения понимать человека.
-            </p>
-          </div>
-          <nav aria-label="Разделы сайта">
-            {navigation.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <div>
-            <span className="site-eyebrow">На связи</span>
-            <a
-              className="site-text-link"
-              href={contactHref}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              @c0lddev <ArrowUpRight size={16} />
-            </a>
-            <p>
-              Вопросы об обучении,
-              <br />
-              оплате и доступе.
-            </p>
-          </div>
+        <div className="footer-top">
+          <Link className="site-wordmark" href="/">
+            NWO<span>NEW WAY OUT</span>
+          </Link>
+          <p>Навык, который остаётся с тобой.</p>
+          <a
+            className="site-text-link"
+            href={contactHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Написать Ярославу <ArrowUpRight size={17} />
+          </a>
         </div>
         <div className="site-footer-bottom">
           <span>© {new Date().getFullYear()} New Way Out</span>
-          <span>Практика. Обратная связь. Следующий шаг.</span>
+          <nav aria-label="Все разделы">
+            <Link href="/free/">Бесплатный курс</Link>
+            <Link href="/premium/">Black</Link>
+            <Link href="/mentorship/">Менторство</Link>
+            <Link href="/blog/">Журнал</Link>
+          </nav>
+          <span>Практика продаж</span>
         </div>
       </div>
     </footer>
@@ -124,41 +133,19 @@ export function SiteFooter() {
 export function CourseFolio({ black = false }: { black?: boolean }) {
   return (
     <div
-      className={`folio-scene ${black ? "folio-scene-black" : ""}`}
+      className={`art-panel ${black ? "art-panel-black" : ""}`}
       aria-hidden="true"
     >
-      <div className="folio-orbit" />
-      <div className="folio-shadow" />
-      <div className="course-folio">
-        <div className="folio-top">
-          <span>NWO / FIELD NOTES</span>
-          <span>01—06</span>
-        </div>
-        <div className="folio-title">
-          The art
+      <img src="/art/impasto-blue.webp" alt="" width="1672" height="941" />
+      <div className="art-panel-caption">
+        <span>NWO / {black ? "BLACK EDITION" : "OPEN EDITION"}</span>
+        <strong>
+          Искусство
           <br />
-          of the
-          <br />
-          <em>conversation.</em>
-        </div>
-        <div className="folio-mark">
-          N<span>W</span>O
-        </div>
-        <div className="folio-bottom">
-          <span>{black ? "BLACK EDITION" : "NEW WAY OUT"}</span>
-          <span>Практика продаж</span>
-        </div>
+          <em>диалога.</em>
+        </strong>
+        <span>ПРАКТИКА ПРОДАЖ</span>
       </div>
-      <div className="folio-note">
-        <span className="site-eyebrow">Первое правило</span>
-        <p>
-          Сначала понять.
-          <br />
-          <em>Потом предложить.</em>
-        </p>
-        <span className="folio-note-line" />
-      </div>
-      <span className="folio-caption">Навык, который остаётся с тобой.</span>
     </div>
   );
 }

@@ -67,7 +67,7 @@ export default function FreeCoursePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
         <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-2xl">
           ⚠️
         </div>
@@ -96,7 +96,7 @@ export default function FreeCoursePage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
         <h1 className="text-2xl font-semibold text-black">
           Материалы пока недоступны
         </h1>

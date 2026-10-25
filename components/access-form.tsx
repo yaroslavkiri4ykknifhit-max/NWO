@@ -247,7 +247,7 @@ export function AccessForm({
           >
             <span
               className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
-              style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
+              style={{ fontFamily: "var(--font-display)" }}
             >
               New Way Out
             </span>
