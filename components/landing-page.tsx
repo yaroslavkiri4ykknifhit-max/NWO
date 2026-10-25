@@ -4,12 +4,6 @@ import { SiteHeader, SiteFooter, contactHref } from "@/components/site-shell";
 import { CinematicMotion } from "@/components/cinematic-motion";
 import { salesFaq } from "@/lib/site-content";
 
-const skills = [
-  ["01", "Начать разговор", "Первый контакт, который открывает диалог."],
-  ["02", "Понять клиента", "Вопросы, которые помогают увидеть задачу."],
-  ["03", "Объяснить ценность", "Предложение и цена, в которых ты уверен."],
-  ["04", "Договориться", "От сомнений — к конкретному следующему шагу."],
-];
 export function LandingPage() {
   return (
     <div className="editorial-site">
@@ -47,7 +41,7 @@ export function LandingPage() {
                   сделке.
                 </p>
                 <div className="site-actions">
-                  <Link className="site-button" href="/free/">
+                  <Link className="site-button" href="/free/#first-lesson">
                     Начать бесплатно <ArrowUpRight size={18} />
                   </Link>
                   <a className="site-text-link" href="#formats">
@@ -72,27 +66,33 @@ export function LandingPage() {
             className="site-container site-section approach-section"
             data-reveal
           >
-            <div className="section-heading">
-              <span className="site-eyebrow">01 / Подход</span>
-              <h2>
-                Не заучивать.
-                <br />
-                <em>Понимать.</em>
-              </h2>
-              <p>
-                Четыре навыка, из которых складывается сильный разговор.
-                Разбираем по шагам и применяем к твоему предложению.
-              </p>
-            </div>
-            <div className="skills-grid">
-              {skills.map(([number, title, text]) => (
-                <article className="skill-card" key={number}>
-                  <span className="skill-number">{number}</span>
-                  <h3>{title}</h3>
-                  <p>{text}</p>
-                </article>
-              ))}
-            </div>
+            <Link
+              href="/free/#first-lesson"
+              className="first-lesson-cta"
+              aria-label="Открыть первый бесплатный урок"
+            >
+              <span className="lesson-cta-top">
+                <span>БЕСПЛАТНЫЙ КУРС ПО ПРОДАЖАМ</span>
+                <span>УРОК 01</span>
+              </span>
+              <span className="lesson-cta-main">
+                <span className="lesson-cta-title">
+                  Открыть первый
+                  <br />
+                  <em>бесплатный урок.</em>
+                </span>
+                <span className="lesson-cta-arrow" aria-hidden="true">
+                  <ArrowUpRight />
+                </span>
+              </span>
+              <span className="lesson-cta-bottom">
+                <span>Без регистрации. Без оплаты.</span>
+                <span>
+                  Нажми — и ты в уроке{" "}
+                  <ArrowRight size={18} aria-hidden="true" />
+                </span>
+              </span>
+            </Link>
           </section>
           <section id="formats" className="formats-section">
             <div className="site-container site-section">
@@ -120,7 +120,7 @@ export function LandingPage() {
                     Бесплатно<span>Без регистрации</span>
                   </div>
                   <Link
-                    href="/free/"
+                    href="/free/#first-lesson"
                     className="site-button site-button-outline"
                   >
                     Открыть курс <ArrowUpRight size={17} />
@@ -232,7 +232,7 @@ export function LandingPage() {
                 <br />
                 начинается <em>с тебя.</em>
               </h2>
-              <Link href="/free/" className="site-button">
+              <Link href="/free/#first-lesson" className="site-button">
                 Начать бесплатно <ArrowUpRight size={18} />
               </Link>
               <span className="site-microcopy">

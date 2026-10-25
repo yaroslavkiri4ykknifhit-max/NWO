@@ -3,7 +3,6 @@
 import { ProgramIntro, CourseLoading } from "@/components/program-intro";
 
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { CourseHeader } from "@/components/course-header";
 import { Dashboard } from "@/components/dashboard";
 import { LessonSidebar } from "@/components/lesson-sidebar";
@@ -41,8 +40,12 @@ export default function FreeCoursePage() {
     try {
       const data = await fetchPublicCourseData();
       setCourseData(data);
-      setCurrentModuleId("");
-      setCurrentLessonId("");
+      const firstModule = data.modules.find(
+        (module) => module.lessons.length > 0,
+      );
+      const directStart = window.location.hash === "#first-lesson";
+      setCurrentModuleId(directStart ? firstModule?.id || "" : "");
+      setCurrentLessonId(directStart ? firstModule?.lessons[0].id || "" : "");
     } catch (loadError) {
       setError(
         loadError instanceof Error
@@ -57,6 +60,23 @@ export default function FreeCoursePage() {
   useEffect(() => {
     void loadCourseData();
   }, []);
+
+  useEffect(() => {
+    const openFirstLesson = () => {
+      if (window.location.hash !== "#first-lesson") return;
+      setStarted(true);
+      const firstModule = courseData?.modules.find(
+        (module) => module.lessons.length > 0,
+      );
+      if (firstModule) {
+        setCurrentModuleId(firstModule.id);
+        setCurrentLessonId(firstModule.lessons[0].id);
+      }
+    };
+    openFirstLesson();
+    window.addEventListener("hashchange", openFirstLesson);
+    return () => window.removeEventListener("hashchange", openFirstLesson);
+  }, [courseData]);
 
   if (!started)
     return <ProgramIntro variant="free" onStart={() => setStarted(true)} />;

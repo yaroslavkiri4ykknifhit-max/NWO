@@ -1561,3 +1561,165 @@ h1 em,
     font-size: 58px;
   }
 }
+
+/* A single, full-width invitation directly into the first free lesson. */
+.approach-section {
+  padding-block: 64px;
+}
+.first-lesson-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding: 36px 46px;
+  min-height: 340px;
+  border: 1px solid #d4e3f3;
+  background: #c5d6e8;
+  color: #101b27;
+  box-shadow:
+    0 20px 90px #7198bf14,
+    inset 0 1px 0 #ffffff80;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    background 0.3s,
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+.first-lesson-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("/art/impasto-blue.webp") right center / cover;
+  mix-blend-mode: luminosity;
+  opacity: 0.065;
+  pointer-events: none;
+}
+.first-lesson-cta:hover {
+  background: #dbe8f4;
+  transform: translateY(-4px);
+  box-shadow: 0 24px 100px #7198bf30;
+}
+.first-lesson-cta:focus-visible {
+  outline-offset: 8px;
+  outline-color: #e8f3ff;
+}
+.lesson-cta-top,
+.lesson-cta-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.lesson-cta-top {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+.lesson-cta-top > span:last-child {
+  border: 1px solid #101b2738;
+  padding: 7px 12px;
+  white-space: nowrap;
+}
+.lesson-cta-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+.lesson-cta-title {
+  font: 500 clamp(48px, 5.6vw, 84px)/0.98 var(--font-display);
+  letter-spacing: -0.04em;
+}
+.lesson-cta-title em {
+  font-weight: 400;
+  color: #314e6b;
+}
+.lesson-cta-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 108px;
+  height: 108px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #122131;
+  color: #e6f0fa;
+  transition: transform 0.3s;
+}
+.lesson-cta-arrow svg {
+  width: 50px;
+  height: 50px;
+  stroke-width: 1.2;
+}
+.first-lesson-cta:hover .lesson-cta-arrow {
+  transform: rotate(45deg);
+}
+.lesson-cta-bottom {
+  font-size: 12px;
+  border-top: 1px solid #101b2730;
+  padding-top: 22px;
+}
+.lesson-cta-bottom > span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 600;
+}
+@media (max-width: 767px) {
+  .approach-section {
+    padding-block: 32px;
+  }
+  .first-lesson-cta {
+    padding: 24px;
+    gap: 35px;
+    min-height: 365px;
+  }
+  .lesson-cta-top {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    gap: 10px;
+  }
+  .lesson-cta-top > span:first-child {
+    max-width: 170px;
+  }
+  .lesson-cta-top > span:last-child {
+    font-size: 7px;
+    padding: 6px 8px;
+  }
+  .lesson-cta-main {
+    align-items: start;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .lesson-cta-title {
+    font-size: clamp(36px, 9.5vw, 62px);
+    line-height: 1.04;
+  }
+  .lesson-cta-arrow {
+    width: 58px;
+    height: 58px;
+    align-self: end;
+  }
+  .lesson-cta-arrow svg {
+    width: 31px;
+    height: 31px;
+  }
+  .lesson-cta-bottom {
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    font-size: 11px;
+    margin-top: auto;
+  }
+}
+@media (max-width: 380px) {
+  .first-lesson-cta {
+    padding: 20px;
+    gap: 28px;
+  }
+  .lesson-cta-title {
+    font-size: 35px;
+  }
+}
