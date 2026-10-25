@@ -1573,6 +1573,7 @@ h1 em,
   display: flex;
   flex-direction: column;
   min-height: 0;
+  padding-bottom: 110px;
   border: 1px solid #ffffff24;
   background:
     radial-gradient(ellipse at 50% 28%, #21324670, transparent 60%), #090e15;
@@ -1605,7 +1606,7 @@ h1 em,
 }
 .lesson-poster-link {
   position: relative;
-  margin: 80px auto 0;
+  margin: -44px auto 0;
   width: min(690px, calc(100% - 160px));
   min-height: 132px;
   padding: 22px 28px;
@@ -1674,7 +1675,7 @@ h1 em,
 .lesson-poster-hand {
   position: absolute;
   top: 50%;
-  width: 235px;
+  width: 185px;
   aspect-ratio: 735 / 870;
   opacity: 0;
   pointer-events: none;
@@ -1684,12 +1685,12 @@ h1 em,
     opacity 0.35s;
 }
 .lesson-poster-hand-left {
-  left: -235px;
-  transform: translate(-200px, -35%) rotate(-16deg);
+  left: -185px;
+  transform: translate(-200px, 20px) rotate(-16deg);
 }
 .lesson-poster-hand-right {
-  right: -235px;
-  transform: translate(200px, -35%) rotate(16deg);
+  right: -185px;
+  transform: translate(200px, 20px) rotate(16deg);
 }
 .lesson-poster-hand svg {
   display: block;
@@ -1700,10 +1701,10 @@ h1 em,
   opacity: 0.88;
 }
 .lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-left {
-  transform: translate(0, -35%) rotate(-8deg);
+  transform: translate(0, 20px) rotate(-8deg);
 }
 .lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-right {
-  transform: translate(0, -35%) rotate(8deg);
+  transform: translate(0, 20px) rotate(8deg);
 }
 .lesson-poster-caption {
   margin: 26px 20px 32px;
@@ -1731,6 +1732,7 @@ h1 em,
   }
   .lesson-poster {
     min-height: 0;
+    padding-bottom: 40px;
   }
   .lesson-poster-edition {
     top: 22px;
@@ -1750,7 +1752,7 @@ h1 em,
     height: auto;
   }
   .lesson-poster-link {
-    margin-top: 100px;
+    margin-top: -22px;
     width: calc(100% - 48px);
     min-height: 122px;
     padding: 20px 18px;
@@ -1787,10 +1789,10 @@ h1 em,
     right: -110px;
   }
   .lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-left {
-    transform: translate(0, -100%) rotate(14deg);
+    transform: translate(0, 10px) rotate(14deg);
   }
   .lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-right {
-    transform: translate(0, -100%) rotate(-14deg);
+    transform: translate(0, 10px) rotate(-14deg);
   }
 }
 @media (hover: none) {
@@ -1798,10 +1800,10 @@ h1 em,
     opacity: 0.5;
   }
   .lesson-poster-hand-left {
-    transform: translate(0, -100%) rotate(14deg);
+    transform: translate(0, 10px) rotate(14deg);
   }
   .lesson-poster-hand-right {
-    transform: translate(0, -100%) rotate(-14deg);
+    transform: translate(0, 10px) rotate(-14deg);
   }
 }
 @media (prefers-reduced-motion: reduce) {
