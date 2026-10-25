@@ -1562,164 +1562,273 @@ h1 em,
   }
 }
 
-/* A single, full-width invitation directly into the first free lesson. */
+/* Editorial portrait with hands framing a separate, direct lesson link. */
 .approach-section {
-  padding-block: 64px;
+  padding-block: 58px;
 }
-.first-lesson-cta {
-  display: flex;
-  flex-direction: column;
-  gap: 44px;
-  padding: 36px 46px;
-  min-height: 340px;
-  border: 1px solid #d4e3f3;
-  background: #c5d6e8;
-  color: #101b27;
-  box-shadow:
-    0 20px 90px #7198bf14,
-    inset 0 1px 0 #ffffff80;
+.lesson-poster {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+  min-height: 650px;
+  border: 1px solid #ffffff24;
+  background:
+    radial-gradient(ellipse at 50% 28%, #21324670, transparent 60%), #090e15;
+}
+.lesson-poster-edition {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  right: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #9fb1c6;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  z-index: 1;
+}
+.lesson-poster-portrait {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 390px;
+  overflow: hidden;
+  mask-image: radial-gradient(
+    ellipse 65% 85% at 50% 30%,
+    #000 38%,
+    transparent 100%
+  );
+}
+.lesson-poster-portrait img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: auto;
+  max-width: none;
+  filter: grayscale(1) brightness(0.86) contrast(1.12);
+}
+.lesson-poster-link {
+  position: absolute;
+  left: 50%;
+  top: 450px;
+  transform: translateX(-50%);
+  width: min(690px, calc(100% - 160px));
+  min-height: 132px;
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  background: #c8d9ea;
+  border: 1px solid #dfecfa;
+  color: #101b27;
+  box-shadow: 0 16px 80px #527ba929;
   transition:
     background 0.3s,
-    transform 0.3s,
     box-shadow 0.3s;
+  z-index: 2;
 }
-.first-lesson-cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: url("/art/impasto-blue.webp") right center / cover;
-  mix-blend-mode: luminosity;
-  opacity: 0.065;
-  pointer-events: none;
+.lesson-poster-link:hover {
+  background: #e0edf8;
+  box-shadow: 0 18px 100px #739ac54d;
 }
-.first-lesson-cta:hover {
-  background: #dbe8f4;
-  transform: translateY(-4px);
-  box-shadow: 0 24px 100px #7198bf30;
-}
-.first-lesson-cta:focus-visible {
+.lesson-poster-link:focus-visible {
+  outline: 2px solid #e0edf8;
   outline-offset: 8px;
-  outline-color: #e8f3ff;
 }
-.lesson-cta-top,
-.lesson-cta-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
+.lesson-poster-button-copy {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 9px;
 }
-.lesson-cta-top {
-  font-size: 10px;
-  letter-spacing: 0.15em;
+.lesson-poster-button-copy > span:first-child {
+  font-size: 8px;
   font-weight: 700;
+  letter-spacing: 0.13em;
 }
-.lesson-cta-top > span:last-child {
-  border: 1px solid #101b2738;
-  padding: 7px 12px;
-  white-space: nowrap;
+.lesson-poster-button-copy strong {
+  font: 500 clamp(30px, 3.5vw, 47px)/1.05 var(--font-display);
+  letter-spacing: -0.03em;
 }
-.lesson-cta-main {
+.lesson-poster-button-copy > span:last-child {
+  font-size: 11px;
+  color: #354e68;
+}
+.lesson-poster-button-arrow {
+  position: relative;
+  z-index: 3;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-}
-.lesson-cta-title {
-  font: 500 clamp(48px, 5.6vw, 84px)/0.98 var(--font-display);
-  letter-spacing: -0.04em;
-}
-.lesson-cta-title em {
-  font-weight: 400;
-  color: #314e6b;
-}
-.lesson-cta-arrow {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  width: 108px;
-  height: 108px;
-  flex-shrink: 0;
+  align-items: center;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: #122131;
-  color: #e6f0fa;
-  transition: transform 0.3s;
+  color: #e5f0fa;
+  flex-shrink: 0;
 }
-.lesson-cta-arrow svg {
-  width: 50px;
-  height: 50px;
-  stroke-width: 1.2;
+.lesson-poster-button-arrow svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 1.3;
+  transition: transform 0.5s;
 }
-.first-lesson-cta:hover .lesson-cta-arrow {
+.lesson-poster-link:hover .lesson-poster-button-arrow svg {
   transform: rotate(45deg);
 }
-.lesson-cta-bottom {
-  font-size: 12px;
-  border-top: 1px solid #101b2730;
-  padding-top: 22px;
+.lesson-poster-hand {
+  position: absolute;
+  top: 50%;
+  width: 235px;
+  aspect-ratio: 735 / 870;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition:
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.35s;
 }
-.lesson-cta-bottom > span:last-child {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  font-weight: 600;
+.lesson-poster-hand-left {
+  left: -235px;
+  transform: translate(-200px, -35%) rotate(-16deg);
+}
+.lesson-poster-hand-right {
+  right: -235px;
+  transform: translate(200px, -35%) rotate(16deg);
+}
+.lesson-poster-hand svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand {
+  opacity: 0.88;
+}
+.lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-left {
+  transform: translate(0, -35%) rotate(-8deg);
+}
+.lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-right {
+  transform: translate(0, -35%) rotate(8deg);
+}
+.lesson-poster-caption {
+  position: absolute;
+  bottom: 23px;
+  left: 20px;
+  right: 20px;
+  text-align: center;
+  font-size: 10px;
+  color: #8f9fb2;
+}
+@media (max-width: 1000px) {
+  .lesson-poster-link {
+    width: calc(100% - 140px);
+  }
+  .lesson-poster-hand {
+    width: 185px;
+  }
+  .lesson-poster-hand-left {
+    left: -185px;
+  }
+  .lesson-poster-hand-right {
+    right: -185px;
+  }
 }
 @media (max-width: 767px) {
   .approach-section {
     padding-block: 32px;
   }
-  .first-lesson-cta {
-    padding: 24px;
-    gap: 35px;
-    min-height: 365px;
+  .lesson-poster {
+    min-height: 585px;
   }
-  .lesson-cta-top {
-    font-size: 8px;
-    letter-spacing: 0.08em;
-    gap: 10px;
-  }
-  .lesson-cta-top > span:first-child {
-    max-width: 170px;
-  }
-  .lesson-cta-top > span:last-child {
+  .lesson-poster-edition {
+    top: 22px;
+    left: 20px;
+    right: 20px;
     font-size: 7px;
-    padding: 6px 8px;
+    letter-spacing: 0.1em;
   }
-  .lesson-cta-main {
-    align-items: start;
-    flex-direction: column;
-    gap: 24px;
+  .lesson-poster-edition > span:last-child {
+    display: none;
   }
-  .lesson-cta-title {
-    font-size: clamp(36px, 9.5vw, 62px);
-    line-height: 1.04;
+  .lesson-poster-portrait {
+    width: 100%;
+    height: 320px;
+    top: 35px;
+    mask-image: radial-gradient(
+      ellipse 75% 85% at 50% 30%,
+      #000 40%,
+      transparent 100%
+    );
   }
-  .lesson-cta-arrow {
-    width: 58px;
-    height: 58px;
-    align-self: end;
+  .lesson-poster-portrait img {
+    width: 400px;
   }
-  .lesson-cta-arrow svg {
-    width: 31px;
-    height: 31px;
-  }
-  .lesson-cta-bottom {
-    flex-direction: column;
-    align-items: start;
+  .lesson-poster-link {
+    top: 395px;
+    width: calc(100% - 48px);
+    min-height: 122px;
+    padding: 20px 18px;
     gap: 10px;
-    font-size: 11px;
-    margin-top: auto;
+  }
+  .lesson-poster-button-copy {
+    gap: 10px;
+  }
+  .lesson-poster-button-copy strong {
+    font-size: clamp(25px, 5.5vw, 38px);
+  }
+  .lesson-poster-button-copy > span:first-child {
+    font-size: 6px;
+    letter-spacing: 0.06em;
+  }
+  .lesson-poster-button-copy > span:last-child {
+    font-size: 9px;
+  }
+  .lesson-poster-button-arrow {
+    width: 36px;
+    height: 36px;
+  }
+  .lesson-poster-button-arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+  .lesson-poster-hand {
+    width: 110px;
+  }
+  .lesson-poster-hand-left {
+    left: -110px;
+  }
+  .lesson-poster-hand-right {
+    right: -110px;
+  }
+  .lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-left {
+    transform: translate(0, -100%) rotate(14deg);
+  }
+  .lesson-poster-link:is(:hover, :focus-visible) .lesson-poster-hand-right {
+    transform: translate(0, -100%) rotate(-14deg);
   }
 }
-@media (max-width: 380px) {
-  .first-lesson-cta {
-    padding: 20px;
-    gap: 28px;
+@media (hover: none) {
+  .lesson-poster-hand {
+    opacity: 0.5;
   }
-  .lesson-cta-title {
-    font-size: 35px;
+  .lesson-poster-hand-left {
+    transform: translate(0, -100%) rotate(14deg);
+  }
+  .lesson-poster-hand-right {
+    transform: translate(0, -100%) rotate(-14deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lesson-poster-hand {
+    transition: none;
+  }
+  .lesson-poster-button-arrow svg {
+    transition: none;
   }
 }

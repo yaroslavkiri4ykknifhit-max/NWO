@@ -3,6 +3,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight, Plus } from "lucide-react";
 import { SiteHeader, SiteFooter, contactHref } from "@/components/site-shell";
 import { CinematicMotion } from "@/components/cinematic-motion";
 import { salesFaq } from "@/lib/site-content";
+import { FreeLessonPoster } from "@/components/free-lesson-poster";
 
 export function LandingPage() {
   return (
@@ -66,33 +67,7 @@ export function LandingPage() {
             className="site-container site-section approach-section"
             data-reveal
           >
-            <Link
-              href="/free/#first-lesson"
-              className="first-lesson-cta"
-              aria-label="Открыть первый бесплатный урок"
-            >
-              <span className="lesson-cta-top">
-                <span>БЕСПЛАТНЫЙ КУРС ПО ПРОДАЖАМ</span>
-                <span>УРОК 01</span>
-              </span>
-              <span className="lesson-cta-main">
-                <span className="lesson-cta-title">
-                  Открыть первый
-                  <br />
-                  <em>бесплатный урок.</em>
-                </span>
-                <span className="lesson-cta-arrow" aria-hidden="true">
-                  <ArrowUpRight />
-                </span>
-              </span>
-              <span className="lesson-cta-bottom">
-                <span>Без регистрации. Без оплаты.</span>
-                <span>
-                  Нажми — и ты в уроке{" "}
-                  <ArrowRight size={18} aria-hidden="true" />
-                </span>
-              </span>
-            </Link>
+            <FreeLessonPoster />
           </section>
           <section id="formats" className="formats-section">
             <div className="site-container site-section">
