@@ -1,3 +1,5 @@
+> Historical design notes. Superseded by the shared red/yellow system in `unified-site-design.md`.
+
 # NWO cinematic redesign
 
 The home page follows one route: introduction → four practical skills → format selection → author → four concise FAQs → first lesson. Free, Black, mentorship, journal and article pages share the same navigation and dark editorial design. Prices are preserved from the existing source: Black $17, mentorship $170/30 days.

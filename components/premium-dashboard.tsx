@@ -86,7 +86,7 @@ export function PremiumDashboard({
                 key={module.id}
                 disabled={!next}
                 onClick={() => next && onSelectLesson(module.id, next.id)}
-                className="course-progress-card text-left cursor-pointer hover:border-black transition-colors"
+                className="course-progress-card text-left cursor-pointer hover:border-primary transition-colors"
               >
                 <span>
                   Блок {String(i + 1).padStart(2, "0")} / {count} из{" "}

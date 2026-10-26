@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { BrandMark, BrandPlaceholder } from "@/components/brand";
 
 export const contactHref = "https://t.me/c0lddev";
 const courseNavigation = [
@@ -45,13 +46,7 @@ export function SiteHeader() {
       </a>
       <header className="site-header">
         <div className="site-container site-nav">
-          <Link
-            href="/"
-            className="site-wordmark"
-            aria-label="New Way Out — главная"
-          >
-            NWO<span>NEW WAY OUT</span>
-          </Link>
+          <BrandMark />
           <nav className="site-desktop-nav" aria-label="Основная навигация">
             {navigation.map((item) => (
               <Link
@@ -102,6 +97,9 @@ export function SiteHeader() {
             <Link href="/free/" onClick={() => setOpen(false)}>
               Бесплатный курс <ArrowUpRight size={17} />
             </Link>
+            <Link href="/premium/#login" onClick={() => setOpen(false)}>
+              Войти в Black <ArrowUpRight size={17} />
+            </Link>
           </nav>
         )}
       </header>
@@ -114,9 +112,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="site-container">
         <div className="footer-top">
-          <Link className="site-wordmark" href="/">
-            NWO<span>NEW WAY OUT</span>
-          </Link>
+          <BrandMark />
           <p>Навык, который остаётся с тобой.</p>
           <a
             className="site-text-link"
@@ -144,20 +140,8 @@ export function SiteFooter() {
 
 export function CourseFolio({ black = false }: { black?: boolean }) {
   return (
-    <div
-      className={`art-panel ${black ? "art-panel-black" : ""}`}
-      aria-hidden="true"
-    >
-      <img src="/art/impasto-blue.webp" alt="" width="1672" height="941" />
-      <div className="art-panel-caption">
-        <span>NWO / {black ? "BLACK EDITION" : "OPEN EDITION"}</span>
-        <strong>
-          Искусство
-          <br />
-          <em>диалога.</em>
-        </strong>
-        <span>ПРАКТИКА ПРОДАЖ</span>
-      </div>
+    <div className="art-panel">
+      <BrandPlaceholder variant="course" black={black} />
     </div>
   );
 }

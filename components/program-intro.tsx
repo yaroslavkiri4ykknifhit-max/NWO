@@ -7,6 +7,7 @@ import {
   SiteHeader,
   contactHref,
 } from "@/components/site-shell";
+import { BrandMark } from "@/components/brand";
 import { CinematicMotion } from "@/components/cinematic-motion";
 
 export function ProgramIntro({
@@ -148,9 +149,7 @@ export function CourseLoading({
 }) {
   return (
     <div className="course-loading" role="status" aria-live="polite">
-      <span className="site-wordmark">
-        NWO<span>NEW WAY OUT</span>
-      </span>
+      <BrandMark />
       <Loader2 size={24} className="animate-spin" />
       <p>{label}</p>
       <Link href="/">На главную</Link>

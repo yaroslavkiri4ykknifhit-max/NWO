@@ -193,7 +193,7 @@ function renderFormattedContent(text: string) {
         renderedBlocks.push(
           <ul
             key={`list-ul-${key}`}
-            className="list-disc pl-6 my-4 space-y-2 text-black font-ui"
+            className="list-disc pl-6 my-4 space-y-2 text-foreground font-ui"
           >
             {...currentListItems}
           </ul>,
@@ -202,7 +202,7 @@ function renderFormattedContent(text: string) {
         renderedBlocks.push(
           <ol
             key={`list-ol-${key}`}
-            className="list-decimal pl-6 my-4 space-y-2 text-black font-ui"
+            className="list-decimal pl-6 my-4 space-y-2 text-foreground font-ui"
           >
             {...currentListItems}
           </ol>,
@@ -232,7 +232,7 @@ function renderFormattedContent(text: string) {
           <img
             src={url}
             alt={alt || "Изображение"}
-            className="rounded-none border border-border/40 max-w-full h-auto mx-auto shadow-md hover:scale-[1.01] transition-transform duration-300"
+            className="rounded-xl border border-border/40 max-w-full h-auto mx-auto shadow-md hover:scale-[1.01] transition-transform duration-300"
             loading="lazy"
           />
           {alt && (
@@ -289,7 +289,7 @@ function renderFormattedContent(text: string) {
       renderedBlocks.push(
         <blockquote
           key={`quote-${i}`}
-          className="pl-4 py-2.5 border-l-4 border-black bg-gray-50 rounded-none my-4 text-black italic font-ui leading-relaxed"
+          className="pl-4 py-2.5 border-l-4 border-border bg-secondary rounded-xl my-4 text-foreground italic font-ui leading-relaxed"
         >
           {parseInlineStyles(trimmedLine.substring(2))}
         </blockquote>,
@@ -344,7 +344,10 @@ function renderFormattedContent(text: string) {
     // Обычный абзац текста
     flushList(String(i));
     renderedBlocks.push(
-      <p key={`p-${i}`} className="my-3.5 leading-relaxed text-black font-ui">
+      <p
+        key={`p-${i}`}
+        className="my-3.5 leading-relaxed text-foreground font-ui"
+      >
         {parseInlineStyles(rawLine)}
       </p>,
     );
@@ -401,7 +404,7 @@ export function LessonViewer({
   return (
     <main
       ref={scrollContainerRef}
-      className={cn("flex-1 overflow-y-auto bg-white", "")}
+      className={cn("flex-1 overflow-y-auto bg-background", "")}
     >
       <div
         className={cn(
@@ -410,22 +413,22 @@ export function LessonViewer({
         )}
       >
         {/* Header */}
-        <div className="mb-8 border-b border-gray-300 pb-8">
+        <div className="mb-8 border-b border-border pb-8">
           {isPremium && (
-            <span className="inline-block px-2.5 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+            <span className="inline-block px-2.5 py-1 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
               NWO BLACK · Урок закрытого клуба
             </span>
           )}
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-2">
             {moduleName}
           </p>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-black leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground leading-tight mb-4">
             {title}
           </h1>
 
-          <div className="flex items-center gap-6 mt-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <div className="flex items-center gap-6 mt-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             <span className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-[#793630]" />
+              <BookOpen className="w-4 h-4 text-brand-yellow" />
               Текстовые материалы доступны ниже
             </span>
           </div>
@@ -433,7 +436,7 @@ export function LessonViewer({
 
         {/* Video Player (Отображается только если видео задано) */}
         {hasVideo && (
-          <div className="aspect-video bg-black rounded-none mb-8 overflow-hidden border border-black shadow-sm">
+          <div className="aspect-video bg-black rounded-xl mb-8 overflow-hidden border border-border shadow-sm">
             {isDirectVideo ? (
               /* Нативный HTML5 плеер для прямых ссылок (.mp4 / uc?export=download) с защитой от скачивания */
               <video
@@ -462,7 +465,7 @@ export function LessonViewer({
             <h2 className="text-xl font-semibold text-foreground font-ui">
               Материалы урока
             </h2>
-            <div className="lesson-reading-content p-6 sm:p-8 bg-[#fafaf9] rounded-none border border-gray-300 text-gray-900 leading-relaxed text-base font-ui">
+            <div className="lesson-reading-content p-6 sm:p-8 bg-card rounded-xl border border-border text-foreground leading-relaxed text-base font-ui">
               {renderFormattedContent(textContent)}
             </div>
           </div>
@@ -475,15 +478,15 @@ export function LessonViewer({
             onClick={onComplete}
             disabled={saving || isCompleted}
             className={cn(
-              "gap-2 cursor-pointer rounded-none h-12 px-6 w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors",
+              "gap-2 cursor-pointer rounded-xl h-12 px-6 w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors",
               isCompleted
-                ? "border border-gray-300 bg-gray-100 text-black hover:bg-gray-200"
-                : "bg-black text-white hover:bg-gray-800",
+                ? "border border-border bg-secondary text-foreground hover:bg-secondary"
+                : "bg-primary text-primary-foreground hover:bg-secondary",
             )}
           >
             {isCompleted ? (
               <>
-                <CheckCircle2 className="w-4 h-4 text-[#793630]" />
+                <CheckCircle2 className="w-4 h-4 text-brand-yellow" />
                 Урок завершён
               </>
             ) : (
@@ -498,7 +501,7 @@ export function LessonViewer({
             <Button
               variant="default"
               onClick={onNext}
-              className="gap-2 cursor-pointer rounded-none h-12 px-6 border border-black bg-black text-white hover:bg-gray-800 w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors"
+              className="gap-2 cursor-pointer rounded-xl h-12 px-6 border border-border bg-primary text-primary-foreground hover:bg-secondary w-full sm:w-auto justify-center font-bold text-xs uppercase tracking-widest transition-colors"
             >
               Следующий урок
               <ChevronRight className="w-4 h-4" />

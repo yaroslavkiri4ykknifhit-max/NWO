@@ -135,36 +135,36 @@ export default function PremiumPage() {
     const displayName = user?.display_name || user?.email || "пользователь";
 
     return (
-      <main className="access-surface flex items-center justify-center p-4 sm:p-6 font-ui text-[#121212]">
-        <section className="access-card w-full max-w-lg border-2 border-black p-8 sm:p-12 text-center bg-[#fafaf9] shadow-sm">
+      <main className="access-surface flex items-center justify-center p-4 sm:p-6 font-ui text-foreground">
+        <section className="access-card w-full max-w-lg border-2 border-border p-8 sm:p-12 text-center bg-card shadow-sm">
           <div className="mb-6">
             <span
-              className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
-              style={{ fontFamily: "'UnifrakturMaguntia', serif" }}
+              className="text-3xl sm:text-4xl text-foreground block tracking-tight select-none"
+              style={{ fontFamily: "var(--font-display)" }}
             >
               New Way Out
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-500 block mt-1">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground block mt-1">
               NWO Black · Личный кабинет
             </span>
           </div>
 
-          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-black bg-black text-white">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border border-border bg-primary text-primary-foreground">
             <LockKeyhole className="w-6 h-6" />
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-display font-bold text-black mb-4">
+          <h1 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-4">
             Доступ пока не подключён
           </h1>
 
-          <p className="text-sm text-gray-700 leading-relaxed font-ui mb-8 max-w-md mx-auto">
+          <p className="text-sm text-muted-foreground leading-relaxed font-ui mb-8 max-w-md mx-auto">
             Email <strong>{displayName}</strong> подтверждён, но членство в
             закрытом клубе NWO BLACK ещё не активировано. Вы можете продолжать
             учиться в бесплатной базе или написать Ярославу для подключения
             доступа.
           </p>
 
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Уже оплатил? Напиши Ярославу — он проверит твой доступ.
           </p>
           <div className="space-y-3 max-w-xs mx-auto">
@@ -172,7 +172,7 @@ export default function PremiumPage() {
               href="https://t.me/c0lddev"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-2 bg-black text-white py-3.5 px-6 font-bold text-xs uppercase tracking-widest hover:bg-gray-800 transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3.5 px-6 font-bold text-xs uppercase tracking-widest hover:bg-secondary transition-colors"
             >
               <span>Получить доступ ($17)</span>
               <ChevronRight className="w-4 h-4" />
@@ -180,7 +180,7 @@ export default function PremiumPage() {
 
             <Link
               href="/free"
-              className="w-full inline-flex items-center justify-center gap-2 border border-gray-300 bg-white py-3 px-6 font-semibold text-xs text-gray-800 hover:border-black transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 border border-border bg-background py-3 px-6 font-semibold text-xs text-foreground hover:border-primary transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               Бесплатная база NWO
@@ -189,7 +189,7 @@ export default function PremiumPage() {
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full py-2 text-xs font-semibold text-gray-500 hover:text-black transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               Войти с другого аккаунта
@@ -206,24 +206,24 @@ export default function PremiumPage() {
 
   if (error) {
     return (
-      <div className="course-state min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
-        <div className="w-14 h-14 border border-black bg-[#fafaf9] flex items-center justify-center text-xl">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-background text-foreground font-ui">
+        <div className="w-14 h-14 border border-border bg-card flex items-center justify-center text-xl">
           ⚠️
         </div>
-        <h2 className="text-2xl font-display font-bold text-black">
+        <h2 className="text-2xl font-display font-bold text-foreground">
           Не удалось загрузить NWO BLACK
         </h2>
-        <p className="max-w-md text-xs text-gray-600">{error}</p>
+        <p className="max-w-md text-xs text-muted-foreground">{error}</p>
         <div className="flex flex-wrap justify-center gap-3 mt-4">
           <button
             onClick={loadCourseData}
-            className="border border-black bg-black text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-gray-800 cursor-pointer"
+            className="border border-border bg-primary text-primary-foreground px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-secondary cursor-pointer"
           >
             Повторить
           </button>
           <Link
             href="/free"
-            className="border border-gray-300 bg-white px-5 py-2.5 text-xs font-semibold text-gray-800 hover:border-black"
+            className="border border-border bg-background px-5 py-2.5 text-xs font-semibold text-foreground hover:border-primary"
           >
             В бесплатный курс
           </Link>
@@ -234,20 +234,20 @@ export default function PremiumPage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="course-state min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-white text-black font-ui">
-        <div className="w-16 h-16 border border-black bg-black text-white flex items-center justify-center">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center gap-4 p-4 text-center bg-background text-foreground font-ui">
+        <div className="w-16 h-16 border border-border bg-primary text-primary-foreground flex items-center justify-center">
           <Crown className="w-8 h-8" />
         </div>
-        <h2 className="text-3xl font-display font-bold text-black">
+        <h2 className="text-3xl font-display font-bold text-foreground">
           NWO BLACK подключён
         </h2>
-        <p className="max-w-md text-xs text-gray-600">
+        <p className="max-w-md text-xs text-muted-foreground">
           Доступ активен, но материалы пока не загрузились. Напиши Ярославу в
           Telegram — он поможет с курсом.
         </p>
         <Link
           href="/"
-          className="mt-2 border border-black bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-gray-800"
+          className="mt-2 border border-border bg-primary text-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-secondary"
         >
           Вернуться на главную
         </Link>
@@ -318,7 +318,7 @@ export default function PremiumPage() {
   };
 
   return (
-    <div className="learning-shell flex flex-col overflow-hidden text-black font-ui">
+    <div className="learning-shell flex flex-col overflow-hidden text-foreground font-ui">
       <CourseHeader
         courseName={courseData.name}
         user={user}
@@ -334,7 +334,7 @@ export default function PremiumPage() {
         }}
       />
       {progressError && (
-        <p role="alert" className="px-4 py-2 text-sm bg-red-50 text-red-800">
+        <p role="alert" className="px-4 py-2 text-sm bg-red-950 text-red-300">
           {progressError}
         </p>
       )}

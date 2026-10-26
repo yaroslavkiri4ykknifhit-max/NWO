@@ -22,6 +22,7 @@ import {
   isPlatformAuthenticatorAvailable,
 } from "@/lib/sheets-api";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand";
 
 interface AccessFormProps {
   onAccessGranted: () => void;
@@ -232,27 +233,17 @@ export function AccessForm({
   // ── Render ────────────────────────────────────────────────────────
 
   return (
-    <div className="access-surface flex flex-col items-center justify-center p-4 sm:p-6 font-ui text-[#121212] relative">
+    <div className="access-surface flex flex-col items-center justify-center p-4 sm:p-6 font-ui text-foreground relative">
       {onBack && (
         <button className="access-back" onClick={onBack}>
           <ArrowLeft size={14} /> О программе NWO Black
         </button>
       )}
-      <div className="access-card w-full max-w-md border-2 border-black p-6 sm:p-10 bg-[#fafaf9] shadow-sm">
+      <div className="access-card w-full max-w-md border-2 border-border p-6 sm:p-10 bg-card shadow-sm">
         {/* Masthead */}
-        <div className="text-center border-b border-gray-300 pb-6 mb-6">
-          <Link
-            href="/"
-            className="inline-block hover:opacity-80 transition-opacity"
-          >
-            <span
-              className="text-3xl sm:text-4xl text-black block tracking-tight select-none"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              New Way Out
-            </span>
-          </Link>
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-500 block mt-1">
+        <div className="text-center border-b border-border pb-6 mb-6">
+          <BrandMark />
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground block mt-1">
             {isPremium
               ? "NWO BLACK · Закрытый доступ"
               : "Читательский билет · Авторизация"}
@@ -265,10 +256,10 @@ export function AccessForm({
         {view === "initial" && (
           <div>
             <div className="text-center mb-6">
-              <h1 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 {isPremium ? "Вход в NWO BLACK" : "Авторизация в системе"}
               </h1>
-              <p className="text-xs text-gray-600 font-ui leading-relaxed">
+              <p className="text-xs text-muted-foreground font-ui leading-relaxed">
                 {isPremium
                   ? "Введи email, на который активирован доступ. При первом входе после покупки понадобится инвайт-код."
                   : "Войдите для сохранения вашего прогресса уроков и синхронизации."}
@@ -276,13 +267,13 @@ export function AccessForm({
             </div>
 
             {/* Security banner */}
-            <div className="border border-gray-300 bg-white p-4 mb-6 flex gap-3 items-start">
-              <ShieldCheck className="w-5 h-5 text-black shrink-0 mt-0.5" />
+            <div className="border border-border bg-background p-4 mb-6 flex gap-3 items-start">
+              <ShieldCheck className="w-5 h-5 text-foreground shrink-0 mt-0.5" />
               <div className="text-left">
-                <p className="text-xs font-bold text-black uppercase tracking-wider">
+                <p className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Безопасный вход без пароля
                 </p>
-                <p className="text-[11px] text-gray-600 mt-0.5 leading-snug">
+                <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
                   Используйте Passkey (Face ID, Touch ID) для мгновенного входа
                   или получите код на вашу почту.
                 </p>
@@ -297,7 +288,7 @@ export function AccessForm({
                   type="button"
                   onClick={handlePasskeyLogin}
                   disabled={isLoading}
-                  className="w-full h-[52px] bg-black text-white hover:bg-gray-800 active:bg-gray-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
+                  className="w-full h-[52px] bg-primary text-primary-foreground hover:bg-secondary active:bg-secondary font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
                 >
                   <Fingerprint className="w-5 h-5 shrink-0" />
                   <span>
@@ -313,8 +304,8 @@ export function AccessForm({
                 disabled={isLoading}
                 className={`w-full h-[52px] font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border ${
                   passkeyAvailable
-                    ? "border-black bg-white text-black hover:bg-gray-50"
-                    : "border-none bg-black text-white hover:bg-gray-800"
+                    ? "border-border bg-background text-foreground hover:bg-secondary"
+                    : "border-none bg-primary text-primary-foreground hover:bg-secondary"
                 }`}
               >
                 <Mail className="w-5 h-5 shrink-0" />
@@ -325,23 +316,23 @@ export function AccessForm({
             {error && (
               <p
                 role="alert"
-                className="mt-4 text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-3"
+                className="mt-4 text-xs font-bold text-red-300 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-950 p-3"
               >
                 <KeyRound className="w-4 h-4 shrink-0" />
                 {error}
               </p>
             )}
 
-            <div className="mt-8 pt-6 border-t border-gray-200 flex items-start gap-3 text-left">
-              <HelpCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-              <div className="text-[11px] text-gray-600 leading-normal">
+            <div className="mt-8 pt-6 border-t border-border flex items-start gap-3 text-left">
+              <HelpCircle className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+              <div className="text-[11px] text-muted-foreground leading-normal">
                 Возникли сложности с доступом? Напишите напрямую основателю в
                 Telegram:{" "}
                 <a
                   href="https://t.me/c0lddev"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-bold text-black underline underline-offset-2"
+                  className="font-bold text-foreground underline underline-offset-2"
                 >
                   @c0lddev
                 </a>
@@ -351,7 +342,7 @@ export function AccessForm({
             <div className="mt-6 text-center">
               <Link
                 href="/"
-                className="text-xs font-semibold text-gray-500 hover:text-black flex items-center justify-center gap-1 transition-colors"
+                className="text-xs font-semibold text-muted-foreground hover:text-foreground flex items-center justify-center gap-1 transition-colors"
               >
                 <ArrowLeft size={12} /> Вернуться на главную страницу
               </Link>
@@ -365,10 +356,10 @@ export function AccessForm({
         {view === "email_input" && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Вход по email
               </h2>
-              <p className="text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Введите ваш email — мы отправим 6-значный код для входа.
               </p>
             </div>
@@ -382,7 +373,7 @@ export function AccessForm({
                 placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 bg-white border border-black text-center text-base font-medium focus:ring-0 focus:border-black rounded-none text-black lowercase"
+                className="h-12 bg-background border border-border text-center text-base font-medium focus:ring-0 focus:border-primary rounded-xl text-foreground lowercase"
                 disabled={isLoading}
                 autoFocus
                 autoComplete="email"
@@ -391,7 +382,7 @@ export function AccessForm({
               {error && (
                 <p
                   role="alert"
-                  className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2"
+                  className="text-xs font-bold text-red-300 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-950 p-2"
                 >
                   <Mail className="w-4 h-4 shrink-0" />
                   {error}
@@ -400,7 +391,7 @@ export function AccessForm({
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
+                className="w-full h-12 bg-primary text-primary-foreground hover:bg-secondary transition-colors font-bold text-xs uppercase tracking-widest rounded-xl cursor-pointer"
                 disabled={!email.trim() || isLoading}
               >
                 {isLoading ? "Отправляем..." : "Получить код"}
@@ -409,7 +400,7 @@ export function AccessForm({
               <button
                 type="button"
                 onClick={handleBackToInitial}
-                className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                className="w-full py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 disabled={isLoading}
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Назад
@@ -424,25 +415,25 @@ export function AccessForm({
         {view === "otp_verify" && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Введите код
               </h2>
-              <p className="text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Мы отправили 6-значный код на{" "}
-                <strong className="text-black">{email}</strong>
+                <strong className="text-foreground">{email}</strong>
               </p>
             </div>
 
             {/* Email badge */}
-            <div className="border border-black bg-white p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
-              <div className="w-9 h-9 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
-                <Mail className="w-4 h-4 text-black" />
+            <div className="border border-border bg-background p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
+              <div className="w-9 h-9 border border-border bg-secondary flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-black leading-tight truncate">
+                <p className="text-xs font-bold text-foreground leading-tight truncate">
                   {email}
                 </p>
-                <p className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1 mt-0.5">
+                <p className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider flex items-center gap-1 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                   Код отправлен
                 </p>
@@ -464,7 +455,7 @@ export function AccessForm({
                   const val = e.target.value.replace(/\D/g, "").slice(0, 6);
                   setOtpCode(val);
                 }}
-                className="h-14 bg-white border border-black text-center text-2xl tracking-[0.5em] uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
+                className="h-14 bg-background border border-border text-center text-2xl tracking-[0.5em] uppercase font-mono font-bold focus:ring-0 focus:border-primary rounded-xl text-foreground"
                 disabled={isLoading}
                 autoFocus
                 autoComplete="one-time-code"
@@ -473,7 +464,7 @@ export function AccessForm({
               {error && (
                 <p
                   role="alert"
-                  className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-50 p-2"
+                  className="text-xs font-bold text-red-300 text-center flex items-center justify-center gap-1.5 border border-red-200 bg-red-950 p-2"
                 >
                   <KeyRound className="w-4 h-4 shrink-0" />
                   {error}
@@ -482,7 +473,7 @@ export function AccessForm({
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
+                className="w-full h-12 bg-primary text-primary-foreground hover:bg-secondary transition-colors font-bold text-xs uppercase tracking-widest rounded-xl cursor-pointer"
                 disabled={otpCode.length !== 6 || isLoading}
               >
                 {isLoading ? "Проверяем..." : "Подтвердить"}
@@ -492,7 +483,7 @@ export function AccessForm({
                 <button
                   type="button"
                   onClick={handleBackToEmail}
-                  className="text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 cursor-pointer"
                   disabled={isLoading}
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> Другой email
@@ -501,7 +492,7 @@ export function AccessForm({
                 <button
                   type="button"
                   onClick={() => handleSendOTP()}
-                  className="text-xs font-semibold text-gray-600 hover:text-black transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   disabled={isLoading || otpCountdown > 0}
                 >
                   {otpCountdown > 0
@@ -511,9 +502,9 @@ export function AccessForm({
               </div>
             </form>
 
-            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
-              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-gray-500 leading-snug">
+            <div className="mt-6 p-3 border border-border bg-background flex gap-2.5 items-start text-left">
+              <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-[11px] text-muted-foreground leading-snug">
                 Не получили код? Проверьте папку «Спам». Код действителен 5
                 минут.
               </p>
@@ -527,25 +518,25 @@ export function AccessForm({
         {view === "invite_bind" && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Привязка инвайт-кода
               </h2>
-              <p className="text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Введите инвайт-код, чтобы навсегда закрепить доступ за вашим
                 email.
               </p>
             </div>
 
             {/* Email badge */}
-            <div className="border border-black bg-white p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
-              <div className="w-9 h-9 border border-gray-300 bg-gray-100 flex items-center justify-center shrink-0">
-                <Mail className="w-4 h-4 text-black" />
+            <div className="border border-border bg-background p-3.5 flex gap-3 items-center mb-6 text-left shadow-xs">
+              <div className="w-9 h-9 border border-border bg-secondary flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-black leading-tight truncate">
+                <p className="text-xs font-bold text-foreground leading-tight truncate">
                   {email}
                 </p>
-                <p className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1 mt-0.5">
+                <p className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider flex items-center gap-1 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                   Email подтверждён
                 </p>
@@ -560,14 +551,14 @@ export function AccessForm({
                   placeholder="ВВЕДИТЕ ИНВАЙТ-КОД"
                   value={inviteCode}
                   onChange={(e) => setInviteCode(e.target.value)}
-                  className="h-12 bg-white border border-black text-center text-base tracking-widest uppercase font-mono font-bold focus:ring-0 focus:border-black rounded-none text-black"
+                  className="h-12 bg-background border border-border text-center text-base tracking-widest uppercase font-mono font-bold focus:ring-0 focus:border-primary rounded-xl text-foreground"
                   disabled={isLoading}
                   autoFocus
                 />
                 {error && (
                   <p
                     role="alert"
-                    className="text-xs font-bold text-red-700 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-50 p-2"
+                    className="text-xs font-bold text-red-300 text-center flex items-center justify-center gap-1.5 mt-2 border border-red-200 bg-red-950 p-2"
                   >
                     <KeyRound className="w-4 h-4 shrink-0" />
                     {error}
@@ -577,7 +568,7 @@ export function AccessForm({
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-black text-white hover:bg-gray-800 transition-colors font-bold text-xs uppercase tracking-widest rounded-none cursor-pointer"
+                className="w-full h-12 bg-primary text-primary-foreground hover:bg-secondary transition-colors font-bold text-xs uppercase tracking-widest rounded-xl cursor-pointer"
                 disabled={!inviteCode.trim() || isLoading}
               >
                 {isLoading ? "Активация..." : "Активировать доступ"}
@@ -586,16 +577,16 @@ export function AccessForm({
               <button
                 type="button"
                 onClick={handleBackToInitial}
-                className="w-full py-2 text-xs font-semibold text-gray-600 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                className="w-full py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 disabled={isLoading}
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Войти с другого email
               </button>
             </form>
 
-            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
-              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-gray-500 leading-snug">
+            <div className="mt-6 p-3 border border-border bg-background flex gap-2.5 items-start text-left">
+              <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-[11px] text-muted-foreground leading-snug">
                 Инвайт-код навсегда закрепляется за вашим email. В будущем для
                 входа достаточно будет Passkey или код на почту.
               </p>
@@ -609,13 +600,13 @@ export function AccessForm({
         {view === "passkey_offer" && (
           <div>
             <div className="text-center mb-6">
-              <div className="mx-auto mb-4 w-14 h-14 border border-black bg-black text-white flex items-center justify-center">
+              <div className="mx-auto mb-4 w-14 h-14 border border-border bg-primary text-primary-foreground flex items-center justify-center">
                 <Fingerprint className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Мгновенный вход
               </h2>
-              <p className="text-xs text-gray-600 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Сохраните Passkey, чтобы в следующий раз входить в один тап
                 через Face ID, Touch ID или Windows Hello — без кода и без
                 пароля.
@@ -627,7 +618,7 @@ export function AccessForm({
                 type="button"
                 onClick={handleRegisterPasskey}
                 disabled={isLoading}
-                className="w-full h-[52px] bg-black text-white hover:bg-gray-800 active:bg-gray-900 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
+                className="w-full h-[52px] bg-primary text-primary-foreground hover:bg-secondary active:bg-secondary font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-all cursor-pointer select-none border-none"
               >
                 <Fingerprint className="w-5 h-5 shrink-0" />
                 {isLoading ? "Сохраняем..." : "Сохранить Passkey"}
@@ -636,15 +627,15 @@ export function AccessForm({
               <button
                 type="button"
                 onClick={handleSkipPasskey}
-                className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-black transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                className="w-full py-3 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1 cursor-pointer"
               >
                 Пропустить
               </button>
             </div>
 
-            <div className="mt-6 p-3 border border-gray-200 bg-white flex gap-2.5 items-start text-left">
-              <Info className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-gray-500 leading-snug">
+            <div className="mt-6 p-3 border border-border bg-background flex gap-2.5 items-start text-left">
+              <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-[11px] text-muted-foreground leading-snug">
                 Passkey хранится на вашем устройстве и защищён биометрией. Вы
                 всегда сможете войти по email, если смените устройство.
               </p>

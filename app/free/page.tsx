@@ -87,11 +87,11 @@ export default function FreeCoursePage() {
 
   if (error) {
     return (
-      <div className="course-state min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center bg-background gap-4 p-4 text-center">
         <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center text-2xl">
           ⚠️
         </div>
-        <h1 className="text-xl font-semibold text-black">
+        <h1 className="text-xl font-semibold text-foreground">
           Курс временно недоступен
         </h1>
         <p className="max-w-md text-sm text-muted-foreground">{error}</p>
@@ -116,8 +116,8 @@ export default function FreeCoursePage() {
 
   if (!courseData || courseData.modules.length === 0) {
     return (
-      <div className="course-state min-h-screen flex flex-col items-center justify-center bg-white gap-4 p-4 text-center">
-        <h1 className="text-2xl font-semibold text-black">
+      <div className="course-state min-h-screen flex flex-col items-center justify-center bg-background gap-4 p-4 text-center">
+        <h1 className="text-2xl font-semibold text-foreground">
           Материалы пока недоступны
         </h1>
         <p className="max-w-md text-sm text-muted-foreground">
@@ -209,7 +209,7 @@ export default function FreeCoursePage() {
         }}
       />
       {progressError && (
-        <p role="status" className="px-4 py-2 text-sm bg-amber-50">
+        <p role="status" className="px-4 py-2 text-sm bg-amber-950">
           {progressError}
         </p>
       )}

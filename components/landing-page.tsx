@@ -21,6 +21,7 @@ import {
   eventProgram,
 } from "@/lib/bootcamp-content";
 import s from "./bootcamp.module.css";
+import { BrandMark, BrandPlaceholder } from "@/components/brand";
 
 function Cta({
   children = "ЗАПИСАТЬСЯ НА ЭФИР",
@@ -41,16 +42,6 @@ function Cta({
     >
       <span>{children}</span>
     </a>
-  );
-}
-function Mark() {
-  return (
-    <Link className={s.logo} href="/" aria-label="New Way Out — главная">
-      <span className={s.logoIcon}>N</span>
-      <span>
-        NEW WAY OUT<strong>SALES BOOTCAMP</strong>
-      </span>
-    </Link>
   );
 }
 function Mockup({ index = 0 }: { index?: number }) {
@@ -178,7 +169,7 @@ export function LandingPage() {
         Перейти к содержимому
       </a>
       <header className={s.header}>
-        <Mark />
+        <BrandMark />
         <div>
           УЧАСТИЕ В ЭФИРЕ: <span>БЕСПЛАТНО</span>
         </div>
@@ -204,13 +195,7 @@ export function LandingPage() {
             href="/free/#first-lesson"
             aria-label="Открыть бесплатный урок NWO"
           >
-            <img
-              src="/founder.jpg"
-              alt="Ярослав Киричук — автор NWO"
-              width="1023"
-              height="1023"
-              fetchPriority="high"
-            />
+            <BrandPlaceholder variant="session" />
             <span className={s.mediaOverlay}>
               <strong>Познакомься с подходом NWO</strong>
               <Play size={52} fill="currentColor" aria-hidden />
@@ -287,14 +272,7 @@ export function LandingPage() {
               <p>Именно с этого мы начнём на эфире.</p>
             </div>
           </div>
-          <img
-            className={s.problemPhoto}
-            src="/founder.jpg"
-            width="1023"
-            height="1023"
-            alt="Ярослав Киричук, New Way Out"
-            loading="lazy"
-          />
+          <BrandPlaceholder variant="portrait" className={s.problemPhoto} />
         </section>
 
         <section className={s.quoteSection}>
@@ -543,13 +521,7 @@ export function LandingPage() {
                   className={`${s.proofThumb} ${item.type === 1 ? s.photoThumb : ""}`}
                 >
                   {item.type === 1 ? (
-                    <img
-                      src="/founder.jpg"
-                      alt="Ярослав Киричук"
-                      width="1023"
-                      height="1023"
-                      loading="lazy"
-                    />
+                    <BrandPlaceholder variant="story" />
                   ) : (
                     <>
                       <span>NWO / МАТЕРИАЛЫ</span>
@@ -756,13 +728,7 @@ export function LandingPage() {
           <div className={s.hostTop}>
             <h2 className={s.bigHeading}>Кто ведёт эфир</h2>
             <div className={s.hostPortrait}>
-              <img
-                src="/founder.jpg"
-                alt="Ярослав Киричук — автор New Way Out"
-                width="1023"
-                height="1023"
-                loading="lazy"
-              />
+              <BrandPlaceholder variant="story" />
               <strong>Ярослав Киричук</strong>
               <span>Автор NWO / New Way Out</span>
             </div>

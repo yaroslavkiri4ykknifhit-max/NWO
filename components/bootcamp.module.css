@@ -1958,3 +1958,104 @@
     transform: translateX(-33.333333%);
   }
 }
+/* Shared NWO artwork replaces every former portrait. */
+.heroMedia > :global(.brand-art) {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+}
+.heroMedia :global(.brand-art-bottom) {
+  opacity: 0;
+}
+.mediaOverlay {
+  border-color: #ffbf0066;
+  background: #1b0c0ed9;
+  box-shadow: 0 0 30px #ed242a33;
+}
+.mediaOverlay > svg {
+  color: #ffbf00;
+}
+.heroMedia:hover .mediaOverlay {
+  background: #471419e8;
+}
+.problemPhoto:global(.brand-art) {
+  min-height: 620px;
+  aspect-ratio: auto;
+  border-radius: 30px;
+}
+.proofThumb > :global(.brand-art) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  padding: 16px;
+}
+.proofThumb :global(.brand-art-center > strong) {
+  font-size: 57px;
+}
+.proofThumb :global(.brand-art-glyph) {
+  width: 42px;
+  height: 42px;
+  font-size: 29px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.proofThumb :global(.brand-art-center > p) {
+  font-size: 6px;
+  margin-top: 9px;
+}
+.proofThumb :global(.brand-art-top),
+.proofThumb :global(.brand-art-bottom) {
+  font-size: 5px;
+}
+.proofThumb :global(.brand-art-bottom) {
+  padding-top: 8px;
+}
+.hostPortrait > :global(.brand-art) {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 25px;
+}
+@media (max-width: 767px) {
+  .problemPhoto:global(.brand-art) {
+    min-height: 400px;
+    aspect-ratio: 4/4.5;
+    border-radius: 20px;
+  }
+  .heroMedia > :global(.brand-art) {
+    padding: 15px;
+    min-height: 0;
+  }
+  .heroMedia :global(.brand-art-center > strong) {
+    font-size: 75px;
+  }
+  .heroMedia :global(.brand-art-glyph) {
+    width: 42px;
+    height: 42px;
+    font-size: 28px;
+    border-radius: 11px;
+    margin-bottom: 10px;
+  }
+  .heroMedia :global(.brand-art-center > p) {
+    font-size: 6px;
+    margin-top: 10px;
+  }
+  .hostPortrait > :global(.brand-art) {
+    min-height: 300px;
+  }
+}
+.hostPortrait {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 380px) {
+  .heroMedia :global(.brand-art-center > strong) {
+    font-size: 54px;
+  }
+}

@@ -1,3 +1,4 @@
+import { BrandPlaceholder } from "@/components/brand";
 import { ArrowUpRight } from "lucide-react";
 import { SiteHeader, SiteFooter, contactHref } from "@/components/site-shell";
 import { CinematicMotion } from "@/components/cinematic-motion";
@@ -42,13 +43,7 @@ export default function MentorshipPage() {
                 </p>
               </div>
               <figure className="mentor-photo">
-                <img
-                  src="/founder.jpg"
-                  width="640"
-                  height="640"
-                  alt="Ярослав Киричук — автор New Way Out"
-                  fetchPriority="high"
-                />
+                <BrandPlaceholder variant="portrait" />
                 <figcaption>
                   <strong>Ярослав Киричук</strong>
                   <span>Автор NWO</span>
