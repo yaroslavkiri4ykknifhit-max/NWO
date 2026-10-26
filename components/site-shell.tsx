@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 
 export const contactHref = "https://t.me/c0lddev";
-const navigation = [
+const courseNavigation = [
   { href: "/#formats", label: "Обучение" },
   { href: "/mentorship/", label: "Менторство" },
   { href: "/blog/", label: "Журнал" },
@@ -15,6 +15,14 @@ const navigation = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const isEvent = pathname === "/";
+  const navigation = isEvent
+    ? [
+        { href: "/#program", label: "Программа эфира" },
+        { href: "/#host", label: "Кто ведёт" },
+        { href: "/#faq", label: "Вопросы" },
+      ]
+    : [{ href: "/#program", label: "Эфир" }, ...courseNavigation];
   const toggle = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     setOpen(false);
@@ -56,8 +64,12 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="nav-end">
-            <Link className="site-nav-cta" href="/premium/#login">
-              Войти в Black <ArrowUpRight size={15} />
+            <Link
+              className="site-nav-cta"
+              href={isEvent ? "/#pricing" : "/premium/#login"}
+            >
+              {isEvent ? "Хочу на эфир" : "Войти в Black"}{" "}
+              <ArrowUpRight size={15} />
             </Link>
             <button
               ref={toggle}
