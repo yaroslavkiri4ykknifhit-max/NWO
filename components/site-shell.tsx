@@ -25,6 +25,15 @@ export function SiteHeader() {
         { href: "/blog/", label: "Журнал" },
       ]
     : [{ href: "/#program", label: "Эфир" }, ...courseNavigation];
+  const mobileNavigation = [
+    ...navigation,
+    { href: "/mentorship/", label: "Менторство" },
+    { href: "/free/", label: "Бесплатный курс" },
+    { href: "/premium/#login", label: "Войти в Black" },
+  ].filter(
+    (item, index, items) =>
+      items.findIndex((candidate) => candidate.href === item.href) === index,
+  );
   const toggle = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     setOpen(false);
@@ -85,7 +94,7 @@ export function SiteHeader() {
             className="site-mobile-nav"
             aria-label="Меню на телефоне"
           >
-            {navigation.map((item) => (
+            {mobileNavigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -95,18 +104,18 @@ export function SiteHeader() {
                 <ArrowUpRight size={17} />
               </Link>
             ))}
-            <Link href="/mentorship/" onClick={() => setOpen(false)}>
-              Менторство <ArrowUpRight size={17} />
-            </Link>
-            <Link href="/free/" onClick={() => setOpen(false)}>
-              Бесплатный курс <ArrowUpRight size={17} />
-            </Link>
-            <Link href="/premium/#login" onClick={() => setOpen(false)}>
-              Войти в Black <ArrowUpRight size={17} />
-            </Link>
           </nav>
         )}
       </header>
+      {open && (
+        <button
+          type="button"
+          className="site-menu-backdrop"
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+        />
+      )}
     </>
   );
 }

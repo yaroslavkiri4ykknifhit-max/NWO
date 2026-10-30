@@ -20,3 +20,12 @@ Fonts are distributed under their accompanying OFL licenses. `app/font-data.css`
 - Paid access was not exercised with a real account; its existing data and authentication logic were left intact. Local preview uses the repository's existing public-course fallback when the deployment secret is absent.
 
 `pnpm-workspace.yaml` mirrors the existing lodash override so frozen installation works with both pnpm 10 (CI) and pnpm 11 (local runtime).
+
+## Mobile refinement
+
+- Body copy is 15–16 px, secondary copy at least 12 px, primary button text 14 px; menu toggle is 48 px.
+- Full-width primary actions, smaller decorative posters, shorter opening spacing, and poster artwork that avoids its captions.
+- Native safe-area padding and viewport-fit support without restricting zoom. Form fields use 16 px text to avoid focus zoom on iOS.
+- The menu has a dismissing backdrop, deduplicated destinations, and a scrollable height limit for landscape phones. Footer links and lesson controls have larger touch areas.
+- Homepage scroll effects register no scroll listener below 768 px. Internal page reveals use shorter travel and duration; pages without parallax have no scroll handler.
+- Chrome iframe QA at 320×568, 375×667, 390×844, 430×844, 667×375, and 768×900: no horizontal overflow or out-of-bounds headings, paragraphs or links on the homepage. Also checked course introductions, mentorship, journal and an article at 320 px, plus lesson navigation and outline at 375 px. Real-device Safari testing was not available.

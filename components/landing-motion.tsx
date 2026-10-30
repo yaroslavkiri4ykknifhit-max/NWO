@@ -8,10 +8,12 @@ export function LandingMotion({ children }: { children: ReactNode }) {
     const element = root.current;
     if (!element) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = window.matchMedia("(min-width: 768px)");
     let teardown = () => {};
     const setup = () => {
       teardown();
-      if (preference.matches) return;
+      // Mobile uses CSS entrance effects only; no per-scroll geometry work.
+      if (preference.matches || !desktop.matches) return;
       const opening = element.querySelector<HTMLElement>(".opening-scene");
       const ink = element.querySelector<HTMLElement>("[data-ink]");
       const steps = Array.from(
@@ -61,9 +63,11 @@ export function LandingMotion({ children }: { children: ReactNode }) {
     };
     setup();
     preference.addEventListener("change", setup);
+    desktop.addEventListener("change", setup);
     return () => {
       teardown();
       preference.removeEventListener("change", setup);
+      desktop.removeEventListener("change", setup);
     };
   }, []);
   return <div ref={root}>{children}</div>;

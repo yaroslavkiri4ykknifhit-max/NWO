@@ -8,21 +8,26 @@ export function CinematicMotion({ children }: { children: ReactNode }) {
     const element = root.current;
     if (!element) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = window.matchMedia("(min-width: 768px)");
     let cleanup = () => {};
     const setup = () => {
       cleanup();
       if (preference.matches) return;
       const animations: Animation[] = [];
+      const distance = desktop.matches ? 28 : 10;
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (!entry.isIntersecting) return;
             const animation = entry.target.animate(
               [
-                { opacity: 0, transform: "translateY(28px)" },
+                { opacity: 0, transform: `translateY(${distance}px)` },
                 { opacity: 1, transform: "translateY(0)" },
               ],
-              { duration: 850, easing: "cubic-bezier(.2,.65,.2,1)" },
+              {
+                duration: desktop.matches ? 850 : 400,
+                easing: "cubic-bezier(.2,.65,.2,1)",
+              },
             );
             animations.push(animation);
             observer.unobserve(entry.target);
@@ -47,7 +52,8 @@ export function CinematicMotion({ children }: { children: ReactNode }) {
         if (!frame) frame = requestAnimationFrame(paint);
       };
       paint();
-      window.addEventListener("scroll", scroll, { passive: true });
+      if (hero && desktop.matches)
+        window.addEventListener("scroll", scroll, { passive: true });
       cleanup = () => {
         observer.disconnect();
         window.removeEventListener("scroll", scroll);
@@ -58,9 +64,11 @@ export function CinematicMotion({ children }: { children: ReactNode }) {
     };
     setup();
     preference.addEventListener("change", setup);
+    desktop.addEventListener("change", setup);
     return () => {
       cleanup();
       preference.removeEventListener("change", setup);
+      desktop.removeEventListener("change", setup);
     };
   }, []);
   return <div ref={root}>{children}</div>;
