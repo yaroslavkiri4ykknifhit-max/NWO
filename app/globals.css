@@ -6,41 +6,41 @@
 :root,
 .dark {
   color-scheme: dark;
-  --font-ui: "Inter", Arial, sans-serif;
-  --font-display: "Syne", "Inter", Arial, sans-serif;
-  --background: #0d0d0d;
-  --foreground: #fafafa;
-  --card: #161313;
-  --card-foreground: #fafafa;
-  --popover: #181414;
-  --popover-foreground: #fafafa;
-  --primary: #ed242a;
-  --primary-foreground: #ffffff;
-  --secondary: #251b1b;
-  --secondary-foreground: #f5eeee;
-  --muted: #1b1717;
-  --muted-foreground: #aaa5a5;
-  --accent: #ffbf00;
-  --accent-foreground: #171000;
+  --font-ui: "Manrope", Arial, sans-serif;
+  --font-display: "Oswald", "Arial Narrow", Arial, sans-serif;
+  --background: #000000;
+  --foreground: #f5f3ef;
+  --card: #111111;
+  --card-foreground: #f5f3ef;
+  --popover: #111111;
+  --popover-foreground: #f5f3ef;
+  --primary: #ff5a1f;
+  --primary-foreground: #000000;
+  --secondary: #242424;
+  --secondary-foreground: #f5f3ef;
+  --muted: #181818;
+  --muted-foreground: #b9b7b3;
+  --accent: #ff5a1f;
+  --accent-foreground: #000000;
   --destructive: #f45660;
-  --destructive-foreground: #ffffff;
-  --border: #ffffff29;
-  --input: #ffffff38;
-  --ring: #ffbf00;
-  --chart-1: #ed242a;
-  --chart-2: #ffbf00;
+  --destructive-foreground: #f5f3ef;
+  --border: #f5f3ef29;
+  --input: #f5f3ef38;
+  --ring: #ff5a1f;
+  --chart-1: #ff5a1f;
+  --chart-2: #ff5a1f;
   --chart-3: #e57d45;
   --chart-4: #936c41;
   --chart-5: #b9a689;
   --radius: 1rem;
-  --sidebar: #120e0e;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #ed242a;
-  --sidebar-primary-foreground: #fff;
-  --sidebar-accent: #2b1717;
+  --sidebar: #000000;
+  --sidebar-foreground: #f5f3ef;
+  --sidebar-primary: #ff5a1f;
+  --sidebar-primary-foreground: #000;
+  --sidebar-accent: #242424;
   --sidebar-accent-foreground: #fff;
-  --sidebar-border: #ffffff29;
-  --sidebar-ring: #ffbf00;
+  --sidebar-border: #f5f3ef29;
+  --sidebar-ring: #ff5a1f;
 }
 
 @theme inline {
@@ -107,11 +107,11 @@ body {
   margin: 0;
 }
 ::selection {
-  background: #ffbf00;
+  background: #ff5a1f;
   color: #151000;
 }
 :where(a, button, input, summary):focus-visible {
-  outline: 2px solid #ffbf00;
+  outline: 2px solid #ff5a1f;
   outline-offset: 5px;
 }
 :where(a, button, summary) {
@@ -128,7 +128,7 @@ button:disabled {
   font-family: var(--font-ui);
 }
 .text-brand-yellow {
-  color: #ffbf00;
+  color: #ff5a1f;
 }
 @media (prefers-reduced-motion: reduce) {
   html {

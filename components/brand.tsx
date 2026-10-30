@@ -4,10 +4,10 @@ export function BrandIdentity() {
   return (
     <>
       <span className="brand-mark-icon" aria-hidden="true">
-        N
+        NWO
       </span>
       <span className="brand-mark-name">
-        NEW WAY OUT<strong>SALES BOOTCAMP</strong>
+        NEW WAY OUT<strong>Практика продаж</strong>
       </span>
     </>
   );

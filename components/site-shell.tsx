@@ -21,7 +21,8 @@ export function SiteHeader() {
     ? [
         { href: "/#program", label: "Программа эфира" },
         { href: "/#host", label: "Кто ведёт" },
-        { href: "/#faq", label: "Вопросы" },
+        { href: "/#formats", label: "Обучение" },
+        { href: "/blog/", label: "Журнал" },
       ]
     : [{ href: "/#program", label: "Эфир" }, ...courseNavigation];
   const toggle = useRef<HTMLButtonElement>(null);
@@ -94,6 +95,9 @@ export function SiteHeader() {
                 <ArrowUpRight size={17} />
               </Link>
             ))}
+            <Link href="/mentorship/" onClick={() => setOpen(false)}>
+              Менторство <ArrowUpRight size={17} />
+            </Link>
             <Link href="/free/" onClick={() => setOpen(false)}>
               Бесплатный курс <ArrowUpRight size={17} />
             </Link>
@@ -123,6 +127,12 @@ export function SiteFooter() {
             Написать Ярославу <ArrowUpRight size={17} />
           </a>
         </div>
+        <p className="footer-conditions">
+          Материалы NWO посвящены навыкам продаж и коммуникации. Учебные примеры
+          не являются обещанием результата. Эффект зависит от продукта, рынка,
+          опыта и практики. Обучение не гарантирует доход, трудоустройство или
+          определённое количество сделок.
+        </p>
         <div className="site-footer-bottom">
           <span>© {new Date().getFullYear()} New Way Out</span>
           <nav aria-label="Все разделы">
