@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, X } from "lucide-react";
+import { TelegramCTA } from "@/components/telegram-cta";
+import { siteConfig } from "@/lib/site-config";
 import { BrandMark, BrandPlaceholder } from "@/components/brand";
 
-export const contactHref = "https://t.me/c0lddev";
+export const contactHref = siteConfig.telegramContactUrl;
 const courseNavigation = [
   { href: "/#formats", label: "Обучение" },
   { href: "/mentorship/", label: "Менторство" },
@@ -19,12 +21,12 @@ export function SiteHeader() {
   const isEvent = pathname === "/";
   const navigation = isEvent
     ? [
-        { href: "/#program", label: "Программа эфира" },
+        { href: "/#program", label: "Подход" },
         { href: "/#host", label: "Кто ведёт" },
         { href: "/#formats", label: "Обучение" },
         { href: "/blog/", label: "Журнал" },
       ]
-    : [{ href: "/#program", label: "Эфир" }, ...courseNavigation];
+    : [{ href: "/#program", label: "Подход" }, ...courseNavigation];
   const mobileNavigation = [
     ...navigation,
     { href: "/mentorship/", label: "Менторство" },
@@ -35,19 +37,38 @@ export function SiteHeader() {
       items.findIndex((candidate) => candidate.href === item.href) === index,
   );
   const toggle = useRef<HTMLButtonElement>(null);
+  const menu = useRef<HTMLElement>(null);
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
   useEffect(() => {
     if (!open) return;
+    document.body.dataset.menuOpen = "true";
     const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        const links = [
+          ...(menu.current?.querySelectorAll<HTMLElement>("a[href]") || []),
+        ];
+        const first = toggle.current,
+          last = links[links.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
       if (event.key === "Escape") {
         setOpen(false);
         toggle.current?.focus();
       }
     };
     window.addEventListener("keydown", dismiss);
-    return () => window.removeEventListener("keydown", dismiss);
+    return () => {
+      window.removeEventListener("keydown", dismiss);
+      delete document.body.dataset.menuOpen;
+    };
   }, [open]);
   return (
     <>
@@ -69,13 +90,9 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="nav-end">
-            <Link
-              className="site-nav-cta"
-              href={isEvent ? "/#pricing" : "/premium/#login"}
-            >
-              {isEvent ? "Хочу на эфир" : "Войти в Black"}{" "}
-              <ArrowUpRight size={15} />
-            </Link>
+            <TelegramCTA placement="header" className="site-nav-cta">
+              Telegram
+            </TelegramCTA>
             <button
               ref={toggle}
               className="site-menu-toggle"
@@ -90,6 +107,7 @@ export function SiteHeader() {
         </div>
         {open && (
           <nav
+            ref={menu}
             id="site-mobile-menu"
             className="site-mobile-nav"
             aria-label="Меню на телефоне"
@@ -126,7 +144,9 @@ export function SiteFooter() {
       <div className="site-container">
         <div className="footer-top">
           <BrandMark />
-          <p>Навык, который остаётся с тобой.</p>
+          <TelegramCTA placement="footer" className="footer-channel">
+            Канал NWO
+          </TelegramCTA>
           <a
             className="site-text-link"
             href={contactHref}

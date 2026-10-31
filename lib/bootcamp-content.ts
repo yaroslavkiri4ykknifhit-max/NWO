@@ -1,4 +1,6 @@
-export const eventContactHref = `https://t.me/c0lddev?text=${encodeURIComponent("Привет! Хочу на эфир NWO по продажам. Подскажи дату и как присоединиться.")}`;
+import { siteConfig } from "@/lib/site-config";
+
+export const eventContactHref = `${siteConfig.telegramContactUrl}?text=${encodeURIComponent("Привет! Хочу на эфир NWO по продажам. Подскажи дату и как присоединиться.")}`;
 
 export const eventProgram = [
   {
@@ -59,6 +61,11 @@ export const eventProgram = [
 ];
 
 export const bootcampFaq = [
+  {
+    question: "Как устроено обучение?",
+    answer:
+      "В открытой базе — уроки без регистрации, прогресс хранится в браузере. NWO Black — углублённые материалы за $17 с входом по email и инвайт-коду. Менторство — 30 дней личной работы за $170. Подробности есть на страницах форматов; вопросы можно задать Ярославу в Telegram @c0lddev.",
+  },
   {
     question: "Я новичок. Мне подойдёт?",
     answer:

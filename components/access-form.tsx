@@ -31,7 +31,11 @@ interface AccessFormProps {
 }
 
 type FormView =
-  "initial" | "email_input" | "otp_verify" | "invite_bind" | "passkey_offer";
+  | "initial"
+  | "email_input"
+  | "otp_verify"
+  | "invite_bind"
+  | "passkey_offer";
 
 export function AccessForm({
   onAccessGranted,
@@ -356,9 +360,9 @@ export function AccessForm({
         {view === "email_input" && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Вход по email
-              </h2>
+              </h1>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Введите ваш email — мы отправим 6-значный код для входа.
               </p>
@@ -415,9 +419,9 @@ export function AccessForm({
         {view === "otp_verify" && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Введите код
-              </h2>
+              </h1>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Мы отправили 6-значный код на{" "}
                 <strong className="text-foreground">{email}</strong>
@@ -518,9 +522,9 @@ export function AccessForm({
         {view === "invite_bind" && (
           <div>
             <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Привязка инвайт-кода
-              </h2>
+              </h1>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Введите инвайт-код, чтобы навсегда закрепить доступ за вашим
                 email.
@@ -603,9 +607,9 @@ export function AccessForm({
               <div className="mx-auto mb-4 w-14 h-14 border border-border bg-primary text-primary-foreground flex items-center justify-center">
                 <Fingerprint className="w-7 h-7" />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-2">
                 Мгновенный вход
-              </h2>
+              </h1>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Сохраните Passkey, чтобы в следующий раз входить в один тап
                 через Face ID, Touch ID или Windows Hello — без кода и без

@@ -1,14 +1,24 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
 
 import "./globals.css";
 import "./editorial.css";
-import "./font-data.css";
+
+const manrope = localFont({
+  src: [
+    { path: "./fonts/manrope-400.woff", weight: "400", style: "normal" },
+    { path: "./fonts/manrope-600.woff", weight: "600", style: "normal" },
+    { path: "./fonts/manrope-800.woff", weight: "800", style: "normal" },
+  ],
+  variable: "--font-manrope",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
+  themeColor: "#0a0a0a",
 };
 
 export const metadata: Metadata = {
@@ -118,7 +128,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="ru" className="bg-background">
+    <html lang="ru" className={`${manrope.variable} bg-background`}>
       <head>
         <meta httpEquiv="Referrer-Policy" content="no-referrer" />
         <meta

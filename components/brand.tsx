@@ -4,7 +4,7 @@ export function BrandIdentity() {
   return (
     <>
       <span className="brand-mark-icon" aria-hidden="true">
-        NWO
+        NWO<span className="brand-registered">®</span>
       </span>
       <span className="brand-mark-name">
         NEW WAY OUT<strong>Практика продаж</strong>
