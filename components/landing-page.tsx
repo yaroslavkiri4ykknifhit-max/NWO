@@ -7,24 +7,24 @@ import {
 } from "@/lib/bootcamp-content";
 import { SiteHeader, SiteFooter } from "@/components/site-shell";
 import { LandingMotion } from "@/components/landing-motion";
-import { BrandPlaceholder } from "@/components/brand";
+import { TelegramCTA, StickyTelegramCTA } from "@/components/telegram-cta";
 
 const formats = [
   {
     name: "Открытая база",
     price: "$0",
-    detail: "Самостоятельный старт",
-    text: "Первый контакт, потребность и ценность. Уроки без регистрации, прогресс — в твоём браузере.",
+    detail: "Без регистрации",
+    text: "Первый контакт, потребность и ценность. Учись в своём темпе — прогресс останется в твоём браузере.",
     href: "/free/",
     cta: "Открыть уроки",
   },
   {
     name: "NWO Black",
     price: "$17",
-    detail: "Глубже в переговоры",
-    text: "Работа с ценой, возражениями и закрытием сделок. Доступ по email и инвайт-коду, сохранение прогресса.",
+    detail: "Самостоятельное обучение",
+    text: "Глубже в переговоры: цена, возражения и закрытие сделок. Доступ по email и инвайт-коду.",
     href: "/premium/",
-    cta: "Посмотреть Black",
+    cta: "Программа Black",
   },
   {
     name: "Менторство",
@@ -36,203 +36,198 @@ const formats = [
   },
 ];
 
+function SectionLabel({
+  number,
+  children,
+}: {
+  number: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="section-label">
+      <span>{number} /</span>
+      <span>{children}</span>
+    </div>
+  );
+}
+
 export function LandingPage() {
   return (
     <div className="editorial-site home-site">
       <SiteHeader />
       <LandingMotion>
         <main id="main-content">
-          <section className="opening-scene" aria-labelledby="hero-title">
-            <div className="opening-sticky">
-              <div className="opening-copy">
-                <div className="opening-meta">
-                  <span>New Way Out / Обучение продажам</span>
-                  <span>Открытый онлайн-эфир</span>
-                </div>
-                <h1 id="hero-title" className="opening-title">
-                  <span>ОТ КОНТАКТА</span>
-                  <span>ДО СДЕЛКИ.</span>
-                </h1>
-                <div className="opening-bottom">
-                  <div>
-                    <p>
-                      Пойми клиента.
-                      <br />
-                      Покажи ценность.
-                      <br />
-                      Договорись о следующем шаге.
-                    </p>
-                    <a
-                      href={eventContactHref}
-                      className="site-button"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      На бесплатный эфир <ArrowUpRight size={20} aria-hidden />
-                    </a>
-                    <small>С Ярославом Киричуком. Можно без опыта.</small>
-                  </div>
-                  <a className="scroll-cue" href="#approach">
-                    <ArrowDown size={23} aria-hidden />
-                    <span>Листай вниз</span>
-                  </a>
-                </div>
+          <section
+            id="hero"
+            className="cover site-container"
+            aria-labelledby="hero-title"
+          >
+            <div className="cover-meta">
+              <span>New Way Out — практика продаж</span>
+              <span>Понимание. Система. Действие.</span>
+            </div>
+            <h1 id="hero-title" className="cover-title">
+              <span className="title-mask">
+                <span>ПРОДАЖИ —</span>
+              </span>
+              <span className="title-mask">
+                <span>ЭТО НАВЫК.</span>
+              </span>
+              <span className="title-mask title-outline">
+                <span>НЕ СЛУЧАЙНОСТЬ.</span>
+              </span>
+            </h1>
+            <div className="cover-bottom">
+              <a href="#approach" className="cover-scroll">
+                <ArrowDown size={22} aria-hidden />
+                <span>
+                  От первого контакта
+                  <br />
+                  до сделки
+                </span>
+              </a>
+              <div className="cover-description">
+                <p>
+                  Учись понимать клиентов, работать с возражениями и уверенно
+                  вести разговор к сделке.
+                </p>
+                <TelegramCTA placement="hero" />
+                <span className="site-microcopy">
+                  Telegram-канал NWO. Твой следующий шаг.
+                </span>
               </div>
-              <div className="opening-poster" aria-hidden="true">
-                <div className="poster-top">
-                  <span>Меньше случайностей.</span>
-                  <span>Больше системы.</span>
-                </div>
-                <div className="signal-symbol">
-                  <svg viewBox="0 0 400 500" fill="none">
-                    <path
-                      d="M40 400 305 135M72 135h233v233"
-                      stroke="currentColor"
-                      strokeWidth="88"
-                    />
-                  </svg>
-                  <div className="signal-echo" />
-                </div>
-                <div className="poster-bottom">
-                  <span>
-                    Твой следующий
-                    <br />
-                    разговор будет другим.
-                  </span>
-                  <b>NWO®</b>
-                </div>
-                <div className="poster-shutter" />
+              <div className="cover-seal" aria-hidden="true">
+                <span>NWO</span>
+                <small>
+                  NEW WAY OUT®
+                  <br />
+                  SALES PRACTICE
+                </small>
               </div>
-              <div className="scene-index" aria-hidden="true">
-                Навык в движении <span>↓</span>
-              </div>
+            </div>
+            <div className="cover-footnote">
+              <span>Навык, который остаётся с тобой.</span>
+              <span>Листай, чтобы разобраться ↓</span>
             </div>
           </section>
 
-          <section id="approach" className="approach-section site-container">
-            <div className="section-kicker">
-              <span>Подход NWO</span>
-              <span>Продажи начинаются с понимания</span>
-            </div>
-            <h2 className="manifesto" data-ink>
-              НЕ ИСКАТЬ
-              <br />
-              НУЖНЫЕ СЛОВА.
-              <br />
-              ПОНИМАТЬ,
-              <br />
-              ЧТО ЗА НИМИ.
-            </h2>
-            <div className="approach-bottom">
-              <span className="asterisk" aria-hidden="true">
-                ✳
-              </span>
-              <div>
+          <section id="approach" className="objections-section site-container">
+            <SectionLabel number="01">Знакомый разговор</SectionLabel>
+            <div className="objections-layout">
+              <h2 className="objection-words" data-reveal>
+                <span>«ДОРОГО».</span>
+                <span>«Я ПОДУМАЮ».</span>
+                <span>
+                  «СКИНЬТЕ
+                  <br />
+                  ИНФОРМАЦИЮ».
+                </span>
+              </h2>
+              <div className="objections-copy">
+                <span className="small-cross" aria-hidden>
+                  ↗
+                </span>
+                <h3>
+                  За каждым ответом
+                  <br />
+                  есть причина.
+                </h3>
                 <p>
-                  «Дорого». «Я подумаю». «Скиньте информацию». Знакомо? Вместо
-                  волшебных скриптов — понятная структура разговора.
-                </p>
-                <p>
+                  Вместо волшебных скриптов — понятная структура разговора.
                   Узнай, что нужно человеку, свяжи предложение с его задачей и
-                  закончи диалог конкретной договорённостью. Без давления и
-                  бесконечных скидок.
+                  договорись о следующем шаге.
                 </p>
+                <p>Без давления и бесконечных скидок.</p>
                 <Link className="site-text-link" href="/free/#first-lesson">
                   Посмотреть бесплатный урок{" "}
-                  <ArrowUpRight size={19} aria-hidden />
+                  <ArrowUpRight size={18} aria-hidden />
                 </Link>
               </div>
             </div>
           </section>
 
-          <section id="program" className="program-section">
-            <div className="site-container program-layout">
-              <div className="program-heading">
-                <span className="site-eyebrow">Программа эфира</span>
-                <h2>
+          <section id="program" className="method-section">
+            <div className="site-container">
+              <SectionLabel number="02">Система NWO</SectionLabel>
+              <div className="section-heading">
+                <h2 data-reveal>
                   ПЯТЬ ШАГОВ.
                   <br />
-                  ОДИН
-                  <br />
-                  ДИАЛОГ.
+                  <span>ОДИН ДИАЛОГ.</span>
                 </h2>
                 <p>
-                  Разберём путь от первого сообщения до следующего действия. С
-                  примерами, которые можно адаптировать к своему продукту.
+                  От первого сообщения до конкретной договорённости. Структура,
+                  которую можно адаптировать к своему продукту.
                 </p>
-                <a
-                  href={eventContactHref}
-                  className="site-text-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Участвовать бесплатно <ArrowUpRight size={19} aria-hidden />
-                </a>
               </div>
-              <div className="program-steps">
+              <div className="method-list">
                 {eventProgram.map((item, i) => (
-                  <article className="program-step" key={item.tag} data-step>
-                    <div className="step-top">
-                      <span>0{i + 1}</span>
-                      <span>{item.tag.toLocaleLowerCase("ru")}</span>
-                      <ArrowDown size={20} aria-hidden />
-                    </div>
-                    <h3>{item.title}</h3>
-                    <p>{item.description}</p>
-                    <details>
-                      <summary>
-                        Что внутри <Plus size={17} aria-hidden />
-                      </summary>
+                  <details className="method-row" key={item.tag} open={i === 0}>
+                    <summary>
+                      <span className="method-number">0{i + 1}</span>
+                      <span className="method-name">{item.tag}</span>
+                      <span className="method-title">{item.title}</span>
+                      <Plus size={23} aria-hidden />
+                    </summary>
+                    <div className="method-detail">
+                      <p>{item.description}</p>
                       <ul>
                         {item.points.map((point) => (
                           <li key={point}>{point}</li>
                         ))}
                       </ul>
-                    </details>
-                  </article>
+                    </div>
+                  </details>
                 ))}
+              </div>
+              <div className="method-after">
+                <span>Понимать разговор. Управлять следующим шагом.</span>
+                <TelegramCTA placement="midpage" />
               </div>
             </div>
           </section>
 
-          <section id="host" className="host-section site-container">
-            <div className="host-art">
-              <BrandPlaceholder variant="portrait" />
-              <span className="host-art-caption">
-                Личный опыт → понятная система
-              </span>
-            </div>
-            <div className="host-copy">
-              <span className="site-eyebrow">Кто ведёт</span>
-              <h2>
-                ЯРОСЛАВ
-                <br />
-                КИРИЧУК.
-              </h2>
-              <span className="host-role">Автор NWO / New Way Out</span>
-              <p>
-                Мои первые звонки были неуверенными, а цену я называл
-                извиняющимся тоном. Всё изменилось, когда я стал меньше
-                рассказывать о продукте и больше спрашивать.
-              </p>
-              <blockquote>
-                «Клиенту важен не список характеристик. Ему нужно решение своей
-                задачи».
-              </blockquote>
-              <p>
-                Этот опыт я собрал в открытую базу, Black и личное менторство.
-                На эфире разберём эту логику по шагам.
-              </p>
-              <Link href="/blog/how-i-made-11k/" className="site-text-link">
-                Моя история в журнале <ArrowUpRight size={19} aria-hidden />
-              </Link>
+          <section id="host" className="author-section site-container">
+            <SectionLabel number="03">Человек за проектом</SectionLabel>
+            <div className="author-grid">
+              <div className="author-title">
+                <h2 data-reveal>
+                  ЯРОСЛАВ
+                  <br />
+                  КИРИЧУК<span aria-hidden="true">↗</span>
+                </h2>
+                <p>Автор NWO / New Way Out</p>
+                <div className="author-note">
+                  <span>Личный опыт, собранный в систему.</span>
+                  <span>Y. K. / NWO®</span>
+                </div>
+              </div>
+              <div className="author-copy">
+                <p>
+                  Мои первые звонки были неуверенными, а цену я называл
+                  извиняющимся тоном. Всё изменилось, когда я стал меньше
+                  рассказывать о продукте и больше спрашивать.
+                </p>
+                <blockquote>
+                  «Клиенту важен не список характеристик. Ему нужно решение
+                  своей задачи».
+                </blockquote>
+                <p>
+                  Этот опыт я собрал в открытую базу, Black и личное менторство.
+                  На эфире разберём эту логику по шагам.
+                </p>
+                <Link href="/blog/how-i-made-11k/" className="site-text-link">
+                  Моя история целиком <ArrowUpRight size={18} aria-hidden />
+                </Link>
+              </div>
             </div>
           </section>
 
-          <section id="formats" className="formats-section">
+          <section id="formats" className="editions-section">
             <div className="site-container">
-              <div className="formats-heading">
-                <h2>
+              <SectionLabel number="04">Форматы обучения</SectionLabel>
+              <div className="section-heading">
+                <h2 data-reveal>
                   ТВОЙ ТЕМП.
                   <br />
                   ТВОЙ МАРШРУТ.
@@ -243,111 +238,131 @@ export function LandingPage() {
                   Продолжение выбираешь сам.
                 </p>
               </div>
-              <div className="format-grid">
+              <div className="editions-list">
                 {formats.map((format, i) => (
-                  <article
-                    className={`format-card format-card-${i}`}
-                    key={format.name}
-                  >
-                    <div className="format-top">
+                  <article className="edition-row" key={format.name}>
+                    <span className="edition-number">0{i + 1}</span>
+                    <div className="edition-name">
                       <span>{format.detail}</span>
-                      <ArrowUpRight size={22} aria-hidden />
+                      <h3>{format.name}</h3>
                     </div>
-                    <h3>{format.name}</h3>
-                    <strong className="format-price">{format.price}</strong>
                     <p>{format.text}</p>
-                    <Link href={format.href} className="format-link">
-                      {format.cta}
-                      <ArrowUpRight size={20} aria-hidden />
+                    <strong>{format.price}</strong>
+                    <Link
+                      href={format.href}
+                      data-program-link={format.name}
+                      className="edition-link"
+                    >
+                      <span>{format.cta}</span>
+                      <ArrowUpRight size={23} aria-hidden />
                     </Link>
                   </article>
                 ))}
               </div>
-              <p className="format-note">
+              <p className="edition-note">
                 Black и менторство — отдельные форматы. Для участия в бесплатном
                 эфире покупать их не нужно.
               </p>
             </div>
           </section>
 
-          <section className="journal-teaser site-container">
-            <div>
-              <span className="site-eyebrow">Журнал NWO</span>
-              <h2>
-                ОТ ОПЫТА
-                <br />К ПРАКТИКЕ.
-              </h2>
-            </div>
-            <div className="teaser-links">
-              <Link href="/blog/how-i-made-11k/">
-                <span>Как я пришёл в продажи</span>
-                <ArrowUpRight aria-hidden />
-              </Link>
-              <Link href="/blog/why-managers-burn-out/">
-                <span>Почему структура важнее импровизации</span>
-                <ArrowUpRight aria-hidden />
-              </Link>
-              <Link href="/blog/" className="all-posts">
-                Все материалы
-                <ArrowUpRight size={18} aria-hidden />
-              </Link>
-            </div>
-          </section>
-
-          <section id="faq" className="faq-section site-container">
-            <h2>
-              ЕСТЬ
-              <br />
-              ВОПРОСЫ?
-            </h2>
-            <div>
-              {bootcampFaq.map((item) => (
-                <details key={item.question}>
-                  <summary>
-                    {item.question}
-                    <Plus size={22} aria-hidden />
-                  </summary>
-                  <p>{item.answer}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-
-          <section id="pricing" className="event-closing">
-            <div className="site-container">
-              <div className="closing-meta">
-                <span>Онлайн. Бесплатно. По делу.</span>
-                <span>Дата и время уточняются</span>
-              </div>
-              <h2>
-                НАЧНИ
-                <br />С ДИАЛОГА.
-              </h2>
-              <div className="closing-bottom">
-                <p>
-                  Напиши «ЭФИР» Ярославу в Telegram.
+          <section id="practice" className="practice-section site-container">
+            <SectionLabel number="05">Из теории в практику</SectionLabel>
+            <div className="practice-grid">
+              <div>
+                <h2 data-reveal>
+                  СНАЧАЛА
                   <br />
-                  Уточни расписание, площадку и ссылку на участие.
+                  ПОПРОБУЙ.
+                </h2>
+                <p>
+                  Познакомься с подходом NWO до выбора платного формата: открой
+                  урок или прочитай историю автора.
                 </p>
+                <Link
+                  href="/free/#first-lesson"
+                  className="site-button site-button-outline"
+                >
+                  Первый урок бесплатно <ArrowUpRight size={20} aria-hidden />
+                </Link>
+              </div>
+              <div className="practice-links">
+                <Link href="/blog/how-i-made-11k/">
+                  <span className="site-eyebrow">01 / Личный опыт</span>
+                  <h3>
+                    Как я пришёл
+                    <br />в продажи
+                  </h3>
+                  <ArrowUpRight size={28} aria-hidden />
+                </Link>
+                <Link href="/blog/why-managers-burn-out/">
+                  <span className="site-eyebrow">02 / Журнал NWO</span>
+                  <h3>
+                    Почему менеджеры
+                    <br />
+                    выгорают
+                  </h3>
+                  <ArrowUpRight size={28} aria-hidden />
+                </Link>
+                <Link href="/blog/" className="site-text-link">
+                  Все материалы <ArrowUpRight size={18} aria-hidden />
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          <section id="faq" className="questions-section site-container">
+            <SectionLabel number="06">Перед первым шагом</SectionLabel>
+            <div className="questions-grid">
+              <h2>
+                ЕСТЬ
+                <br />
+                ВОПРОСЫ?
+              </h2>
+              <div className="questions-list">
+                {bootcampFaq.map((item) => (
+                  <details key={item.question}>
+                    <summary>
+                      {item.question}
+                      <Plus size={21} aria-hidden />
+                    </summary>
+                    <p>{item.answer}</p>
+                  </details>
+                ))}
                 <a
                   href={eventContactHref}
-                  className="site-button"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="site-text-link"
                 >
-                  Записаться через Telegram
-                  <ArrowUpRight size={22} aria-hidden />
+                  Записаться через Telegram{" "}
+                  <ArrowUpRight size={18} aria-hidden />
                 </a>
               </div>
-              <p className="closing-note">
-                Отправь подготовленное сообщение в чате — кнопка сама по себе не
-                завершает запись. Наличие записи эфира уточни у Ярослава.
-              </p>
+            </div>
+          </section>
+
+          <section id="pricing" className="next-step-section">
+            <div className="site-container">
+              <SectionLabel number="07">Дальше — твой ход</SectionLabel>
+              <h2 data-reveal>
+                ТВОЙ
+                <br />
+                СЛЕДУЮЩИЙ ШАГ.
+              </h2>
+              <TelegramCTA placement="footer" className="telegram-finale">
+                TELEGRAM
+              </TelegramCTA>
+              <div className="next-step-note">
+                <span>New Way Out / Практика продаж</span>
+                <span>Начни с одного решения.</span>
+              </div>
             </div>
           </section>
         </main>
       </LandingMotion>
       <SiteFooter />
+      <StickyTelegramCTA />
     </div>
   );
 }

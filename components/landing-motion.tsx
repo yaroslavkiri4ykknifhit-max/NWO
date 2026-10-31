@@ -1,73 +1,66 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
+import { trackEvent } from "@/lib/analytics";
 
-/** Native vertical scrolling. Animation never intercepts wheel, touch or keyboard. */
+/** Native vertical scrolling; static content and immediate CTAs even without JS. */
 export function LandingMotion({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = root.current;
-    if (!element) return;
+    if (!element || !("IntersectionObserver" in window)) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = window.matchMedia("(min-width: 768px)");
-    let teardown = () => {};
-    const setup = () => {
-      teardown();
-      // Mobile uses CSS entrance effects only; no per-scroll geometry work.
-      if (preference.matches || !desktop.matches) return;
-      const opening = element.querySelector<HTMLElement>(".opening-scene");
-      const ink = element.querySelector<HTMLElement>("[data-ink]");
-      const steps = Array.from(
-        element.querySelectorAll<HTMLElement>("[data-step]"),
-      );
-      let frame = 0;
-      const clamp = (n: number) => Math.max(0, Math.min(n, 1));
-      const paint = () => {
-        frame = 0;
-        if (opening) {
-          const rect = opening.getBoundingClientRect();
-          const progress = clamp(
-            -rect.top / Math.max(1, rect.height - innerHeight),
-          );
-          opening.style.setProperty("--scene-progress", String(progress));
-        }
-        if (ink) {
-          const rect = ink.getBoundingClientRect();
-          ink.style.setProperty(
-            "--ink-progress",
-            `${clamp((innerHeight * 0.9 - rect.top) / (rect.height + innerHeight * 0.2)) * 140}%`,
-          );
-        }
-        steps.forEach((step) => {
-          const rect = step.getBoundingClientRect();
-          if (rect.bottom > 0 && rect.top < innerHeight)
-            step.style.setProperty(
-              "--step-lift",
-              `${Math.max(0, (rect.top - innerHeight * 0.65) * 0.12)}px`,
+    const animations: Animation[] = [];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          if (entry.target.id)
+            trackEvent(
+              entry.target.id === "hero" ? "hero_view" : "section_view",
+              { section: entry.target.id },
             );
+          if (!preference.matches && entry.target.hasAttribute("data-reveal")) {
+            animations.push(
+              entry.target.animate(
+                [
+                  { transform: "translateY(22px)" },
+                  { transform: "translateY(0)" },
+                ],
+                {
+                  duration: window.innerWidth < 768 ? 350 : 800,
+                  easing: "cubic-bezier(.16,1,.3,1)",
+                },
+              ),
+            );
+          }
+          observer.unobserve(entry.target);
         });
-      };
-      const scroll = () => {
-        if (!frame) frame = requestAnimationFrame(paint);
-      };
-      paint();
-      window.addEventListener("scroll", scroll, { passive: true });
-      window.addEventListener("resize", scroll);
-      teardown = () => {
-        window.removeEventListener("scroll", scroll);
-        window.removeEventListener("resize", scroll);
-        cancelAnimationFrame(frame);
-        opening?.style.removeProperty("--scene-progress");
-        ink?.style.removeProperty("--ink-progress");
-        steps.forEach((step) => step.style.removeProperty("--step-lift"));
-      };
+      },
+      { threshold: 0.08 },
+    );
+    element
+      .querySelectorAll("section[id], [data-reveal]")
+      .forEach((node) => observer.observe(node));
+    const stopMotion = () => {
+      if (preference.matches)
+        animations.forEach((animation) => animation.cancel());
     };
-    setup();
-    preference.addEventListener("change", setup);
-    desktop.addEventListener("change", setup);
+    preference.addEventListener("change", stopMotion);
+    const programClick = (event: MouseEvent) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>(
+        "[data-program-link]",
+      );
+      if (link)
+        trackEvent("program_click", {
+          program: link.dataset.programLink || "",
+        });
+    };
+    element.addEventListener("click", programClick);
     return () => {
-      teardown();
-      preference.removeEventListener("change", setup);
-      desktop.removeEventListener("change", setup);
+      observer.disconnect();
+      animations.forEach((animation) => animation.cancel());
+      preference.removeEventListener("change", stopMotion);
+      element.removeEventListener("click", programClick);
     };
   }, []);
   return <div ref={root}>{children}</div>;

@@ -3,7 +3,7 @@
 import { ArrowLeft, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserProfile } from "@/lib/sheets-api";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { BrandIdentity } from "@/components/brand";
 import type { Variants } from "motion/react";
 
@@ -26,15 +26,19 @@ interface PathProps {
   transition?: { duration: number };
 }
 
-const Path = (props: PathProps) => (
-  <motion.path
-    fill="transparent"
-    strokeWidth="2.5"
-    stroke="currentColor"
-    strokeLinecap="round"
-    {...props}
-  />
-);
+const Path = (props: PathProps) => {
+  const reducedMotion = useReducedMotion();
+  return (
+    <motion.path
+      fill="transparent"
+      strokeWidth="2.5"
+      stroke="currentColor"
+      strokeLinecap="round"
+      {...props}
+      transition={reducedMotion ? { duration: 0 } : props.transition}
+    />
+  );
+};
 
 const MenuToggle = ({
   toggle,

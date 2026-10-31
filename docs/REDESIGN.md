@@ -1,31 +1,64 @@
-# NWO visual redesign
+# NWO — Dark Luxury Editorial
 
-The site remains a Next.js static export deployed by the existing GitHub Pages workflow. The custom domain, lesson data, authentication, pricing and Telegram destinations are preserved.
+## Что изменено
 
-## Visual system
+Главная теперь ведёт от короткого предложения к Telegram-каналу: CTA на первом экране, после программы, в финале и в общей навигации. Адрес канала предоставлен владельцем проекта. Личная переписка и запись на эфир остаются отдельными действиями.
 
-- Black, red, orange and off-white flat surfaces; condensed Oswald headings and Manrope body text.
-- Homepage: native vertical scroll, sticky opening scene, scroll-linked arrow scaling and rotation, color wipe, text fill and programme movement. No wheel, touch or keyboard scroll interception.
-- Inner pages: shared header, footer, typography, posters, buttons, course outline, lesson and authentication surfaces. Only short existing reveals remain.
-- Content is server rendered; programme and FAQ details use native disclosures. Reduced motion removes continuous transforms and entrance animations. Mobile uses a shorter, unpinned opening scene.
-- Homepage retains the event programme, author, course formats and prices, scheduling status, registration instructions, FAQ, journal links and original result conditions.
+Общая система: фон `#0A0A0A`, поверхности `#141414` / `#1C1C1C`, текст `#F5F5F0`, серебро `#BFC3C7`, разделители `#303030`. Локальный Manrope с кириллицей через `next/font/local`, адаптивные поля, крупные заголовки, нумерация, тонкие линии и светлый редакционный раздел форматов. На внутренних страницах — спокойная типографика и минимум движения.
 
-Fonts are distributed under their accompanying OFL licenses. `app/font-data.css` embeds the small WOFF files to avoid external font requests. Regenerate with `node scripts/generate-font-css.mjs` after changing source fonts.
+| Маршрут / состояние | Реализация |
+| --- | --- |
+| `/` | Новая обложка, возражения, пять раскрывающихся этапов, автор, форматы строками, реальные материалы, FAQ, финальный CTA |
+| `/free/` | Общая система на вступлении, кабинете, оглавлении, уроках, прогрессе, загрузке и ошибках |
+| `/premium/`, `#login` | Общая система на программе, форме входа, состояниях доступа, кабинете и уроках |
+| `/mentorship/` | Общая система на условиях и формате личной работы |
+| `/blog/` | Редакционный индекс статей |
+| `/blog/how-i-made-11k/` | Читаемая колонка, метаданные и переход к практике |
+| `/blog/why-managers-burn-out/` | Та же система статьи; исходный текст сохранён |
+| `404`, `/loader-demo/` | Общие типографика, палитра и состояния |
 
-## Validation
+`content/`, `lib/sheets-api.ts`, `google-apps-script.js`, ключи хранения прогресса, порядок уроков, инвайт-коды, OTP и Passkey не изменены. Цены сохранены: $0 / $17 / $170; менторство — 30 дней. Условия эфира сохранены в FAQ: дата и время уточняются, запись через личный Telegram. Подтверждённых фотографий автора в текущем checkout нет; вымышленные портреты и отзывы не добавлялись.
 
-- `pnpm install --frozen-lockfile`, `pnpm build`, `tsc --noEmit`, `git diff --check`.
-- All 12 static route outputs generated; 132 internal links checked without missing destinations.
-- Browser review at desktop and 375 / 768 px iframe widths: typography, native scrolling, mobile menu, programme disclosure, course introductions, journal, mentorship, free-course navigation and lesson completion.
-- Paid access was not exercised with a real account; its existing data and authentication logic were left intact. Local preview uses the repository's existing public-course fallback when the deployment secret is absent.
+## Компоненты и поведение
 
-`pnpm-workspace.yaml` mirrors the existing lodash override so frozen installation works with both pnpm 10 (CI) and pnpm 11 (local runtime).
+- `TelegramCTA` — единые адрес, оформление и аналитика по месту клика.
+- `StickyTelegramCTA` — мобильная нижняя панель после первого экрана; скрывается при видимом основном CTA и открытом меню. Учтены safe-area и место внизу страницы.
+- `SiteHeader`, `SiteFooter`, `BrandMark` — единая навигация, канал и отдельная личная связь. Меню поддерживает Escape и возврат фокуса.
+- `LandingMotion`, маски строк заголовка и `SectionLabel` — короткие появления при нативной вертикальной прокрутке. Нет тяжёлой библиотеки или постоянно работающего обработчика скролла на главной.
+- Общие токены применены к программам, журналу, курсу, авторизации и ошибкам. В форме входа каждый самостоятельный экран имеет основной заголовок.
+- CSS, анимации прокрутки и анимация меню курса учитывают `prefers-reduced-motion`. Содержимое остаётся доступно без анимаций; CTA не ждёт их завершения.
 
-## Mobile refinement
+## Адреса и аналитика
 
-- Body copy is 15–16 px, secondary copy at least 12 px, primary button text 14 px; menu toggle is 48 px.
-- Full-width primary actions, smaller decorative posters, shorter opening spacing, and poster artwork that avoids its captions.
-- Native safe-area padding and viewport-fit support without restricting zoom. Form fields use 16 px text to avoid focus zoom on iOS.
-- The menu has a dismissing backdrop, deduplicated destinations, and a scrollable height limit for landscape phones. Footer links and lesson controls have larger touch areas.
-- Homepage scroll effects register no scroll listener below 768 px. Internal page reveals use shorter travel and duration; pages without parallax have no scroll handler.
-- Chrome iframe QA at 320×568, 375×667, 390×844, 430×844, 667×375, and 768×900: no horizontal overflow or out-of-bounds headings, paragraphs or links on the homepage. Also checked course introductions, mentorship, journal and an article at 320 px, plus lesson navigation and outline at 375 px. Real-device Safari testing was not available.
+`lib/site-config.ts` содержит два разных назначения:
+
+- `telegramChannelUrl`: `https://t.me/+insdlV6z3CM3YTZi`.
+- `telegramContactUrl`: `https://t.me/c0lddev`.
+
+`lib/analytics.ts` отправляет `nwo:analytics` и, если уже существует `window.dataLayer`, передаёт событие туда. Новый трекер не подключается. Переход не ждёт аналитику и работает, даже если её обработчик недоступен.
+
+События: `telegram_click_hero`, `telegram_click_sticky`, `telegram_click_midpage`, `telegram_click_footer`, `telegram_click_header`, `hero_view`, `section_view`, `program_click`. В данные входят путь страницы, место клика и доступные `utm_source`, `utm_medium`, `utm_campaign` (не полный URL и не произвольная строка параметров). В коде не добавлены идентификаторы посетителя или новое хранилище персональных данных.
+
+Клик не означает вступление. Для подсчёта вступлений можно завести отдельные пригласительные ссылки Telegram для источников и сверять статистику этих ссылок в администрировании канала. Потребуются права администратора; такая интеграция в этот редизайн не включена.
+
+## Проверки
+
+- `pnpm build`: успешно, статический экспорт всех маршрутов, встроенная проверка TypeScript.
+- `pnpm exec tsc --noEmit`: успешно.
+- `git diff --check`: успешно.
+- Проверка сгенерированного HTML: семь индексируемых страниц имеют уникальные title и canonical, description; внутренние переходы и якоря главной существуют.
+- Chrome, production export: главная, две программы, менторство, журнал, обе статьи и 404 проверены при ширинах **320, 360, 375, 390, 414, 768, 1024, 1440 px** (64 сочетания маршрута и ширины). Горизонтального переполнения не найдено. Проверка выполнена в iframe с реальной шириной viewport, без эмуляции устройства.
+- На главной проверены видимость hero CTA, появление нижней панели после обложки, скрытие при открытом меню и рядом с основными CTA, раскрытие меню и аккордеонов.
+- Проверены адрес канала, `target` и события CTA в тестовом окружении; внешняя навигация при этих кликах перехватывалась тестовой оболочкой, чтобы не открывать приложение и не вступать в канал.
+- Бесплатный курс: открытие кабинета и первого урока, отметка завершения, следующий урок, мобильное оглавление и восстановление завершённого урока после повторного открытия. В локальной сборке использовалась существующая демонстрационная база: секрет `NEXT_PUBLIC_APPS_SCRIPT_URL` здесь не предоставлен.
+- Black: открытие программы и экрана входа, переход к форме email и возврат к программе. Настоящие OTP, инвайт-код, Passkey, оплата и авторизованный платный кабинет требуют тестового доступа к действующему API; их сквозная проверка не выполнялась.
+- В проверенном браузере ошибок приложения с источником `terminal.local` не обнаружено. Сообщения расширения браузера не являются ошибками сайта.
+- `pnpm lint`: существующая команда недоступна, потому что в зависимостях проекта отсутствует ESLint (`eslint: not found`). Проверка не отключалась и конфигурация линтера не изменялась.
+
+Большая встроенная CSS-копия шрифтов (~224 КБ) исключена из загрузки: Next.js выдаёт три существующих WOFF отдельно с кешированием и корректировкой fallback. После сборки общий CSS составляет примерно 171 КБ до сжатия / 29 КБ gzip. Это размеры ресурсов, а не измерение Core Web Vitals.
+
+## Ограничения и выпуск
+
+Реальные Safari/iOS, Android и TikTok WebView, низкая производительность устройства и полевые LCP/INP/CLS не проверялись. Утверждений о достижении целевых Core Web Vitals или росте конверсии нет. Reduced motion проверен по реализации, без переключения системной настройки браузера.
+
+Сохранены `output: 'export'`, `trailingSlash`, CNAME и существующий workflow GitHub Pages. Новых production-зависимостей нет. Перед слиянием можно просмотреть изменения в PR; обычный push в `main` запустит действующий деплой.
