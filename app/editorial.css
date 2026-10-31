@@ -1795,22 +1795,22 @@ details[open] > summary > svg {
 }
 @media (max-width: 767px) {
   :root {
-    --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
-    --section-space: 76px;
-    --mobile-header-height: calc(64px + env(safe-area-inset-top));
+    --gutter: max(18px, env(safe-area-inset-left), env(safe-area-inset-right));
+    --section-space: 64px;
+    --mobile-header-height: calc(72px + env(safe-area-inset-top));
   }
   html {
-    scroll-padding-top: calc(var(--mobile-header-height) + 16px);
+    scroll-padding-top: calc(var(--mobile-header-height) + 12px);
   }
   .site-nav {
-    min-height: 64px;
-    gap: 12px;
+    min-height: 72px;
+    gap: 10px;
   }
   .site-header .brand-mark-name {
     display: none;
   }
   .brand-mark-icon {
-    font-size: 31px;
+    font-size: 36px;
   }
   .brand-registered {
     font-size: 11px;
@@ -1818,44 +1818,68 @@ details[open] > summary > svg {
   .brand-mark {
     gap: 12px;
   }
+  .site-menu-toggle {
+    width: 48px;
+    height: 48px;
+  }
   .nav-end {
     gap: 8px;
   }
   .telegram-cta.site-nav-cta {
-    font-size: 10px;
-    gap: 10px;
-    padding: 8px 12px;
+    font-size: 12px;
+    gap: 12px;
+    padding: 10px 14px;
+    min-height: 48px;
   }
   .site-nav-cta svg {
-    width: 16px;
+    width: 18px;
   }
   .site-mobile-nav {
     padding-top: 10px;
     max-height: calc(100dvh - var(--mobile-header-height));
   }
   .site-mobile-nav a {
-    font-size: 23px;
-    min-height: 56px;
+    font-size: 25px;
+    min-height: 60px;
   }
   .site-menu-backdrop {
     inset-block-start: var(--mobile-header-height);
   }
   .telegram-cta {
-    min-height: 56px;
-    padding: 16px 18px;
-    font-size: 12px;
+    min-height: 60px;
+    padding: 18px 20px;
+    font-size: 15px;
   }
   .site-button {
+    font-size: 15px;
+    padding-inline: 20px;
+    min-height: 58px;
+  }
+  .site-eyebrow {
     font-size: 13px;
-    padding-inline: 18px;
-    min-height: 54px;
+  }
+  .footer-top .telegram-cta {
+    font-size: 14px;
+    min-height: 52px;
+    padding: 14px 18px;
+  }
+  .edition-number {
+    font-size: 13px;
+  }
+  .course-upgrade p,
+  .course-state p {
+    font-size: 16px;
+  }
+  .access-card p,
+  .access-card label {
+    font-size: 15px;
   }
   .site-text-link {
-    font-size: 13px;
+    font-size: 15px;
   }
   .section-label {
-    font-size: 11px;
-    margin-bottom: 34px;
+    font-size: 13px;
+    margin-bottom: 28px;
   }
   .section-heading {
     flex-direction: column;
@@ -1864,60 +1888,63 @@ details[open] > summary > svg {
     margin-bottom: 36px;
   }
   .section-heading h2 {
-    font-size: clamp(34px, 8.6vw, 60px);
+    font-size: clamp(38px, 10vw, 76px);
   }
   .section-heading > p {
     max-width: 36ch;
-    font-size: 14px;
+    font-size: 16px;
   }
   .cover {
-    padding-top: 22px;
+    padding-top: 20px;
   }
   .cover-meta {
-    font-size: 10px;
+    font-size: 12px;
   }
   .cover-meta > span:last-child {
     display: none;
   }
   .cover-title {
-    font-size: clamp(40px, 10.8vw, 78px);
+    font-size: clamp(44px, 14vw, 92px);
     letter-spacing: -0.068em;
-    margin: 36px 0 32px;
-    line-height: 1.13;
+    margin: 28px 0;
+    line-height: 1.08;
   }
   .title-outline {
-    font-size: 0.67em;
-    line-height: 1.8;
-    letter-spacing: -0.055em;
+    font-size: 0.69em;
+    line-height: 1.4;
+    letter-spacing: -0.06em;
+    color: var(--silver);
+    -webkit-text-stroke: 0;
   }
   .cover-bottom {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding-bottom: 32px;
+    padding-bottom: 26px;
   }
   .cover-scroll,
   .cover-seal {
     display: none;
   }
   .cover-description > p {
-    font-size: 15px;
-    line-height: 1.75;
+    font-size: 17px;
+    line-height: 1.65;
     max-width: 34ch;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
   }
   .cover-description .telegram-cta {
     width: 100%;
     max-width: none;
   }
   .site-microcopy {
-    font-size: 11px;
+    font-size: 13px;
     margin-top: 12px;
+    line-height: 1.6;
   }
   .cover-footnote {
-    font-size: 9px;
-    padding-top: 18px;
+    font-size: 12px;
+    padding-top: 16px;
   }
   .cover-footnote > span:last-child {
     display: none;
@@ -1927,30 +1954,30 @@ details[open] > summary > svg {
     gap: 36px;
   }
   .objection-words {
-    font-size: clamp(32px, 8.2vw, 58px);
+    font-size: clamp(34px, 9.6vw, 68px);
     line-height: 1.25;
   }
   .objections-copy h3 {
-    font-size: 25px;
+    font-size: 28px;
     margin-bottom: 18px;
   }
   .small-cross {
     display: none;
   }
   .objections-copy p {
-    font-size: 14px;
+    font-size: 16px;
   }
   .method-row summary {
-    grid-template-columns: 26px 1fr 22px;
-    gap: 14px;
-    min-height: 84px;
+    grid-template-columns: 24px 1fr 22px;
+    gap: 12px;
+    min-height: 88px;
     padding-block: 24px;
   }
   .method-number {
-    font-size: 11px;
+    font-size: 13px;
   }
   .method-name {
-    font-size: clamp(19px, 5.3vw, 30px);
+    font-size: clamp(23px, 6.3vw, 38px);
   }
   .method-title {
     display: none;
@@ -1958,9 +1985,10 @@ details[open] > summary > svg {
   .method-detail {
     grid-template-columns: 1fr;
     gap: 18px;
-    margin-left: 40px;
+    margin-left: 0;
     padding: 0 0 25px;
-    font-size: 13px;
+    font-size: 16px;
+    line-height: 1.75;
   }
   .method-detail p {
     max-width: 42ch;
@@ -1972,7 +2000,7 @@ details[open] > summary > svg {
     margin-top: 30px;
   }
   .method-after > span {
-    font-size: 11px;
+    font-size: 13px;
     max-width: 35ch;
   }
   .author-grid {
@@ -1980,43 +2008,50 @@ details[open] > summary > svg {
     gap: 32px;
   }
   .author-title h2 {
-    font-size: clamp(37px, 10.3vw, 72px);
+    font-size: clamp(42px, 11.4vw, 80px);
   }
   .author-title > p {
     margin-top: 18px;
   }
   .author-note {
     margin-top: 28px;
-    font-size: 9px;
+    font-size: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .author-copy p,
+  .author-title > p {
+    font-size: 16px;
   }
   .author-copy blockquote {
-    font-size: 25px;
+    font-size: 28px;
     margin-block: 24px;
   }
   .edition-row {
-    grid-template-columns: 18px 1fr auto;
-    gap: 16px;
-    padding: 24px 0 50px;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 14px 12px;
+    padding: 28px 0 64px;
   }
   .edition-name > span {
-    font-size: 10px;
+    font-size: 13px;
   }
   .edition-name h3 {
-    font-size: clamp(23px, 6.5vw, 38px);
+    font-size: clamp(28px, 7.5vw, 44px);
     margin-top: 8px;
   }
   .edition-row > p {
-    grid-column: 2/-1;
-    grid-row: 2;
-    font-size: 13px;
+    grid-column: 2;
+    grid-row: 3;
+    font-size: 16px;
     max-width: 40ch;
     padding-top: 0;
+    line-height: 1.75;
   }
   .edition-row > strong {
-    grid-column: 3;
-    grid-row: 1;
-    font-size: 28px;
-    padding-top: 20px;
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 40px;
+    padding-top: 0;
   }
   .edition-link {
     position: static;
@@ -2024,18 +2059,18 @@ details[open] > summary > svg {
     min-height: 0;
   }
   .edition-link > span {
-    left: 34px;
-    bottom: 20px;
-    font-size: 11px;
+    left: 36px;
+    bottom: 22px;
+    font-size: 14px;
   }
   .edition-link svg {
     position: absolute;
-    bottom: 20px;
+    bottom: 24px;
     right: 0;
-    width: 20px;
+    width: 22px;
   }
   .edition-note {
-    font-size: 11px;
+    font-size: 13px;
     margin-top: 24px;
   }
   .practice-grid {
@@ -2044,14 +2079,14 @@ details[open] > summary > svg {
   }
   .practice-grid h2,
   .questions-grid > h2 {
-    font-size: clamp(36px, 9.5vw, 64px);
+    font-size: clamp(40px, 10.5vw, 76px);
   }
   .practice-grid > div > p {
-    font-size: 14px;
+    font-size: 16px;
     margin-block: 24px;
   }
   .practice-links h3 {
-    font-size: 28px;
+    font-size: 32px;
   }
   .practice-links > a:not(.site-text-link) {
     padding-block: 22px 26px;
@@ -2061,31 +2096,32 @@ details[open] > summary > svg {
     gap: 34px;
   }
   .questions-list summary {
-    min-height: 74px;
-    font-size: 14px;
+    min-height: 80px;
+    font-size: 16px;
     gap: 18px;
   }
   .questions-list details p {
-    font-size: 13px;
+    font-size: 16px;
     padding-right: 0;
+    line-height: 1.75;
   }
   .next-step-section {
     padding-block: 34px 26px;
   }
   .next-step-section h2 {
-    font-size: clamp(27px, 7.2vw, 50px);
+    font-size: clamp(32px, 8.1vw, 62px);
   }
   .telegram-cta.telegram-finale {
-    font-size: clamp(38px, 11vw, 80px);
+    font-size: clamp(44px, 12.5vw, 94px);
     gap: 8px;
     margin-top: 24px;
     padding-block: 8px 30px;
   }
   .telegram-finale svg {
-    width: 32px;
+    width: 36px;
   }
   .next-step-note {
-    font-size: 9px;
+    font-size: 12px;
     padding-top: 22px;
   }
   .next-step-note > span:last-child {
@@ -2116,7 +2152,7 @@ details[open] > summary > svg {
     padding-block: 24px 48px;
   }
   .hero-edition {
-    font-size: 10px;
+    font-size: 12px;
     padding-bottom: 18px;
   }
   .hero-grid {
@@ -2125,20 +2161,21 @@ details[open] > summary > svg {
     margin-top: 32px;
   }
   .hero-copy h1 {
-    font-size: clamp(34px, 9.2vw, 64px);
-    line-height: 1.15;
+    font-size: clamp(40px, 10.5vw, 76px);
+    line-height: 1.12;
     margin-top: 22px;
   }
   .hero-description {
-    font-size: 15px;
+    font-size: 17px;
     margin-top: 24px;
+    line-height: 1.7;
   }
   .intro-meta {
     gap: 12px 16px;
     margin-top: 24px;
   }
   .intro-meta span {
-    font-size: 11px;
+    font-size: 13px;
   }
   .site-actions .site-button {
     width: 100%;
@@ -2157,12 +2194,12 @@ details[open] > summary > svg {
     font-size: clamp(85px, 25vw, 155px);
   }
   .brand-art .brand-art-center > p {
-    font-size: 11px;
+    font-size: 12px;
     margin-top: 20px;
   }
   .brand-art-top,
   .brand-art-bottom {
-    font-size: 9px;
+    font-size: 11px;
   }
   .compact-syllabus {
     padding-block: 8px 60px;
@@ -2173,11 +2210,11 @@ details[open] > summary > svg {
     margin-top: 28px;
   }
   .syllabus-list h2 {
-    font-size: 28px;
+    font-size: 30px;
     margin-top: 14px;
   }
   .syllabus-list p {
-    font-size: 14px;
+    font-size: 16px;
     max-width: 42ch;
     margin-top: 12px;
   }
@@ -2185,17 +2222,17 @@ details[open] > summary > svg {
     font-size: 24px;
   }
   .conditions-note {
-    font-size: 12px;
+    font-size: 14px;
   }
   .mentorship-price {
     font-size: 52px;
   }
   .mentorship-price > span {
-    font-size: 12px;
+    font-size: 14px;
     margin-left: 10px;
   }
   .mentor-photo figcaption strong {
-    font-size: 20px;
+    font-size: 23px;
   }
   .site-footer {
     padding: 34px 0 calc(24px + env(safe-area-inset-bottom));
@@ -2215,7 +2252,7 @@ details[open] > summary > svg {
     align-items: start;
     gap: 20px;
     margin-top: 24px;
-    font-size: 11px;
+    font-size: 13px;
   }
   .site-footer-bottom nav {
     display: grid;
@@ -2224,17 +2261,17 @@ details[open] > summary > svg {
     width: 100%;
   }
   .footer-conditions {
-    font-size: 11px;
+    font-size: 13px;
     margin-top: 24px;
   }
   .journal-hero {
     padding: 38px 0;
   }
   .journal-hero h1 {
-    font-size: clamp(37px, 10vw, 70px);
+    font-size: clamp(44px, 11.5vw, 80px);
   }
   .journal-hero > p {
-    font-size: 14px;
+    font-size: 16px;
     margin-top: 24px;
   }
   .journal-list {
@@ -2253,39 +2290,39 @@ details[open] > summary > svg {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px 20px;
-    font-size: 11px;
+    font-size: 13px;
   }
   .journal-entry h2 {
-    font-size: 29px;
+    font-size: 32px;
     line-height: 1.25;
   }
   .journal-entry p {
-    font-size: 14px;
+    font-size: 16px;
     margin-top: 16px;
   }
   .reading-article {
     padding: 26px var(--gutter) 60px;
   }
   .reading-article h1 {
-    font-size: clamp(32px, 8vw, 48px);
+    font-size: clamp(36px, 9.3vw, 56px);
     margin-block: 24px;
   }
   .article-meta {
-    font-size: 11px;
+    font-size: 13px;
     gap: 10px 20px;
     padding-bottom: 24px;
   }
   .article-content {
-    font-size: 16px;
-    line-height: 1.85;
+    font-size: 17px;
+    line-height: 1.8;
     margin-top: 28px;
     overflow-wrap: anywhere;
   }
   .article-content h2 {
-    font-size: 28px;
+    font-size: 30px;
   }
   .article-content h3 {
-    font-size: 24px;
+    font-size: 26px;
   }
   .article-content blockquote {
     padding-left: 18px;
@@ -2294,7 +2331,7 @@ details[open] > summary > svg {
     padding-block: 55px;
   }
   .closing-section h2 {
-    font-size: clamp(30px, 8.2vw, 50px);
+    font-size: clamp(36px, 9vw, 60px);
     line-height: 1.2;
   }
   .closing-section .site-button {
@@ -2309,7 +2346,7 @@ details[open] > summary > svg {
     display: none;
   }
   .course-header .brand-mark-icon {
-    font-size: 28px;
+    font-size: 32px;
   }
   .course-header > .flex:first-child {
     gap: 6px;
@@ -2333,7 +2370,7 @@ details[open] > summary > svg {
     line-height: 1.2;
   }
   .course-welcome > p {
-    font-size: 14px;
+    font-size: 16px;
   }
   .course-progress-grid {
     grid-template-columns: 1fr;
@@ -2348,7 +2385,7 @@ details[open] > summary > svg {
   }
   .course-progress-card > span,
   .course-progress-card p {
-    font-size: 13px;
+    font-size: 15px;
   }
   .course-upgrade {
     padding: 24px;
@@ -2362,17 +2399,17 @@ details[open] > summary > svg {
   }
   .outline-lesson,
   .outline-module-toggle {
-    font-size: 13px;
+    font-size: 15px;
   }
   .outline-support {
-    font-size: 12px;
+    font-size: 14px;
   }
   .lesson-reading-content {
     padding: 18px;
   }
   .lesson-reading-content p,
   .lesson-reading-content li {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.85;
   }
   .lesson-content-section > h2 {
@@ -2383,7 +2420,8 @@ details[open] > summary > svg {
     gap: 10px;
   }
   .lesson-actions button {
-    font-size: 13px;
+    font-size: 15px;
+    min-height: 56px;
   }
   .access-surface {
     padding-block: 24px;
@@ -2392,11 +2430,11 @@ details[open] > summary > svg {
     padding: 26px 20px;
   }
   .access-card .text-xs {
-    font-size: 13px;
+    font-size: 15px;
   }
   .access-card button {
-    min-height: 48px;
-    font-size: 13px;
+    min-height: 52px;
+    font-size: 15px;
     white-space: normal;
   }
   .not-found-content {
@@ -2408,7 +2446,7 @@ details[open] > summary > svg {
     font-size: 120px;
   }
   .not-found-content h2 {
-    font-size: 28px;
+    font-size: 32px;
   }
   .not-found-content .brand-art {
     aspect-ratio: 1.2;
@@ -2421,26 +2459,30 @@ details[open] > summary > svg {
   :root {
     --gutter: 16px;
   }
+  .nav-end {
+    gap: 6px;
+  }
+  .telegram-cta.site-nav-cta {
+    padding-inline: 10px;
+    gap: 8px;
+  }
   .cover-title {
-    font-size: 10.8vw;
+    font-size: 14vw;
   }
   .section-heading h2 {
-    font-size: 9vw;
+    font-size: 36px;
   }
   .author-title h2 {
-    font-size: 10vw;
+    font-size: 40px;
   }
   .method-name {
-    font-size: 17px;
-  }
-  .edition-name h3 {
     font-size: 22px;
   }
-  .edition-row > strong {
-    font-size: 25px;
+  .edition-name h3 {
+    font-size: 28px;
   }
   .cover-description > p {
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2462,9 +2504,9 @@ details[open] > summary > svg {
 }
 @media (max-width: 767px) {
   html {
-    scroll-padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    scroll-padding-bottom: calc(108px + env(safe-area-inset-bottom));
   }
   .home-site :where(a, summary) {
-    scroll-margin-bottom: calc(100px + env(safe-area-inset-bottom));
+    scroll-margin-bottom: calc(108px + env(safe-area-inset-bottom));
   }
 }
