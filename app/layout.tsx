@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 
 import "./globals.css";
 import "./editorial.css";
+import "./mentorship-checkout.css";
 
 const manrope = localFont({
   src: [

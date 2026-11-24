@@ -1,6 +1,6 @@
 import { BrandPlaceholder } from "@/components/brand";
 import { ArrowUpRight } from "lucide-react";
-import { SiteHeader, SiteFooter, contactHref } from "@/components/site-shell";
+import { SiteHeader, SiteFooter } from "@/components/site-shell";
 import { CinematicMotion } from "@/components/cinematic-motion";
 export default function MentorshipPage() {
   return (
@@ -28,18 +28,13 @@ export default function MentorshipPage() {
                   новые навыки на практике.
                 </p>
                 <div className="mentorship-price">
-                  $170 <span>за 30 дней работы</span>
+                  $70 <span>за 30 дней работы</span>
                 </div>
-                <a
-                  className="site-button"
-                  href={contactHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Обсудить свою задачу <ArrowUpRight size={18} />
+                <a className="site-button" href="/mentorship/buy/">
+                  Оформить менторство <ArrowUpRight size={18} />
                 </a>
                 <p className="site-microcopy">
-                  Напиши, чем занимаешься и что хочешь улучшить.
+                  Заявка, условия возврата и выбор способа оплаты.
                 </p>
               </div>
               <figure className="mentor-photo">
